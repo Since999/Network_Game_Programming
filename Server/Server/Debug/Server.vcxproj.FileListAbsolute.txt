@@ -1,0 +1,2 @@
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\Debug\NGP Server.exe
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\Debug\NGP Server.pdb

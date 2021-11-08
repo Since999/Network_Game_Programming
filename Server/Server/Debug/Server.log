@@ -1,0 +1,5 @@
+﻿  server.cpp
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(8,6): warning C4101: 'fileNameSize' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(9,6): warning C4101: 'fileSize' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(10,6): warning C4101: 'retval' :참조되지 않은 지역 변수입니다.
+  Server.vcxproj -> C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\Debug\NGP Server.exe
