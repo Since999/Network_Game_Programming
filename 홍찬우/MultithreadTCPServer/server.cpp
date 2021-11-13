@@ -1,9 +1,7 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // 최신 VC++ 컴파일 시 경고 방지
-#pragma comment(lib, "ws2_32")
+
 #include "server.h"
-#include <winsock2.h>
-#include <stdlib.h>
-#include <stdio.h>
+
+
 #include <vector>
 using namespace std;
 #define SERVERPORT 9000
@@ -14,7 +12,7 @@ int recvn(SOCKET s, char* buf, int len, int flags)
 	int received;
 	char* ptr = buf;
 	int left = len;
-
+	
 	while (left > 0) {
 		received = recv(s, ptr, left, flags);
 		if (received == SOCKET_ERROR)
@@ -58,39 +56,44 @@ void err_display(char* msg)
 void MovePlayer(int key, Player& p)
 {
 	printf("%s \n", p.playerID);
-	if (key == 1)
+	if (key == MOVE_LEFT)
 	{
 		if (p.pos.x > 0)
 			p.pos.x--;
-		printf("%f\n", p.pos.x);
 		CheckPlayerByWallCollision(key, p);
+		CheckPlayerByEnemyCollision(p);
 	}
-	else if (key == 2)
+	else if (key == MOVE_RIGHT)
 	{
 		if (p.pos.x < 11)
 			p.pos.x++;
-		printf("%f\n", p.pos.x);
 		CheckPlayerByWallCollision(key,p);
+		CheckPlayerByEnemyCollision(p);
+
 	}
-	else if (key == 3)
+	else if (key == MOVE_UP)
 	{
 		if (p.pos.y > 0)
 			p.pos.y--;
-		printf("%f\n", p.pos.x);
 		CheckPlayerByWallCollision(key, p);
+		CheckPlayerByEnemyCollision(p);
+
 	}
-	else if (key == 4)
+	else if (key == MOVE_DOWN)
 	{
 		if (p.pos.y < 11)
 			p.pos.y++;
-		printf("%f\n", p.pos.x);
 		CheckPlayerByWallCollision(key, p);
+		CheckPlayerByEnemyCollision(p);
+
 	}
 	
 }
 
-Enemy enemyList[50];
+Enemy enemyList[35];
 Wall List[36];
+Item itemList[4];
+
 void InitWall()
 {
 	List[0].pos.x = 2;
@@ -248,7 +251,7 @@ void CheckPlayerByWallCollision(int key, Player& p)
 {
 	switch (key)
 	{
-	case 1:
+	case MOVE_LEFT:
 		for (int i = 0;i < 36;i++)
 		{
 			if (List[i].pos.x == p.pos.x && List[i].pos.y == p.pos.y)
@@ -258,7 +261,7 @@ void CheckPlayerByWallCollision(int key, Player& p)
 			}
 		}
 		break;
-	case 2:
+	case MOVE_RIGHT:
 		for (int i = 0;i < 36;i++)
 		{
 			if (List[i].pos.x == p.pos.x && List[i].pos.y == p.pos.y)
@@ -268,7 +271,7 @@ void CheckPlayerByWallCollision(int key, Player& p)
 			}
 		}
 		break;
-	case 3:
+	case MOVE_UP:
 		for (int i = 0;i < 36;i++)
 		{
 			if (List[i].pos.x == p.pos.x && List[i].pos.y == p.pos.y)
@@ -278,7 +281,7 @@ void CheckPlayerByWallCollision(int key, Player& p)
 			}
 		}
 		break;
-	case 4:
+	case MOVE_DOWN:
 		for (int i = 0;i < 36;i++)
 		{
 			if (List[i].pos.x == p.pos.x && List[i].pos.y == p.pos.y)
@@ -292,6 +295,17 @@ void CheckPlayerByWallCollision(int key, Player& p)
 	default:
 		break;
 	}
+
+}
+void CheckPlayerByEnemyCollision(Player& p)
+{
+	for (int i = 0;i < 35;i++)
+		if (p.pos.x == enemyList[i].pos.x && p.pos.y == enemyList[i].pos.y)
+		{
+			enemyList[i].isAlived = false;
+			printf("%d 충돌\n",i);
+			break;
+		}
 
 }
 // Client_Thread
@@ -318,30 +332,24 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 		if (retval == 0) {
 			break;
 		}
-		else {
-
-
-			printf("key = %d , ID = %s :  \n", first.keyInputDirection, first.playerID);
-
-
-		}
+		
 		
 		MovePlayer(first.keyInputDirection,player[0]);
+
+
+
+
 		second.players->pos = player->pos;
+		second.enemyList->isAlived = enemyList->isAlived;
+		//printf("%d\n", enemyList[0].isAlived);
+
 
 		second.gameState = 10;
-		printf("pos = %f ,%f :  \n", second.players[0].pos.x, second.players[0].pos.y);
+		
 		retval = send(client_sock, (char*)&second, second.size, 0);
 		if (retval == SOCKET_ERROR) {
 			err_display("send()");
 			break;
-		}
-		else {
-
-
-			printf("send! \n");
-
-
 		}
 
 	}

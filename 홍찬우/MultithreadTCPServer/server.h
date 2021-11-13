@@ -48,7 +48,7 @@ public:
 struct Enemy {
 public:
 	Position pos;				// 위치
-	bool isAlived;				// 생사여부
+	bool isAlived=true;				// 생사여부
 };
 
 struct Item {
@@ -62,10 +62,12 @@ struct Wall {
 };
 
 struct sc_send_struct {
-	char size=116;
+	char size=596U;
 	char type;
 	Player players[3];			// 플레이어들의 리스트
 	int gameState;				// GAME_READY/GAME_RUNNING/GAME_SET
+	Enemy enemyList[36];
+	Item itemList[4];
 };
 
 struct sc_recv_struct {

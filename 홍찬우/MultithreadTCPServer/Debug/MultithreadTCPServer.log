@@ -1,6 +1,8 @@
 ﻿  server.cpp
-C:\Users\cksnd\Desktop\3학년 2학기\넷겜플\Network_Game_Programming\홍찬우\MultithreadTCPServer\server.cpp(10,1): warning C4005: 'BUFSIZE': 매크로 재정의
+C:\Users\cksnd\Desktop\3학년 2학기\넷겜플\Network_Game_Programming\홍찬우\MultithreadTCPServer\server.h(65,16): warning C4305: '초기화 중': 'unsigned int'에서 'char'(으)로 잘립니다.
+C:\Users\cksnd\Desktop\3학년 2학기\넷겜플\Network_Game_Programming\홍찬우\MultithreadTCPServer\server.h(65,12): warning C4309: '초기화 중': 상수 값이 잘립니다.
+C:\Users\cksnd\Desktop\3학년 2학기\넷겜플\Network_Game_Programming\홍찬우\MultithreadTCPServer\server.cpp(8,1): warning C4005: 'BUFSIZE': 매크로 재정의
 C:\Users\cksnd\Desktop\3학년 2학기\넷겜플\Network_Game_Programming\홍찬우\MultithreadTCPServer\server.h(12): message : 'BUFSIZE'의 이전 정의를 참조하십시오.
-C:\Users\cksnd\Desktop\3학년 2학기\넷겜플\Network_Game_Programming\홍찬우\MultithreadTCPServer\server.cpp(305,6): warning C4101: 'fileNameSize' :참조되지 않은 지역 변수입니다.
-C:\Users\cksnd\Desktop\3학년 2학기\넷겜플\Network_Game_Programming\홍찬우\MultithreadTCPServer\server.cpp(306,6): warning C4101: 'fileSize' :참조되지 않은 지역 변수입니다.
+C:\Users\cksnd\Desktop\3학년 2학기\넷겜플\Network_Game_Programming\홍찬우\MultithreadTCPServer\server.cpp(319,6): warning C4101: 'fileNameSize' :참조되지 않은 지역 변수입니다.
+C:\Users\cksnd\Desktop\3학년 2학기\넷겜플\Network_Game_Programming\홍찬우\MultithreadTCPServer\server.cpp(320,6): warning C4101: 'fileSize' :참조되지 않은 지역 변수입니다.
   MultithreadTCPServer.vcxproj -> C:\Users\cksnd\Desktop\3학년 2학기\넷겜플\Network_Game_Programming\홍찬우\MultithreadTCPServer\Debug\MultithreadTCPServer.exe
