@@ -355,9 +355,6 @@ void DrawBoard(HDC hdc, int boardCount, int xS, int yS)
 		LineTo(hdc, 80+boardCount * oneSize + xS, 120+i * oneSize + yS);
 	}
 }
-
-
-
 void DrawPlayer(HDC hdc, int xS, int yS)
 {
 	HBRUSH hBrush, oBrush;
@@ -371,10 +368,6 @@ void DrawPlayer(HDC hdc, int xS, int yS)
 	DeleteObject(hBrush);
 
 }
-
-
-
-
 void InitObstacle(HDC hdc, int xS, int yS)
 {
 	List[0].pos.x = 2 ;
@@ -452,8 +445,6 @@ void InitObstacle(HDC hdc, int xS, int yS)
 	
 
 }
-
-
 void InitEnemy(HDC hdc, int xS, int yS)
 {
 	enemyList[0].pos.x = 2;
@@ -530,7 +521,6 @@ void InitEnemy(HDC hdc, int xS, int yS)
 
 
 }
-
 void InitItem(HDC hdc, int xS, int yS)
 {
 	itemList[0].pos.x = 8;
@@ -542,7 +532,6 @@ void InitItem(HDC hdc, int xS, int yS)
 	itemList[2].pos.x = 2;
 	itemList[2].pos.y = 7;
 }
-
 void InitHpBar(HDC hdc, int xS, int yS)
 {
 	
@@ -559,9 +548,6 @@ void InitHpBar(HDC hdc, int xS, int yS)
 
 	
 }
-
-
-
 void DrawObstacle(HDC hdc, int xS, int yS)
 {
 	HBRUSH hBrush, oBrush;
@@ -576,7 +562,6 @@ void DrawObstacle(HDC hdc, int xS, int yS)
 		DeleteObject(hBrush);
 	}
 }
-
 void DrawItem(HDC hdc, int xS, int yS)
 {
 	HBRUSH hBrush, oBrush;
@@ -594,7 +579,6 @@ void DrawItem(HDC hdc, int xS, int yS)
 		}
 	}
 }
-
 void DrawEnemy(HDC hdc, int xS, int yS)
 {
 	HBRUSH hBrush, oBrush;
@@ -611,7 +595,6 @@ void DrawEnemy(HDC hdc, int xS, int yS)
 		}
 	}
 }
-
 void DrawHp(HDC hdc, int xS, int yS)
 {
 	HBRUSH hBrush, oBrush;
