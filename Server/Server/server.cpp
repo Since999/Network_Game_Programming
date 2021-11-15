@@ -1,23 +1,24 @@
 ﻿#include "server.h"
 
+
 // Client_Thread
-DWORD WINAPI ProcessClient(LPVOID arg) {
+DWORD WINAPI ProcessClient(LPVOID arg)
+{
+	int retval = 0;
 	SOCKET client_sock = (SOCKET)arg;
 	SOCKADDR_IN clientaddr;
-	int addrlen;
-	int fileNameSize;
-	int fileSize;
-	int retval;
-	
-	// 클라이언트 정보
-	addrlen = sizeof(clientaddr);
+	int addrlen = sizeof(clientaddr);
 	getpeername(client_sock, (SOCKADDR*)&clientaddr, &addrlen);
 
+
 	while (1) {
+		if (gameState == GAME_RUNNING) {
+			RecvData(client_sock, rData);
+		}
 	}
 
 	closesocket(client_sock);
-	
+
 	return 0;
 }
 
@@ -36,6 +37,7 @@ int main() {
 	serveraddr.sin_family = AF_INET;
 	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	serveraddr.sin_port = htons(SERVERPORT);
+
 	retval = bind(listen_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("bind()");
 
@@ -46,9 +48,6 @@ int main() {
 	SOCKADDR_IN clientaddr;
 	int addrlen;
 	HANDLE hThread;
-
-	// 임계 영역 초기화
-	InitializeCriticalSection(&cs);
 
 	while (1) {
 		addrlen = sizeof(clientaddr);
@@ -63,14 +62,36 @@ int main() {
 		else { CloseHandle(hThread); }
 	}
 
-	// 임계 영역 종료
-	DeleteCriticalSection(&cs);
-
 	closesocket(listen_sock);
 
 	WSACleanup();
 	return 0;
 }
+
+void SendData(SOCKET sock, sc_send_struct s_data)
+{
+	int retval = 0;
+	char buf[BUFSIZE];
+
+	for (int i = 0; i < PLAYER_MAX; i++) {
+		retval = send(sock_vector[i], (char*)&s_data, sizeof(s_data), 0);
+		if (retval == SOCKET_ERROR) {
+			err_display("SC_Send_data() ");
+			return;
+		}
+	}
+}
+
+void RecvData(SOCKET sock, sc_recv_struct r_data)
+{
+	int retval = 0;
+	retval = recvn(sock, (char*)&r_data, sizeof(r_data), 0);
+	if (retval == SOCKET_ERROR) {
+		err_display("SC_Recv_data() ");
+		return;
+	}
+}
+
 
 void err_quit(const char* msg) {
 	LPVOID lpMsgBuf;
@@ -79,7 +100,7 @@ void err_quit(const char* msg) {
 		NULL, WSAGetLastError(),
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(LPTSTR)&lpMsgBuf, 0, NULL);
-	MessageBox(NULL, (LPCTSTR)lpMsgBuf, msg, MB_ICONERROR);
+	MessageBox(NULL, (LPCTSTR)lpMsgBuf, (LPCSTR)msg, MB_ICONERROR);
 	LocalFree(lpMsgBuf);
 	exit(1);
 }

@@ -1,0 +1,2 @@
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\x64\Debug\Server.exe
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\x64\Debug\Server.pdb

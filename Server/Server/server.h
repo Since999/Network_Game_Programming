@@ -1,12 +1,12 @@
 #pragma once
-
 #define _WINSOCK_DEPRECATED_NO_WARNINGS // 최신 VC++ 컴파일 시 경고 방지
 #define _CRT_SECURE_NO_WARNINGS
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <iostream>
+#include <vector>
 #include <Windows.h>
+using namespace std;
 
 #define SERVERPORT 9000
 #define BUFSIZE 1024
@@ -21,13 +21,14 @@
 #define MOVE_LEFT 23			// A키 입력
 #define MOVE_RIGHT 24			// D키 입력
 
+#define PLAYER_MAX 3
 #define PLAYER_SPEED 10			// 플레이어 속도
 
-CRITICAL_SECTION cs;
-int joinClient = 0;
+vector<SOCKET> sock_vector;
+
 int gameState = GAME_READY;
 
-struct Position {				
+typedef struct Position {
 	float x, y;
 };
 
@@ -42,13 +43,13 @@ public:
 	int rank;					// 최종 순위
 };
 
-struct Enemy {				
+class Enemy {
 public:
 	Position pos;				// 위치
 	bool isAlived;				// 생사여부
 };
 
-struct Item {
+class Item {
 public:
 	Position pos;				// 위치
 	bool isAlived;				// 생사여부
@@ -56,15 +57,11 @@ public:
 
 
 struct sc_send_struct {
-	char size;
-	char type;
 	Player players[3];			// 플레이어들의 리스트
 	int gameState;				// GAME_READY/GAME_RUNNING/GAME_SET
 };
 
 struct sc_recv_struct {
-	char size;
-	char type;
 	int keyInputDirection;		// 클라이언트에서의 키입력 정보
 	char playerID[10];			// 해당 클라이언트의 ID
 };
@@ -73,8 +70,8 @@ float deltaTime();						// deltaTime 반환
 
 void sendGameStart();					// GAME_RUNNING 전환을 클라이언트에게 전송
 
-void SendData(sc_send_struct* s_data);	// sc_send_struct 구조체 전송
-void RecvData(sc_recv_struct* r_data);	// sc_recv_struct 구조체 수신
+void SendData(SOCKET sock, sc_send_struct s_data);	// sc_send_struct 구조체 전송
+void RecvData(SOCKET sock, sc_recv_struct r_data);	// sc_recv_struct 구조체 수신
 
 void MakeRank();						// GAME_SET에서 세 클라이언트의 순위 결정
 
@@ -95,9 +92,9 @@ bool isPlayerAlived();					// 플레이어의 HP 검사를 통해 생사 판별
 
 bool isGameOver();						// 종료 조건 처리 (죽은 플레이어 수 == 3)
 
-
-
-
 void err_quit(const char* msg);
 void err_display(const char* msg);
 int recvn(SOCKET s, char* buf, int len, int flags);
+
+sc_send_struct sData;
+sc_recv_struct rData;
