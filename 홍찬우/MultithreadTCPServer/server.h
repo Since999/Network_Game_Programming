@@ -90,9 +90,9 @@ void MovePlayer(int key,Player& p);				// 플레이어의 위치 정보 갱신
 void UpdatePlayer(Player p);			// 플레이어의 정보 갱신
 
 void CheckPlayerByWallCollision(int key ,Player& p);		// 플레이어와 벽의 충돌 체크
-void CheckPlayerByPlayerCollision();	// 플레이어간의 충돌 체크
+void CheckPlayerByPlayerCollision(int key, Player& p);	// 플레이어간의 충돌 체크
 void CheckPlayerByEnemyCollision(Player& p);		// 플레이어와 Enemy의 충돌 체크
-void CheckPlayerByItemCollision();		// 플레이어와 Item의 충돌 체크
+void CheckPlayerByItemCollision(Player& p);		// 플레이어와 Item의 충돌 체크
 
 void DeleteEnemy();						// Enemy 객체의 isAlived = false;
 										// CheckPlayerByEnemyCollision()에서 호출

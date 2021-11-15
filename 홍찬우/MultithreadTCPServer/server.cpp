@@ -53,46 +53,15 @@ void err_display(char* msg)
     LocalFree(lpMsgBuf);
 }
 
-void MovePlayer(int key, Player& p)
-{
-	printf("%s \n", p.playerID);
-	if (key == MOVE_LEFT)
-	{
-		if (p.pos.x > 0)
-			p.pos.x--;
-		CheckPlayerByWallCollision(key, p);
-		CheckPlayerByEnemyCollision(p);
-	}
-	else if (key == MOVE_RIGHT)
-	{
-		if (p.pos.x < 11)
-			p.pos.x++;
-		CheckPlayerByWallCollision(key,p);
-		CheckPlayerByEnemyCollision(p);
 
-	}
-	else if (key == MOVE_UP)
-	{
-		if (p.pos.y > 0)
-			p.pos.y--;
-		CheckPlayerByWallCollision(key, p);
-		CheckPlayerByEnemyCollision(p);
-
-	}
-	else if (key == MOVE_DOWN)
-	{
-		if (p.pos.y < 11)
-			p.pos.y++;
-		CheckPlayerByWallCollision(key, p);
-		CheckPlayerByEnemyCollision(p);
-
-	}
-	
-}
 
 Enemy enemyList[35];
 Wall List[36];
 Item itemList[4];
+Player player[3];
+sc_recv_struct first;
+sc_send_struct second;
+
 
 void InitWall()
 {
@@ -247,6 +216,62 @@ void InitEnemy()
 
 
 }
+void InitItem()
+{
+	itemList[0].pos.x = 8;
+	itemList[0].pos.y = 11;
+
+	itemList[1].pos.x = 11;
+	itemList[1].pos.y = 7;
+
+	itemList[2].pos.x = 2;
+	itemList[2].pos.y = 7;
+}
+void MovePlayer(int key, Player& p)
+{
+	printf("%s \n", p.playerID);
+	if (key == MOVE_LEFT)
+	{
+		if (p.pos.x > 0)
+			p.pos.x--;
+		CheckPlayerByWallCollision(key, p);
+		CheckPlayerByEnemyCollision(p);
+		CheckPlayerByItemCollision(p);
+		CheckPlayerByPlayerCollision(key, p);
+	}
+	else if (key == MOVE_RIGHT)
+	{
+		if (p.pos.x < 11)
+			p.pos.x++;
+		CheckPlayerByWallCollision(key, p);
+		CheckPlayerByEnemyCollision(p);
+		CheckPlayerByItemCollision(p);
+		CheckPlayerByPlayerCollision(key, p);
+
+	}
+	else if (key == MOVE_UP)
+	{
+		if (p.pos.y > 0)
+			p.pos.y--;
+		CheckPlayerByWallCollision(key, p);
+		CheckPlayerByEnemyCollision(p);
+		CheckPlayerByItemCollision(p);
+		CheckPlayerByPlayerCollision(key, p);
+
+	}
+	else if (key == MOVE_DOWN)
+	{
+		if (p.pos.y < 11)
+			p.pos.y++;
+		CheckPlayerByPlayerCollision(key, p);
+		CheckPlayerByWallCollision(key, p);
+		CheckPlayerByEnemyCollision(p);
+		CheckPlayerByItemCollision(p);
+
+
+	}
+
+}
 void CheckPlayerByWallCollision(int key, Player& p)
 {
 	switch (key)
@@ -308,10 +333,79 @@ void CheckPlayerByEnemyCollision(Player& p)
 		}
 
 }
+void CheckPlayerByItemCollision(Player& p)
+{
+	for (int i = 0;i < 4;i++)
+		if (p.pos.x == itemList[i].pos.x && p.pos.y == itemList[i].pos.y)
+		{
+			itemList[i].isAlived = false;
+			printf("%d 충돌\n", i);
+			break;
+		}
+
+}
+void CheckPlayerByPlayerCollision(int key,Player& p)
+{
+
+		switch (key)
+		{
+		case MOVE_LEFT:
+			for (int i = 1;i < 3;i++)
+			{
+
+				if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+				{
+					//if(p==player[i])
+					p.pos.x++;
+					printf("플레이어 충돌\n");
+
+					break;
+				}
+			}
+			break;
+		case MOVE_RIGHT:
+			for (int i = 1;i < 3;i++)
+			{
+				if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+				{
+					p.pos.x--;
+					printf("플레이어 충돌\n");
+					break;
+				}
+			}
+			break;
+		case MOVE_UP:
+			for (int i = 1;i < 3;i++)
+			{
+				if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+				{
+					p.pos.y++;
+					printf("플레이어 충돌\n");
+					break;
+				}
+			}
+			break;
+		case MOVE_DOWN:
+			for (int i = 1;i < 3;i++)
+			{
+				if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+				{
+					p.pos.y--;
+					printf("플레이어 충돌\n");
+					break;
+				}
+			}
+			break;
+
+		default:
+			break;
+		}
+
+
+
+}
 // Client_Thread
-Player player[3];
-sc_recv_struct first;
-sc_send_struct second;
+
 DWORD WINAPI ProcessClient(LPVOID arg) {
 	SOCKET client_sock = (SOCKET)arg;
 	SOCKADDR_IN clientaddr;
@@ -332,8 +426,11 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 		if (retval == 0) {
 			break;
 		}
+		strcpy(player[0].playerID, first.playerID);
 		
 		
+
+
 		MovePlayer(first.keyInputDirection,player[0]);
 
 
@@ -341,7 +438,8 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 
 		second.players->pos = player->pos;
 		second.enemyList->isAlived = enemyList->isAlived;
-		//printf("%d\n", enemyList[0].isAlived);
+		second.itemList->isAlived = itemList->isAlived;
+		printf("%d\n", enemyList[0].isAlived);
 
 
 		second.gameState = 10;
@@ -392,7 +490,7 @@ int main() {
 	InitializeCriticalSection(&cs);
 	InitEnemy();
 	InitWall();
-
+	InitItem();
 	player->pos.x = 0;
 	player->pos.y = 0;
 	while (1) {

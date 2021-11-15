@@ -130,7 +130,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static RECT rect;
 	static bool Selection{ false };
 	int retval;
-	strcpy(clientSend.playerID, "asd");
+	strcpy(clientSend.playerID, "1");
 	switch (iMessage) {
 
 	case WM_CREATE:
