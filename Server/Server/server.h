@@ -1,77 +1,24 @@
 #pragma once
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // 최신 VC++ 컴파일 시 경고 방지
-#define _CRT_SECURE_NO_WARNINGS
-#pragma comment(lib, "ws2_32")
-#include <winsock2.h>
-#include <iostream>
-#include <vector>
-#include <Windows.h>
-using namespace std;
-
-#define SERVERPORT 9000
-#define BUFSIZE 1024
-
-#define GAME_READY 11			// 접속한 클라이언트 수 < 3
-#define GAME_RUNNING 12			// INGAME 상태 (죽은 클라이언트 수 < 3)
-#define GAME_SET 13				// 죽은 클라이언트 수 == 3
-
-#define MOVE_NONE 20			// 키 입력이 없는 상태 (로그인시 사용)
-#define MOVE_UP 21				// W키 입력
-#define MOVE_DOWN 22			// S키 입력
-#define MOVE_LEFT 23			// A키 입력
-#define MOVE_RIGHT 24			// D키 입력
-
-#define PLAYER_MAX 3
-#define PLAYER_SPEED 10			// 플레이어 속도
-
-vector<SOCKET> sock_vector;
-
-int gameState = GAME_READY;
-
-typedef struct Position {
-	float x, y;
-};
-
-class Player {
-public:
-	Position pos;				// 위치
-	char playerID[10];			// 로그인시 사용할 ID
-	bool isAlived;				// 생사여부
-	int hp;						// 생사를 결정하는 HP
-	int score;					// Enemy를 잡으면 1 상승 (승패 결정)
-	int clientIndex;			// 해당 클라이언트의 인덱스
-	int rank;					// 최종 순위
-};
-
-class Enemy {
-public:
-	Position pos;				// 위치
-	bool isAlived;				// 생사여부
-};
-
-class Item {
-public:
-	Position pos;				// 위치
-	bool isAlived;				// 생사여부
-};
+#include "define.h"
 
 
-struct sc_send_struct {
-	Player players[3];			// 플레이어들의 리스트
-	int gameState;				// GAME_READY/GAME_RUNNING/GAME_SET
-};
+float elapsedTime;
+int gameState = GAME_RUNNING;
 
-struct sc_recv_struct {
-	int keyInputDirection;		// 클라이언트에서의 키입력 정보
-	char playerID[10];			// 해당 클라이언트의 ID
-};
+Player player[3];
+Enemy enemyList[35];
+Wall wallList[36];
+Item itemList[4];
 
-float deltaTime();						// deltaTime 반환
+sc_send_struct sData;
+sc_recv_struct rData;
 
-void sendGameStart();					// GAME_RUNNING 전환을 클라이언트에게 전송
+DWORD WINAPI ProcessClient(LPVOID);
 
 void SendData(SOCKET sock, sc_send_struct s_data);	// sc_send_struct 구조체 전송
 void RecvData(SOCKET sock, sc_recv_struct r_data);	// sc_recv_struct 구조체 수신
+
+void sendGameStart();					// GAME_RUNNING 전환을 클라이언트에게 전송
 
 void MakeRank();						// GAME_SET에서 세 클라이언트의 순위 결정
 
@@ -83,18 +30,15 @@ void CheckPlayerByPlayerCollision();	// 플레이어간의 충돌 체크
 void CheckPlayerByEnemyCollision();		// 플레이어와 Enemy의 충돌 체크
 void CheckPlayerByItemCollision();		// 플레이어와 Item의 충돌 체크
 
-void DeleteEnemy();						// Enemy 객체의 isAlived = false;
-										// CheckPlayerByEnemyCollision()에서 호출
-void DeleteItem();						// Item 객체의 isAlived = false;
-										// CheckPlayerByItemCollision()에서 호출
+void DeleteEnemy();						// Enemy 객체의 isAlived = false;  CheckPlayerByEnemyCollision()에서 호출
+void DeleteItem();						// Item 객체의 isAlived = false;   CheckPlayerByItemCollision()에서 호출
 
 bool isPlayerAlived();					// 플레이어의 HP 검사를 통해 생사 판별
+int isGameOver();						// 종료 조건 처리 (죽은 플레이어 수 == 3)
 
-bool isGameOver();						// 종료 조건 처리 (죽은 플레이어 수 == 3)
+template <typename T>
+void SetPos(T gameObject, int x, int y);
 
 void err_quit(const char* msg);
 void err_display(const char* msg);
 int recvn(SOCKET s, char* buf, int len, int flags);
-
-sc_send_struct sData;
-sc_recv_struct rData;

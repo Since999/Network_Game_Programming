@@ -1,4 +1,4 @@
 ﻿  server.cpp
-C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.h(33,2): warning C4091: 'typedef ': 변수를 선언하지 않으면 'Position' 왼쪽은 무시됩니다.
-C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(74,7): warning C4101: 'buf' :참조되지 않은 지역 변수입니다.
-  Server.vcxproj -> C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\x64\Debug\Server.exe
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\define.h(30,2): warning C4091: 'typedef ': 변수를 선언하지 않으면 'Position' 왼쪽은 무시됩니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(9,3): error C2561: 'main': 함수는 값을 반환해야 합니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(3): message : 'main' 선언을 참조하십시오.

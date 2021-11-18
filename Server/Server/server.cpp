@@ -1,33 +1,12 @@
 ﻿#include "server.h"
 
-
-// Client_Thread
-DWORD WINAPI ProcessClient(LPVOID arg)
+int main() 
 {
-	int retval = 0;
-	SOCKET client_sock = (SOCKET)arg;
-	SOCKADDR_IN clientaddr;
-	int addrlen = sizeof(clientaddr);
-	getpeername(client_sock, (SOCKADDR*)&clientaddr, &addrlen);
-
-
-	while (1) {
-		if (gameState == GAME_RUNNING) {
-			RecvData(client_sock, rData);
-		}
-	}
-
-	closesocket(client_sock);
-
-	return 0;
-}
-
-int main() {
 	int retval;
 
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-		return 1;
+		return 0;
 
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (listen_sock == INVALID_SOCKET) err_quit("socket()");
@@ -62,24 +41,46 @@ int main() {
 		else { CloseHandle(hThread); }
 	}
 
-	closesocket(listen_sock);
+	for (int i = 0; i < PLAYER_MAX; i++) {
+		SendData(client_sock, sData);
+	}
 
+	closesocket(listen_sock);
 	WSACleanup();
 	return 0;
 }
 
-void SendData(SOCKET sock, sc_send_struct s_data)
+// Client_Thread
+DWORD WINAPI ProcessClient(LPVOID arg)
+{
+	int retval = 0;
+	SOCKET client_sock = (SOCKET)arg;
+	SOCKADDR_IN clientaddr;
+	int addrlen = sizeof(clientaddr);
+	getpeername(client_sock, (SOCKADDR*)&clientaddr, &addrlen);
+
+	while (1) {
+		if (gameState == GAME_RUNNING) {
+			RecvData(client_sock, rData);
+		}
+	}
+
+	closesocket(client_sock);
+	return 0;
+}
+
+void SendData(SOCKET sock, sc_send_struct* s_data)
 {
 	int retval = 0;
 	char buf[BUFSIZE];
 
-	for (int i = 0; i < PLAYER_MAX; i++) {
-		retval = send(sock_vector[i], (char*)&s_data, sizeof(s_data), 0);
+	//for (int i = 0; i < PLAYER_MAX; i++) {
+		retval = send(sock, (char*)&s_data, sizeof(s_data), 0);
 		if (retval == SOCKET_ERROR) {
 			err_display("SC_Send_data() ");
 			return;
 		}
-	}
+	//}
 }
 
 void RecvData(SOCKET sock, sc_recv_struct r_data)
@@ -92,6 +93,12 @@ void RecvData(SOCKET sock, sc_recv_struct r_data)
 	}
 }
 
+template <typename T>
+void SetPos(T gameObject, int x, int y)
+{
+	gameObject.Pos.x = x;
+	gameObject.Pos.y = y;
+}
 
 void err_quit(const char* msg) {
 	LPVOID lpMsgBuf;
