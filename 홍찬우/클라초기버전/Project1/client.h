@@ -90,7 +90,7 @@ struct cs_recv_struct {
 	char type;
 	Player player[3];
 	int gameState;
-	Enemy enemyList[36];
+	Enemy enemyList[35];
 	Item itemList[4];
 
 };

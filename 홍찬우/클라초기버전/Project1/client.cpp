@@ -1,4 +1,4 @@
-//#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 
 #include "client.h"
 
@@ -62,6 +62,8 @@ cs_recv_struct clientRecv;
 Player temp;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 	int retval;
@@ -88,7 +90,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 	InitItem();
 	InitEnemy();
 	InitHpBar();
-
+	p.hp = 1;
 	HWND hWnd;
 	MSG Message;
 	WNDCLASSEX WndClass;
@@ -102,12 +104,20 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 		WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 		WndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 		WndClass.hInstance = hInstance;
-		WndClass.lpfnWndProc = (WNDPROC)WndProc;
+		WndClass.lpfnWndProc =WndProc;
 		WndClass.lpszClassName = lpszClass;
 		WndClass.lpszMenuName = NULL;
 		WndClass.style = CS_HREDRAW | CS_VREDRAW;
 		WndClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 		RegisterClassEx(&WndClass);
+
+		WndClass.hCursor = LoadCursor(NULL, IDC_HELP);
+		WndClass.hbrBackground = (HBRUSH)GetStockObject(GRAY_BRUSH);
+		WndClass.lpszClassName = lpszClass;
+		WndClass.lpfnWndProc = ChildProc;
+		RegisterClassEx(&WndClass);
+
+
 	}
 	hWnd = CreateWindow(lpszClass, lpszClass, WS_OVERLAPPEDWINDOW | WS_HSCROLL | WS_VSCROLL,
 		0, 0, 800, 800, NULL, (HMENU)NULL, hInstance, NULL);
@@ -126,6 +136,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
+	HWND child_hWnd;
 	PAINTSTRUCT ps;
 	static RECT rect;
 	static bool Selection{ false };
@@ -135,9 +146,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 	case WM_CREATE:
 		GetClientRect(hWnd, &rect);
-		
+		child_hWnd = CreateWindow(lpszClass,NULL,WS_CHILD|WS_VISIBLE|WS_BORDER,10,10,10,500,hWnd,NULL,g_hInst,NULL);
 		break;
 	
+
 	case WM_KEYDOWN:
 		if (wParam == VK_LEFT)
 		{
@@ -148,7 +160,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				err_display("send()");
 				break;
 			}
-			retval = recvn(sock, (char*)&clientRecv, clientRecv.size, 0);
+			retval = recvn(sock, (char*)&clientRecv, sizeof(clientRecv), 0);
 			if (retval == 0) {
 				break;
 			}
@@ -170,14 +182,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					err_display("send()");
 					break;
 				}
-				retval = recvn(sock, (char*)&clientRecv, clientRecv.size, 0);
+				retval = recvn(sock, (char*)&clientRecv, sizeof(clientRecv), 0);
 				if (retval == 0) {
 					break;
 				}
 				else
 				{
 					p.pos = clientRecv.player->pos;
-					enemyList[0].isAlived = false;
+					printf("%f , %f ", p.pos.x, p.pos.y);
+					//enemyList[0].isAlived = false;
+					//printf("(%d)\n", enemyList[0].isAlived);
 					enemyList->isAlived = clientRecv.enemyList->isAlived;
 				}
 			
@@ -194,7 +208,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				err_display("send()");
 				break;
 			}
-			retval = recvn(sock, (char*)&clientRecv, clientRecv.size, 0);
+			retval = recvn(sock, (char*)&clientRecv, sizeof(clientRecv), 0);
 			if (retval == 0) {
 				break;
 			}
@@ -212,7 +226,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				err_display("send()");
 				break;
 			}
-			retval = recvn(sock, (char*)&clientRecv, clientRecv.size, 0);
+			retval = recvn(sock, (char*)&clientRecv, sizeof(clientRecv), 0);
 			if (retval == 0) {
 				break;
 			}
@@ -224,6 +238,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 
 		}
+		for (int i = 0;i < 35;i++)
+			enemyList[i].isAlived = clientRecv.enemyList[i].isAlived;
+		//printf();
 		InvalidateRgn(hWnd, NULL, TRUE);
 		
 		break;
@@ -248,6 +265,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	}
 	return(DefWindowProc(hWnd, iMessage, wParam, lParam));
 }
+
+LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
+{
+	switch (iMessage)
+	{
+	case WM_LBUTTONDOWN:
+		MessageBox(hWnd, L"Lefr Mouse Button", L"Mouse Test", MB_OK);
+		break;
+	default:
+		break;
+	}
+	return DefWindowProc(hWnd, iMessage, wParam, lParam);
+}
+
 
 void DrawBoard(HDC hdc, int boardCount, int xS, int yS)
 {

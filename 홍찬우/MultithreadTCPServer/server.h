@@ -42,7 +42,7 @@ public:
 	int hp;						// 생사를 결정하는 HP
 	int score;					// Enemy를 잡으면 1 상승 (승패 결정)
 	int clientIndex;			// 해당 클라이언트의 인덱스
-	int rank;					// 최종 순위
+	int rank=3;					// 최종 순위
 };
 
 struct Enemy {
@@ -66,7 +66,7 @@ struct sc_send_struct {
 	char type;
 	Player players[3];			// 플레이어들의 리스트
 	int gameState;				// GAME_READY/GAME_RUNNING/GAME_SET
-	Enemy enemyList[36];
+	Enemy enemyList[35];
 	Item itemList[4];
 };
 
@@ -87,7 +87,7 @@ void RecvData(sc_recv_struct* r_data);	// sc_recv_struct 구조체 수신
 void MakeRank();						// GAME_SET에서 세 클라이언트의 순위 결정
 
 void MovePlayer(int key,Player& p);				// 플레이어의 위치 정보 갱신
-void UpdatePlayer(Player p);			// 플레이어의 정보 갱신
+void UpdatePlayer(Player &p);			// 플레이어의 정보 갱신
 
 void CheckPlayerByWallCollision(int key ,Player& p);		// 플레이어와 벽의 충돌 체크
 void CheckPlayerByPlayerCollision(int key, Player& p);	// 플레이어간의 충돌 체크
@@ -101,7 +101,7 @@ void DeleteItem();						// Item 객체의 isAlived = false;
 
 bool isPlayerAlived();					// 플레이어의 HP 검사를 통해 생사 판별
 
-bool isGameOver();						// 종료 조건 처리 (죽은 플레이어 수 == 3)
+int isGameOver(Player p);						// 종료 조건 처리 (죽은 플레이어 수 == 3)
 
 
 
