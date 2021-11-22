@@ -1,8 +1,8 @@
 ﻿  server.cpp
-D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\홍찬우\MultithreadTCPServer\server.h(70,11): warning C4305: '초기화 중': 'unsigned int'에서 'char'(으)로 잘립니다.
-D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\홍찬우\MultithreadTCPServer\server.h(70,12): warning C4309: '초기화 중': 상수 값이 잘립니다.
-D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\홍찬우\MultithreadTCPServer\server.cpp(8,1): warning C4005: 'BUFSIZE': 매크로 재정의
-D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\홍찬우\MultithreadTCPServer\server.h(12): message : 'BUFSIZE'의 이전 정의를 참조하십시오.
-D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\홍찬우\MultithreadTCPServer\server.cpp(376,6): warning C4101: 'fileNameSize' :참조되지 않은 지역 변수입니다.
-D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\홍찬우\MultithreadTCPServer\server.cpp(377,6): warning C4101: 'fileSize' :참조되지 않은 지역 변수입니다.
-  MultithreadTCPServer.vcxproj -> D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\홍찬우\MultithreadTCPServer\Debug\MultithreadTCPServer.exe
+D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\이화수\MultithreadTCPServer\server.h(71,11): warning C4305: '초기화 중': 'unsigned int'에서 'char'(으)로 잘립니다.
+D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\이화수\MultithreadTCPServer\server.h(71,12): warning C4309: '초기화 중': 상수 값이 잘립니다.
+D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\이화수\MultithreadTCPServer\server.cpp(7,1): warning C4005: 'BUFSIZE': 매크로 재정의
+D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\이화수\MultithreadTCPServer\server.h(12): message : 'BUFSIZE'의 이전 정의를 참조하십시오.
+D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\이화수\MultithreadTCPServer\server.cpp(488,6): warning C4101: 'fileNameSize' :참조되지 않은 지역 변수입니다.
+D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\이화수\MultithreadTCPServer\server.cpp(489,6): warning C4101: 'fileSize' :참조되지 않은 지역 변수입니다.
+  MultithreadTCPServer.vcxproj -> D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\이화수\MultithreadTCPServer\Debug\MultithreadTCPServer.exe

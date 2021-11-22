@@ -1,6 +1,8 @@
 #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 
 #include "client.h"
+#define IDC_BUTTON 100
+#define IDC_EDIT 101
 
 // 소켓 함수 오류 출력 후 종료
 void err_quit(const char* msg)
@@ -47,8 +49,10 @@ int recvn(SOCKET s, char* buf, int len, int flags)
 	return (len - left);
 }
 
-HINSTANCE g_hInst;
-TCHAR lpszClass[] = TEXT("Mini Pac-Man");		
+HINSTANCE g_hInst;	
+TCHAR lpszClass[] = TEXT("Mini Pac-Man");
+TCHAR lpszClass2[] = TEXT("Mini Pac-Man Lobby");
+TCHAR lpszClass3[] = TEXT("Mini Pac-Man Result");
 
 SOCKET sock;
 Obstacle List[36];
@@ -62,35 +66,21 @@ cs_send_struct clientSend;
 cs_recv_struct clientRecv;
 Player temp;
 
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK ChildProc2(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
-	int retval;
-
-	// 윈속 초기화
-	WSADATA wsa;
-	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-		return 1;
-
-	// socket()
-	sock = socket(AF_INET, SOCK_STREAM, 0);
-
-	if (sock == INVALID_SOCKET) err_quit("socket()");
-
-	// connect()
-	SOCKADDR_IN serveraddr;
-	ZeroMemory(&serveraddr, sizeof(serveraddr));
-	serveraddr.sin_family = AF_INET;
-	serveraddr.sin_addr.s_addr = inet_addr(SERVERIP);
-	serveraddr.sin_port = htons(SERVERPORT);
-	retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
-	if (retval == SOCKET_ERROR) err_quit("connect()");
 	InitObstacle();
 	InitItem();
 	InitEnemy();
 	InitHpBar();
 	InitExHp();
-
+	gamestate = GAME_READY;
+	p.hp = 1;
+	
 	HWND hWnd;
 	MSG Message;
 	WNDCLASSEX WndClass;
@@ -110,6 +100,18 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 		WndClass.style = CS_HREDRAW | CS_VREDRAW;
 		WndClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 		RegisterClassEx(&WndClass);
+
+		WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+		WndClass.hbrBackground = (HBRUSH)GetStockObject(GRAY_BRUSH);
+		WndClass.lpszClassName = lpszClass2;
+		WndClass.lpfnWndProc = ChildProc;
+		RegisterClassEx(&WndClass);
+
+		WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+		WndClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+		WndClass.lpszClassName = lpszClass3;
+		WndClass.lpfnWndProc = ChildProc2;
+		RegisterClassEx(&WndClass);
 	}
 	hWnd = CreateWindow(lpszClass, lpszClass, WS_OVERLAPPEDWINDOW | WS_HSCROLL | WS_VSCROLL,
 		0, 0, 800, 800, NULL, (HMENU)NULL, hInstance, NULL);
@@ -122,12 +124,15 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 	return Message.wParam;
 }
 
-
+TCHAR str[10];
+HWND hButton, hEdit;
 
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
+	HWND child_hWnd;
+	HWND child_hWnd2;
 	PAINTSTRUCT ps;
 	static RECT rect;
 	static bool Selection{ false };
@@ -139,7 +144,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 		GetClientRect(hWnd, &rect);
 		SetTimer(hWnd, 1, 3000, NULL);
+
+		if (gamestate == GAME_READY)
+		{
+			child_hWnd = CreateWindow(lpszClass2, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
+				0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
+
+		}
+		else if (gamestate == GAME_SET)
+		{
+			child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
+				0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
+
+
+		}
+		
 		break;
+
+	
 	case WM_TIMER:
 		switch (wParam) {
 		case 1:
@@ -149,165 +171,186 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 		InvalidateRect(hWnd, NULL, TRUE);
 		break;
-	case WM_KEYDOWN:
-		if (p.isAlived) {
-			if (wParam == VK_LEFT)
-			{
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case IDC_BUTTON:
+			hdc = GetDC(hWnd);
+			gamestate = GAME_SET;
+			printf("%d\n", gamestate);
+			ReleaseDC(hWnd, hdc);
 
-				clientSend.keyInputDirection = MOVE_LEFT;
-				retval = send(sock, (char*)&clientSend, clientSend.size, 0);
-				if (retval == SOCKET_ERROR) {
-					err_display("send()");
-					break;
-				}
-
-
-				retval = recvn(sock, (char*)&clientRecv, sizeof(clientRecv), 0);
+			break;
 
 
-				if (retval == 0) {
-					break;
-				}
-				else
-				{
-					p.pos = clientRecv.player->pos;
-					p.score = clientRecv.player->score;
-					std::cout << "score: " << clientRecv.player->score << endl;
-
-					for (int i = 0; i < enemyNumber; ++i) 
-						enemyList[i].isAlived = clientRecv.enemyList[i].isAlived;
-						
-					
-
-
-					for (int i = 0; i < itemNumber; ++i) 
-						itemList[i].isAlived = clientRecv.itemList[i].isAlived;
-						
-
-					if (Timer1Count > 4) {
-						for (int i = 0; i < extrahpNumber; ++i)
-							exhpList[i].isAlived = clientRecv.exhpList[i].isAlived;
-						
-					}
-
-
-					
-
-				}
-
-			}
-			else if (wParam == VK_RIGHT) {
-
-				clientSend.keyInputDirection = MOVE_RIGHT;
-				retval = send(sock, (char*)&clientSend, clientSend.size, 0);
-				if (retval == SOCKET_ERROR) {
-					err_display("send()");
-					break;
-				}
-				retval = recvn(sock, (char*)&clientRecv, sizeof(clientRecv), 0);
-				if (retval == 0) {
-					break;
-				}
-				else
-				{
-					p.pos = clientRecv.player->pos;
-					p.score = clientRecv.player->score;
-					std::cout << "score: " << clientRecv.player->score << endl;
-
-					for (int i = 0; i < enemyNumber; ++i) 
-						enemyList[i].isAlived = clientRecv.enemyList[i].isAlived;
-						
-
-					for (int i = 0; i < itemNumber; ++i) 
-						itemList[i].isAlived = clientRecv.itemList[i].isAlived;
-						
-
-					if (Timer1Count > 4) {
-						for (int i = 0; i < extrahpNumber; ++i) 
-							exhpList[i].isAlived = clientRecv.exhpList[i].isAlived;
-							
-					}
-				}
-
-
-
-
-			}
-			else if (wParam == VK_UP)
-			{
-
-				clientSend.keyInputDirection = MOVE_UP;
-				retval = send(sock, (char*)&clientSend, clientSend.size, 0);
-				if (retval == SOCKET_ERROR) {
-					err_display("send()");
-					break;
-				}
-				retval = recvn(sock, (char*)&clientRecv, sizeof(clientRecv), 0);
-				if (retval == 0) {
-					break;
-				}
-				else
-				{
-					p.pos = clientRecv.player->pos;
-					p.score = clientRecv.player->score;
-					std::cout << "score: " << clientRecv.player->score << endl;
-
-					for (int i = 0; i < enemyNumber; ++i) 
-						enemyList[i].isAlived = clientRecv.enemyList[i].isAlived;
-						
-					
-
-					for (int i = 0; i < itemNumber; ++i) 
-						itemList[i].isAlived = clientRecv.itemList[i].isAlived;
-						
-
-					if (Timer1Count > 4) {
-						for (int i = 0; i < extrahpNumber; ++i) 
-							exhpList[i].isAlived = clientRecv.exhpList[i].isAlived;
-							
-					}
-					
-				}
-			}
-			else if (wParam == VK_DOWN)
-			{
-				clientSend.keyInputDirection = MOVE_DOWN;
-				retval = send(sock, (char*)&clientSend, clientSend.size, 0);
-				if (retval == SOCKET_ERROR) {
-					err_display("send()");
-					break;
-				}
-				retval = recvn(sock, (char*)&clientRecv, sizeof(clientRecv), 0);
-				if (retval == 0) {
-					break;
-				}
-				else
-				{
-					p.pos = clientRecv.player->pos;
-					p.score = clientRecv.player->score;
-					std::cout << "score: " << clientRecv.player->score << endl;
-
-					for (int i = 0; i < enemyNumber; ++i) 
-						enemyList[i].isAlived = clientRecv.enemyList[i].isAlived;
-						
-
-					for (int i = 0; i < itemNumber; ++i) 
-						itemList[i].isAlived = clientRecv.itemList[i].isAlived;
-						
-
-					if (Timer1Count > 4) {
-						for (int i = 0; i < extrahpNumber; ++i) 
-							exhpList[i].isAlived = clientRecv.exhpList[i].isAlived;
-							
-					}
-					
-				}
-
-
-			}
+		default:
+			break;
 		}
-		InvalidateRgn(hWnd, NULL, TRUE);
-		
+		break;
+
+
+
+	case WM_KEYDOWN:
+		if (gamestate == GAME_RUNNING)
+		{
+			if (p.isAlived) {
+				if (wParam == VK_LEFT)
+				{
+
+					clientSend.keyInputDirection = MOVE_LEFT;
+					retval = send(sock, (char*)&clientSend, clientSend.size, 0);
+					if (retval == SOCKET_ERROR) {
+						err_display("send()");
+						break;
+					}
+
+
+					retval = recvn(sock, (char*)&clientRecv, sizeof(clientRecv), 0);
+
+
+					if (retval == 0) {
+						break;
+					}
+					else
+					{
+						p.pos = clientRecv.player->pos;
+						p.score = clientRecv.player->score;
+						std::cout << "score: " << clientRecv.player->score << endl;
+
+						for (int i = 0; i < enemyNumber; ++i)
+							enemyList[i].isAlived = clientRecv.enemyList[i].isAlived;
+
+
+
+
+						for (int i = 0; i < itemNumber; ++i)
+							itemList[i].isAlived = clientRecv.itemList[i].isAlived;
+
+
+						if (Timer1Count > 4) {
+							for (int i = 0; i < extrahpNumber; ++i)
+								exhpList[i].isAlived = clientRecv.exhpList[i].isAlived;
+
+						}
+
+
+
+
+					}
+
+				}
+				else if (wParam == VK_RIGHT) {
+
+					clientSend.keyInputDirection = MOVE_RIGHT;
+					retval = send(sock, (char*)&clientSend, clientSend.size, 0);
+					if (retval == SOCKET_ERROR) {
+						err_display("send()");
+						break;
+					}
+					retval = recvn(sock, (char*)&clientRecv, sizeof(clientRecv), 0);
+					if (retval == 0) {
+						break;
+					}
+					else
+					{
+						p.pos = clientRecv.player->pos;
+						p.score = clientRecv.player->score;
+						std::cout << "score: " << clientRecv.player->score << endl;
+
+						for (int i = 0; i < enemyNumber; ++i)
+							enemyList[i].isAlived = clientRecv.enemyList[i].isAlived;
+
+
+						for (int i = 0; i < itemNumber; ++i)
+							itemList[i].isAlived = clientRecv.itemList[i].isAlived;
+
+
+						if (Timer1Count > 4) {
+							for (int i = 0; i < extrahpNumber; ++i)
+								exhpList[i].isAlived = clientRecv.exhpList[i].isAlived;
+
+						}
+					}
+
+
+
+
+				}
+				else if (wParam == VK_UP)
+				{
+
+					clientSend.keyInputDirection = MOVE_UP;
+					retval = send(sock, (char*)&clientSend, clientSend.size, 0);
+					if (retval == SOCKET_ERROR) {
+						err_display("send()");
+						break;
+					}
+					retval = recvn(sock, (char*)&clientRecv, sizeof(clientRecv), 0);
+					if (retval == 0) {
+						break;
+					}
+					else
+					{
+						p.pos = clientRecv.player->pos;
+						p.score = clientRecv.player->score;
+						std::cout << "score: " << clientRecv.player->score << endl;
+
+						for (int i = 0; i < enemyNumber; ++i)
+							enemyList[i].isAlived = clientRecv.enemyList[i].isAlived;
+
+
+
+						for (int i = 0; i < itemNumber; ++i)
+							itemList[i].isAlived = clientRecv.itemList[i].isAlived;
+
+
+						if (Timer1Count > 4) {
+							for (int i = 0; i < extrahpNumber; ++i)
+								exhpList[i].isAlived = clientRecv.exhpList[i].isAlived;
+
+						}
+
+					}
+				}
+				else if (wParam == VK_DOWN)
+				{
+					clientSend.keyInputDirection = MOVE_DOWN;
+					retval = send(sock, (char*)&clientSend, clientSend.size, 0);
+					if (retval == SOCKET_ERROR) {
+						err_display("send()");
+						break;
+					}
+					retval = recvn(sock, (char*)&clientRecv, sizeof(clientRecv), 0);
+					if (retval == 0) {
+						break;
+					}
+					else
+					{
+						p.pos = clientRecv.player->pos;
+						p.score = clientRecv.player->score;
+						std::cout << "score: " << clientRecv.player->score << endl;
+
+						for (int i = 0; i < enemyNumber; ++i)
+							enemyList[i].isAlived = clientRecv.enemyList[i].isAlived;
+
+
+						for (int i = 0; i < itemNumber; ++i)
+							itemList[i].isAlived = clientRecv.itemList[i].isAlived;
+
+
+						if (Timer1Count > 4) {
+							for (int i = 0; i < extrahpNumber; ++i)
+								exhpList[i].isAlived = clientRecv.exhpList[i].isAlived;
+
+						}
+
+					}
+
+
+				}
+			}
+			InvalidateRgn(hWnd, NULL, TRUE);
+		}
 		break;
 	
 	case WM_PAINT:
@@ -321,7 +364,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		DrawExHp(hdc, xS, yS);
 		
 		
-
 
 		if (Timer1Count == 9)
 			hpList[4].isAlived = false;
@@ -401,6 +443,99 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	return(DefWindowProc(hWnd, iMessage, wParam, lParam));
 }
 
+
+LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
+{
+	HDC hdc;
+	char s[10];
+	int len = 10;
+	switch (iMessage) {
+	case WM_CREATE:
+		hButton = CreateWindow(L"button", L"확인", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			500, 600, 100, 25, hWnd, (HMENU)IDC_BUTTON, g_hInst, NULL);
+		hEdit = CreateWindow(L"edit", L"edit", WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
+			300, 600, 200, 30, hWnd, (HMENU)IDC_EDIT, g_hInst, NULL);
+		break;
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case IDC_BUTTON:
+			hdc = GetDC(hWnd);
+			//TextOut(hdc, 400, 400, L"Hello", 5);
+
+			gamestate = GAME_RUNNING;
+			printf("%d\n", gamestate);
+			int retval;
+
+			// 윈속 초기화
+			WSADATA wsa;
+			if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+				return 1;
+
+			// socket()
+			sock = socket(AF_INET, SOCK_STREAM, 0);
+
+			if (sock == INVALID_SOCKET) err_quit("socket()");
+
+			// connect()
+			SOCKADDR_IN serveraddr;
+			ZeroMemory(&serveraddr, sizeof(serveraddr));
+			serveraddr.sin_family = AF_INET;
+			serveraddr.sin_addr.s_addr = inet_addr(SERVERIP);
+			serveraddr.sin_port = htons(SERVERPORT);
+			retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
+			if (retval == SOCKET_ERROR) err_quit("connect()");
+			DestroyWindow(hWnd);
+			ReleaseDC(hWnd, hdc);
+
+			break;
+		case IDC_EDIT:
+			GetDlgItemText(hWnd, IDC_EDIT, str, 10);
+			hdc = GetDC(hWnd);
+			WideCharToMultiByte(CP_ACP, 0, str, len, clientSend.playerID, len, NULL, NULL);
+
+			ReleaseDC(hWnd, hdc);
+			break;
+
+		default:
+			break;
+		}
+		break;
+	}
+
+	return DefWindowProc(hWnd, iMessage, wParam, lParam);
+}
+LRESULT CALLBACK ChildProc2(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
+{
+	HDC hdc;
+	char s[10];
+	int len = 10;
+	switch (iMessage) {
+	case WM_CREATE:
+		hButton = CreateWindow(L"button", L"확인", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			500, 600, 100, 25, hWnd, (HMENU)IDC_BUTTON, g_hInst, NULL);
+
+		break;
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case IDC_BUTTON:
+			hdc = GetDC(hWnd);
+			DestroyWindow(hWnd);
+			ReleaseDC(hWnd, hdc);
+
+			break;
+
+
+		default:
+			break;
+		}
+		break;
+	}
+
+	return DefWindowProc(hWnd, iMessage, wParam, lParam);
+}
+
 void DrawBoard(HDC hdc, int boardCount, int xS, int yS)
 {
 	int i;
@@ -415,6 +550,7 @@ void DrawBoard(HDC hdc, int boardCount, int xS, int yS)
 }
 void DrawPlayer(HDC hdc, int xS, int yS)
 {
+	//1P
 	HBRUSH hBrush, oBrush;
 
 	hBrush = CreateSolidBrush(RGB(0, 255, 0));
@@ -424,6 +560,28 @@ void DrawPlayer(HDC hdc, int xS, int yS)
 		80+ p.pos.x * oneSize + xS + oneSize, 120+ p.pos.y * oneSize + yS + oneSize);
 	SelectObject(hdc, oBrush);
 	DeleteObject(hBrush);
+
+	//2P
+	/*HBRUSH hBrush, oBrush;
+
+	hBrush = CreateSolidBrush(RGB(255, 255, 0));
+	oBrush = (HBRUSH)SelectObject(hdc, hBrush);
+
+	Rectangle(hdc, 80 + p.pos.x * oneSize + xS, 120 + p.pos.y * oneSize + yS,
+		80 + p.pos.x * oneSize + xS + oneSize, 120 + p.pos.y * oneSize + yS + oneSize);
+	SelectObject(hdc, oBrush);
+	DeleteObject(hBrush);*/
+
+	//3P
+	/*HBRUSH hBrush, oBrush;
+
+	hBrush = CreateSolidBrush(RGB(0, 255, 255));
+	oBrush = (HBRUSH)SelectObject(hdc, hBrush);
+
+	Rectangle(hdc, 80 + p.pos.x * oneSize + xS, 120 + p.pos.y * oneSize + yS,
+		80 + p.pos.x * oneSize + xS + oneSize, 120 + p.pos.y * oneSize + yS + oneSize);
+	SelectObject(hdc, oBrush);
+	DeleteObject(hBrush);*/
 
 }
 void InitObstacle()

@@ -21,7 +21,7 @@ using namespace std;
 #define SERVERIP   "127.0.0.1"
 
 
-
+#define PLAYER_SPEED 10			// 플레이어 속도
 #define GAME_READY 11			// 접속한 클라이언트 수 < 3
 #define GAME_RUNNING 12			// INGAME 상태 (죽은 클라이언트 수 < 3)
 #define GAME_SET 13				// 죽은 클라이언트 수 == 3
@@ -32,8 +32,6 @@ using namespace std;
 #define MOVE_LEFT 23			// A키 입력
 #define MOVE_RIGHT 24			// D키 입력
 
-#define PLAYER_SPEED 10			// 플레이어 속도
-
 static int obstacleNumber{ 36 };
 static int enemyNumber{ 35 };
 static int itemNumber{ 3 };
@@ -43,6 +41,8 @@ static int boardCount{ 12 };
 static int xS{ 12 };
 static int yS{ 12 };
 
+int gamestate;
+
 struct Position {
 	float x, y;
 };
@@ -51,7 +51,7 @@ class Player {
 public:
 	Position pos;                  // 위치
 	char playerID[10];             // 로그인시 사용할 ID
-	bool isAlived{ true };                 // 생사여부
+	bool isAlived{ true };         // 생사여부
 	int hp;                        // 생사를 결정하는 HP
 	int score{ 0 };                // Enemy를 잡으면 1 상승 (승패 결정)
 	int clientIndex;               // 해당 클라이언트의 인덱스

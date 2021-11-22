@@ -30,6 +30,7 @@ int gameState = GAME_READY;
 
 
 
+
 struct Position {
 	float x, y;
 };
@@ -42,7 +43,7 @@ public:
 	int hp;						// 생사를 결정하는 HP
 	int score{ 0 };					// Enemy를 잡으면 1 상승 (승패 결정)
 	int clientIndex;			// 해당 클라이언트의 인덱스
-	int rank;					// 최종 순위
+	int rank{ 3 };					// 최종 순위
 };
 
 struct Enemy {
@@ -96,7 +97,7 @@ void MovePlayer(int key,Player& p);				// 플레이어의 위치 정보 갱신
 void UpdatePlayer(Player p);			// 플레이어의 정보 갱신
 
 void CheckPlayerByWallCollision(int key ,Player& p);		// 플레이어와 벽의 충돌 체크
-void CheckPlayerByPlayerCollision();	// 플레이어간의 충돌 체크
+void CheckPlayerByPlayerCollision(int key, Player& p);	// 플레이어간의 충돌 체크
 void CheckPlayerByEnemyCollision(Player& p);		// 플레이어와 Enemy의 충돌 체크
 void CheckPlayerByItemCollision(Player& p);		// 플레이어와 Item의 충돌 체크
 

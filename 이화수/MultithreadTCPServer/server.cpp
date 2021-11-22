@@ -1,4 +1,3 @@
-
 #include "server.h"
 
 #include <iostream>
@@ -53,48 +52,15 @@ void err_display(char* msg)
     LocalFree(lpMsgBuf);
 }
 
-void MovePlayer(int key, Player& p)
-{
-	printf("%s \n", p.playerID);
-	if (key == MOVE_LEFT)
-	{
-		if (p.pos.x > 0)
-			p.pos.x--;
-		CheckPlayerByWallCollision(key, p);
-		CheckPlayerByEnemyCollision(p);
-		CheckPlayerByItemCollision(p);
-	}
-	else if (key == MOVE_RIGHT)
-	{
-		if (p.pos.x < 11)
-			p.pos.x++;
-		CheckPlayerByWallCollision(key,p);
-		CheckPlayerByEnemyCollision(p);
-		CheckPlayerByItemCollision(p);
-	}
-	else if (key == MOVE_UP)
-	{
-		if (p.pos.y > 0)
-			p.pos.y--;
-		CheckPlayerByWallCollision(key, p);
-		CheckPlayerByEnemyCollision(p);
-		CheckPlayerByItemCollision(p);
-	}
-	else if (key == MOVE_DOWN)
-	{
-		if (p.pos.y < 11)
-			p.pos.y++;
-		CheckPlayerByWallCollision(key, p);
-		CheckPlayerByEnemyCollision(p);
-		CheckPlayerByItemCollision(p);
-	}
-	
-}
 
 Enemy enemyList[35];
 Wall List[36];
 Item itemList[3];
 EXHP exhpList[3];
+Player player[3];
+
+sc_recv_struct SeverRecv;
+sc_send_struct SeverSend;
 
 void InitWall()
 {
@@ -275,6 +241,51 @@ void InitExHp()
 
 }
 
+
+void MovePlayer(int key, Player& p)
+{
+	printf("%s \n", p.playerID);
+	if (key == MOVE_LEFT)
+	{
+		if (p.pos.x > 0)
+			p.pos.x--;
+		CheckPlayerByWallCollision(key, p);
+		CheckPlayerByEnemyCollision(p);
+		CheckPlayerByItemCollision(p);
+		CheckPlayerByPlayerCollision(key, p);
+	}
+	else if (key == MOVE_RIGHT)
+	{
+		if (p.pos.x < 11)
+			p.pos.x++;
+		CheckPlayerByWallCollision(key,p);
+		CheckPlayerByEnemyCollision(p);
+		CheckPlayerByItemCollision(p);
+		CheckPlayerByPlayerCollision(key, p);
+	}
+	else if (key == MOVE_UP)
+	{
+		if (p.pos.y > 0)
+			p.pos.y--;
+		CheckPlayerByWallCollision(key, p);
+		CheckPlayerByEnemyCollision(p);
+		CheckPlayerByItemCollision(p);
+		CheckPlayerByPlayerCollision(key, p);
+	}
+	else if (key == MOVE_DOWN)
+	{
+		if (p.pos.y < 11)
+			p.pos.y++;
+		CheckPlayerByWallCollision(key, p);
+		CheckPlayerByEnemyCollision(p);
+		CheckPlayerByItemCollision(p);
+		CheckPlayerByPlayerCollision(key, p);
+	}
+	
+}
+
+
+
 void CheckPlayerByWallCollision(int key, Player& p)
 {
 	switch (key)
@@ -365,10 +376,111 @@ void CheckPlayerByItemCollision(Player& p)
 
 }
 
+
+void CheckPlayerByPlayerCollision(int key, Player& p)
+{
+
+	switch (key)
+	{
+	case MOVE_LEFT:
+		for (int i = 1; i < 3; i++)
+		{
+
+			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+			{
+				//if(p==player[i])
+				p.pos.x++;
+				printf("플레이어 충돌\n");
+
+				break;
+			}
+		}
+		break;
+	case MOVE_RIGHT:
+		for (int i = 1; i < 3; i++)
+		{
+			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+			{
+				p.pos.x--;
+				printf("플레이어 충돌\n");
+				break;
+			}
+		}
+		break;
+	case MOVE_UP:
+		for (int i = 1; i < 3; i++)
+		{
+			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+			{
+				p.pos.y++;
+				printf("플레이어 충돌\n");
+				break;
+			}
+		}
+		break;
+	case MOVE_DOWN:
+		for (int i = 1; i < 3; i++)
+		{
+			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+			{
+				p.pos.y--;
+				printf("플레이어 충돌\n");
+				break;
+			}
+		}
+		break;
+
+	default:
+		break;
+	}
+
+
+
+}
+
+void MakeRank()
+{
+
+
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 2; j++)
+		{
+			if (player[i].score > player[j].score)
+				player[i].rank--;
+		}
+	}
+
+
+
+}
+int isGameOver(Player p[])
+{
+	int cnt = 0;
+	for (int i = 0; i < 3; i++)
+	{
+		if (p[i].hp <= 0)
+			cnt++;
+	}
+	if (cnt == 3)
+		return GAME_SET;
+	else
+		return GAME_RUNNING;
+}
+
+void UpdatePlayer(Player p[])
+{
+	for (int i = 0; i < 3; i++)
+	{
+		SeverSend.players[i].pos.x = p[i].pos.x;
+		SeverSend.players[i].pos.y = p[i].pos.y;
+
+	}
+
+}
+
 // Client_Thread
-Player player[3];
-sc_recv_struct first;
-sc_send_struct second;
+
 DWORD WINAPI ProcessClient(LPVOID arg) {
 	SOCKET client_sock = (SOCKET)arg;
 	SOCKADDR_IN clientaddr;
@@ -378,41 +490,43 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 	int retval;
 
 	
-
-
 	// 클라이언트 정보
 	addrlen = sizeof(clientaddr);
 	getpeername(client_sock, (SOCKADDR*)&clientaddr, &addrlen);
 
 	while (1) {
-		retval = recvn(client_sock, (char*)&first, first.size, 0);
+		retval = recvn(client_sock, (char*)&SeverRecv, SeverRecv.size, 0);
 		if (retval == 0) {
 			break;
 		}
 		
 		
-		MovePlayer(first.keyInputDirection,player[0]);
+		MovePlayer(SeverRecv.keyInputDirection, player[0]);
+		UpdatePlayer(player);
 
 		
-		second.players->pos = player->pos;
-		second.players->score = player->score;
-		std::cout << second.players->score << endl;
-		
-		for (int i = 0; i < 35; ++i)
-			second.enemyList[i].isAlived = enemyList[i].isAlived;
-		
+		for (int i = 0; i < 35; i++)
+			SeverSend.enemyList[i].isAlived = enemyList[i].isAlived;
 
-		for (int i = 0; i < 3; ++i) 
-			second.itemList[i].isAlived = itemList[i].isAlived;
-			
-		
-		for (int i = 0; i < 3; ++i) 
-			second.exhpList[i].isAlived = exhpList[i].isAlived;
-			
 
-		second.gameState = 10;
+		for (int i = 0; i < 3; ++i)
+			SeverSend.itemList[i].isAlived = itemList[i].isAlived;
+
+
+		for (int i = 0; i < 3; ++i)
+			SeverSend.exhpList[i].isAlived = exhpList[i].isAlived;
+
+
+		SeverSend.gameState = isGameOver(player);
+		if (gameState == GAME_SET)MakeRank();
 		
-		retval = send(client_sock, (char*)&second, sizeof(second), 0);
+		
+		//SeverSend.gameState = gameState;
+		printf("%d\n", gameState);
+		//for (int i = 0;i < 3;i++)
+		//	printf("%d 번째 플레이어 순위 %d\n", i, player[i].rank);
+
+		retval = send(client_sock, (char*)&SeverSend, sizeof(SeverSend), 0);
 		if (retval == SOCKET_ERROR) {
 			err_display("send()");
 			break;
@@ -461,8 +575,8 @@ int main() {
 	InitWall();
 	InitExHp();
 
-	player->pos.x = 0;
-	player->pos.y = 0;
+	//player->pos.x = 0;
+	//player->pos.y = 0;
 	while (1) {
 		addrlen = sizeof(clientaddr);
 		client_sock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
