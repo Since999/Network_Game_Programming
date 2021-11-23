@@ -21,7 +21,7 @@ using namespace std;
 #define MOVE_LEFT 23			// A키 입력
 #define MOVE_RIGHT 24			// D키 입력
 
-#define PLAYER_MAX 3
+#define PLAYER_MAX 1
 #define PLAYER_SPEED 10			// 플레이어 속도#pragma once
 
 
@@ -64,7 +64,7 @@ public:
 };
 
 struct sc_send_struct {
-	Player players[3];
+	Player players[PLAYER_MAX];
 	Enemy enemyList[36];
 	Item itemList[4];
 	int gameState;				// GAME_READY / GAME_RUNNING / GAME_SET

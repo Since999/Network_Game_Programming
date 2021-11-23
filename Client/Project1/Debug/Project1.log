@@ -1,0 +1,24 @@
+﻿  client.cpp
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(156,7): warning C4101: 'buf' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(193,6): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(212,69): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(212,30): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(211,71): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(211,42): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(407,80): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(407,36): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(406,79): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(406,45): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(423,93): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(423,43): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(422,92): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(422,52): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(439,95): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(439,44): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(438,94): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(438,53): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(457,78): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(457,36): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(456,77): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Project1\client.cpp(456,45): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Project1.vcxproj -> C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\Network_Game_Programming--\홍찬우\클라초기버전\Debug\Project1.exe
