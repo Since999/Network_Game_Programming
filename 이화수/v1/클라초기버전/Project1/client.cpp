@@ -117,6 +117,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 	hWnd = CreateWindow(lpszClass, lpszClass, WS_OVERLAPPEDWINDOW | WS_HSCROLL | WS_VSCROLL,
 		0, 0, 800, 800, NULL, (HMENU)NULL, hInstance, NULL);
 	ShowWindow(hWnd, nCmdShow);
+	UpdateWindow(hWnd);
 
 	while (GetMessage(&Message, 0, 0, 0)) {
 		TranslateMessage(&Message);
@@ -132,6 +133,8 @@ HWND hButton, hEdit;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
+	HDC mem1dc;
+	HDC mem2dc;
 	HWND child_hWnd;
 	HWND child_hWnd2;
 	PAINTSTRUCT ps;
@@ -139,6 +142,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static bool Selection{ false };
 	static int Timer1Count = 10;
 	static int Timer2Count = 0;
+	static HBITMAP hBit1, hBit2, oldBit1, oldBit2;
 	static int count = 1;
 	int retval;
 	strcpy(clientSend.playerID, "asd");
@@ -178,7 +182,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			count++;
 			break;
 		}
-		InvalidateRect(hWnd, NULL, TRUE);
+		//InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
@@ -366,18 +370,46 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					}
 				}
 			//}
-			InvalidateRgn(hWnd, NULL, TRUE);
+			
+			InvalidateRgn(hWnd, NULL, FALSE);
 		}
 		break;
 	
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
+		hBit1 = CreateCompatibleBitmap(hdc, 800, 800);
+
+
+		mem1dc = CreateCompatibleDC(hdc);
+		mem2dc = CreateCompatibleDC(mem1dc);
+
+		oldBit1 = (HBITMAP)SelectObject(mem1dc, hBit1);
+		oldBit2 = (HBITMAP)SelectObject(mem2dc, hBit2);
+
+		Rectangle(mem1dc, 0, 0, 800, 800);
+		Rectangle(mem2dc, 0, 0, 800, 800);
 
 		if (count - Timer2Count == 1) {
+			clientSend.keyInputDirection = 0;
 			retval = send(sock, (char*)&clientSend, clientSend.size, 0);
 			if (retval == SOCKET_ERROR) {
 				err_display("send()");
 				break;
+			}
+			else {
+				p.pos = clientRecv2.player->pos;
+				p.score = clientRecv2.player->score;
+				std::cout << "score: " << clientRecv2.player->score << endl;
+
+				for (int i = 0; i < enemyNumber; ++i)
+					if (i == clientRecv2.enemy[0])
+						enemyList[i].isAlived = false;
+
+
+				for (int i = 0; i < itemNumber; ++i)
+					if (i == clientRecv2.item[0])
+						itemList[i].isAlived = false;
+
 			}
 
 
@@ -390,13 +422,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			}
 		}
 
-		DrawBoard(hdc, boardCount, xS, yS);
-		DrawEnemy(hdc, xS, yS);
-		DrawPlayer(hdc, xS, yS);
-		DrawObstacle(hdc, xS, yS);
-		DrawItem(hdc, xS, yS);
-		DrawHp(hdc, xS, yS);
-		DrawExHp(hdc, xS, yS);
+		DrawBoard(mem1dc, boardCount, xS, yS);
+		DrawEnemy(mem1dc, xS, yS);
+		DrawPlayer(mem1dc, xS, yS);
+		DrawObstacle(mem1dc, xS, yS);
+		DrawItem(mem1dc, xS, yS);
+		DrawHp(mem1dc, xS, yS);
+		DrawExHp(mem1dc, xS, yS);
 		
 		
 
@@ -452,19 +484,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		if (!exhpList[2].isAlived && !exhpList[1].isAlived && !exhpList[0].isAlived
 			&& !hpList[0].isAlived && !hpList[1].isAlived && !hpList[2].isAlived
 			&& !hpList[3].isAlived && !hpList[4].isAlived) {
-			TextOut(hdc, 350, 100, L"GAME OVER", strlen("GAME OVER"));
+			TextOut(mem1dc, 350, 100, L"GAME OVER", strlen("GAME OVER"));
 			p.isAlived = false;
 		}
 
 
-		TextOut(hdc, 80, 32, L"HP", strlen("HP"));
-		DrawHp(hdc, xS, yS);
+		TextOut(mem1dc, 80, 32, L"HP", strlen("HP"));
+		DrawHp(mem1dc, xS, yS);
 
 		
-		TextOut(hdc, 450, 32, L"EXTRA", strlen("EXTRA"));
-		DrawExHp(hdc, xS, yS);
+		TextOut(mem1dc, 450, 32, L"EXTRA", strlen("EXTRA"));
+		DrawExHp(mem1dc, xS, yS);
 		
 		
+		BitBlt(hdc, 0, 0, 800, 800, mem1dc, 0, 0, SRCCOPY);
+		BitBlt(mem1dc, 0, 0, 800, 800, mem2dc, 0, 0, SRCCOPY);
+
+		if (hBit1 == NULL) {
+			hBit1 = CreateCompatibleBitmap(hdc, 800, 800);
+		}
+
+		if (hBit2 == NULL) {
+			hBit2 = CreateCompatibleBitmap(mem1dc, 800, 800);
+		}
+
+
+		DeleteDC(mem1dc);
+
+		
+		DeleteDC(mem2dc);
+
 		EndPaint(hWnd, &ps);
 		break;
 	
