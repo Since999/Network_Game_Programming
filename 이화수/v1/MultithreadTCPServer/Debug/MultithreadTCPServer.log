@@ -1,0 +1,6 @@
+﻿  server.cpp
+D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\이화수\v1\MultithreadTCPServer\server.cpp(7,1): warning C4005: 'BUFSIZE': 매크로 재정의
+D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\이화수\v1\MultithreadTCPServer\server.h(12): message : 'BUFSIZE'의 이전 정의를 참조하십시오.
+D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\이화수\v1\MultithreadTCPServer\server.cpp(491,6): warning C4101: 'fileNameSize' :참조되지 않은 지역 변수입니다.
+D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\이화수\v1\MultithreadTCPServer\server.cpp(492,6): warning C4101: 'fileSize' :참조되지 않은 지역 변수입니다.
+  MultithreadTCPServer.vcxproj -> D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\이화수\v1\MultithreadTCPServer\Debug\MultithreadTCPServer.exe
