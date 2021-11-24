@@ -124,7 +124,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 
 TCHAR str[10];
 HWND hButton, hEdit;
-
+int j,k = 0;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
@@ -175,7 +175,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 	case WM_KEYDOWN:
-
+		j = 0;
+		k = 0;
 		if (gamestate == GAME_RUNNING)
 		{
 			if (wParam == VK_LEFT)
@@ -194,7 +195,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				else
 				{
 					p.pos = clientRecv.player->pos;
-					enemyList->isAlived = clientRecv.enemyList->isAlived;
+					//enemyList->isAlived = clientRecv.enemyList->isAlived;
 				}
 
 			}
@@ -217,9 +218,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				{
 					p.pos = clientRecv.player->pos;
 					printf("%f , %f ", p.pos.x, p.pos.y);
+
 					//enemyList[0].isAlived = false;
 					//printf("(%d)\n", enemyList[0].isAlived);
-					enemyList->isAlived = clientRecv.enemyList->isAlived;
+					//enemyList->isAlived = clientRecv.enemyList->isAlived;
 				}
 
 
@@ -242,7 +244,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				else
 				{
 					p.pos = clientRecv.player->pos;
-					enemyList->isAlived = clientRecv.enemyList->isAlived;
+					//enemyList->isAlived = clientRecv.enemyList->isAlived;
 				}
 			}
 			else if (wParam == VK_DOWN)
@@ -260,17 +262,32 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				else
 				{
 					p.pos = clientRecv.player->pos;
-					enemyList->isAlived = clientRecv.enemyList->isAlived;
+					//enemyList->isAlived = clientRecv.enemyList->isAlived;
 				}
 
 
 			}
 
-
+			
 			for (int i = 0;i < 35;i++)
-				enemyList[i].isAlived = clientRecv.enemyList[i].isAlived;
-			//printf();
-			printf("%s\n", clientSend.playerID);
+			{
+				
+				if (i == clientRecv.enemyList.cnt[j])
+				{
+					printf("cnt : %d\n", clientRecv.enemyList.cnt[j]);
+					enemyList[i].isAlived = false;
+					j++;
+				}
+			}
+			for (int i = 0;i < 3;i++)
+			{
+
+				if (i == clientRecv.itemList.cnt[k])
+				{
+					itemList[i].isAlived = false;
+					k++;
+				}
+			}
 			InvalidateRgn(hWnd, NULL, TRUE);
 		}
 		break;

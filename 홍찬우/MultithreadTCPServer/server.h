@@ -50,24 +50,28 @@ public:
 	Position pos;				// 위치
 	bool isAlived=true;				// 생사여부
 };
-
+struct SendEnemy {
+	int  cnt[3] = { -1,-1,-1 };                  //충돌 된 것
+};
 struct Item {
 public:
 	Position pos;				// 위치
 	bool isAlived;				// 생사여부
 };
-
+struct SendItem {
+	int  cnt[3] = { -1,-1,-1 };                  //충돌 된 것
+};
 struct Wall {
 	Position pos;
 };
 
 struct sc_send_struct {
-	char size=596U;
+	char size;
 	char type;
 	Player players[3];			// 플레이어들의 리스트
 	int gameState;				// GAME_READY/GAME_RUNNING/GAME_SET
-	Enemy enemyList[35];
-	Item itemList[4];
+	SendEnemy enemyList;
+	SendItem itemList;
 };
 
 struct sc_recv_struct {

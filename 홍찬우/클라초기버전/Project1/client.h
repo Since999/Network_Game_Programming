@@ -65,13 +65,21 @@ struct Obstacle {
 };
 
 struct Enemy {
-	Position pos;                  // 위치
+	Position pos;                  //충돌 된 것
 	bool isAlived = true;          // 생사여부
 };
 
+struct RecvEnemy {
+	int  cnt[3] = { -1,-1,-1 };                  //충돌 된 것
+};
+
 struct Item {
-	Position pos;                  // 위치
+	Position pos;                  // 충돌 된 것
 	bool isAlived = true;          // 생사여부
+};
+
+struct RecvItem {
+	int  cnt[3] = { -1,-1,-1 };                  //충돌 된 것
 };
 
 struct HPBAR {
@@ -92,8 +100,8 @@ struct cs_recv_struct {
 	char type;
 	Player player[3];
 	int gameState;
-	Enemy enemyList[35];
-	Item itemList[4];
+	RecvEnemy enemyList;
+	RecvItem itemList;
 
 };
 void InitObstacle();

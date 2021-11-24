@@ -59,8 +59,8 @@ Enemy enemyList[35];
 Wall List[36];
 Item itemList[4];
 Player player[3];
-
-
+SendEnemy enemy;
+SendItem item;
 sc_recv_struct SeverRecv;
 sc_send_struct SeverSend;
 
@@ -331,11 +331,15 @@ void CheckPlayerByWallCollision(int key, Player& p)
 }
 void CheckPlayerByEnemyCollision(Player& p)
 {
+	// cnt 안에는 클라이언트 인덱스
+
 	for (int i = 0;i < 35;i++)
 		if (p.pos.x == enemyList[i].pos.x && p.pos.y == enemyList[i].pos.y)
 		{
+			printf("%d \n", i);
 			enemyList[i].isAlived = false;
-			printf("%d 적 충돌\n",i);
+			enemy.cnt[0] = i;
+			
 			
 		}
 
@@ -346,6 +350,7 @@ void CheckPlayerByItemCollision(Player& p)
 		if (p.pos.x == itemList[i].pos.x && p.pos.y == itemList[i].pos.y)
 		{
 			itemList[i].isAlived = false;
+			item.cnt[0] = i;
 			printf("%d 아이템 충돌\n", i);
 			
 		}
@@ -480,18 +485,14 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 		MovePlayer(SeverRecv.keyInputDirection,player[0]);
 		UpdatePlayer(player);
 		
-		for(int i=0;i<35;i++)
-			SeverSend.enemyList[i].isAlived = enemyList[i].isAlived;
 		
-		
+		SeverSend.enemyList.cnt[0] = enemy.cnt[0];
+		SeverSend.itemList.cnt[0] = item.cnt[0];
+
 		
 		SeverSend.gameState = isGameOver(player);
 		if(gameState==GAME_SET)MakeRank();
 
-		//SeverSend.gameState = gameState;
-		printf("%d\n", gameState);
-		//for (int i = 0;i < 3;i++)
-		//	printf("%d 번째 플레이어 순위 %d\n", i, player[i].rank);
 
 		retval = send(client_sock, (char*)&SeverSend, sizeof(SeverSend), 0);
 		if (retval == SOCKET_ERROR) {
