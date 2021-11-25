@@ -173,13 +173,46 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_TIMER:
 		switch (wParam) {
 		case 1:
-			if (Timer1Count > 0)
-				Timer1Count--;
+			//if (Timer1Count > 0)
+			//	Timer1Count--;
 			break;
 
 		case 2:
 			Timer2Count++;
 			count++;
+			if (count - Timer2Count == 1) {
+				clientSend.keyInputDirection = 0;
+				retval = send(sock, (char*)&clientSend, clientSend.size, 0);
+				if (retval == SOCKET_ERROR) {
+					err_display("send()");
+					break;
+				}
+				else {
+					p.pos = clientRecv2.player[clientRecv2.clientIndex].pos;
+
+					for (int i = 0; i < enemyNumber; ++i)
+						if (i == clientRecv2.enemy[0])
+							enemyList[i].isAlived = false;
+
+
+					for (int i = 0; i < itemNumber; ++i)
+						if (i == clientRecv2.item[0])
+							itemList[i].isAlived = false;
+
+				}
+
+
+
+				retval = recvn(sock, (char*)&clientRecv2, sizeof(clientRecv2), 0);
+
+
+				if (retval == 0) {
+					break;
+				}
+
+				InvalidateRgn(hWnd, NULL, FALSE);
+			}
+
 			break;
 		}
 		//InvalidateRect(hWnd, NULL, TRUE);
@@ -368,6 +401,44 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 
 					}
+					else if (wParam == NULL)
+					{
+					clientSend.keyInputDirection = NULL;
+					retval = send(sock, (char*)&clientSend, clientSend.size, 0);
+					if (retval == SOCKET_ERROR) {
+						err_display("send()");
+						break;
+					}
+					retval = recvn(sock, (char*)&clientRecv2, sizeof(clientRecv2), 0);
+					if (retval == 0) {
+						break;
+					}
+					else
+					{
+						p.pos = clientRecv2.player->pos;
+						p.score = clientRecv2.player->score;
+						std::cout << "score: " << clientRecv2.player->score << endl;
+
+						for (int i = 0; i < enemyNumber; ++i)
+							if (i == clientRecv2.enemy[0])
+								enemyList[i].isAlived = false;
+
+
+						for (int i = 0; i < itemNumber; ++i)
+							if (i == clientRecv2.item[0])
+								itemList[i].isAlived = false;
+
+
+						if (Timer1Count > 4) {
+							for (int i = 0; i < extrahpNumber; ++i)
+								exhpList[i].isAlived = clientRecv2.exhpList[i].isAlived;
+
+						}
+
+					}
+
+
+					}
 				}
 			//}
 			
@@ -389,38 +460,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		Rectangle(mem1dc, 0, 0, 800, 800);
 		Rectangle(mem2dc, 0, 0, 800, 800);
 
-		if (count - Timer2Count == 1) {
-			clientSend.keyInputDirection = 0;
-			retval = send(sock, (char*)&clientSend, clientSend.size, 0);
-			if (retval == SOCKET_ERROR) {
-				err_display("send()");
-				break;
-			}
-			else {
-				p.pos = clientRecv2.player->pos;
-				p.score = clientRecv2.player->score;
-				std::cout << "score: " << clientRecv2.player->score << endl;
-
-				for (int i = 0; i < enemyNumber; ++i)
-					if (i == clientRecv2.enemy[0])
-						enemyList[i].isAlived = false;
-
-
-				for (int i = 0; i < itemNumber; ++i)
-					if (i == clientRecv2.item[0])
-						itemList[i].isAlived = false;
-
-			}
-
-
-
-			retval = recvn(sock, (char*)&clientRecv2, sizeof(clientRecv2), 0);
-
-
-			if (retval == 0) {
-				break;
-			}
-		}
 
 		DrawBoard(mem1dc, boardCount, xS, yS);
 		DrawEnemy(mem1dc, xS, yS);

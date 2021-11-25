@@ -62,7 +62,6 @@ public:
 
 	int hp;                        // 생사를 결정하는 HP
 	int score{ 0 };                // Enemy를 잡으면 1 상승 (승패 결정)
-	int clientIndex;               // 해당 클라이언트의 인덱스
 	int rank;                      // 최종 순위
 };
 
@@ -107,6 +106,8 @@ struct cs_recv_struct2 {
 	int enemy[3];
 	int item[3];
 	EXHP exhpList[3];
+	int clientIndex;               // 해당 클라이언트의 인덱스
+
 };
 
 /*struct cs_recv_struct {

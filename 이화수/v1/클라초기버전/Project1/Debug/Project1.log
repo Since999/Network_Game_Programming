@@ -1,1 +1,29 @@
-﻿  Project1.vcxproj -> D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\이화수\v1\클라초기버전\Debug\Project1.exe
+﻿  client.cpp
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(574,7): warning C4101: 's' :참조되지 않은 지역 변수입니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(635,7): warning C4101: 's' :참조되지 않은 지역 변수입니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(665,6): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(684,69): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(684,30): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(683,71): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(683,42): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(915,80): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(915,36): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(914,79): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(914,45): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(931,93): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(931,43): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(930,92): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(930,52): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(947,95): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(947,44): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(946,94): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(946,53): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(967,78): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(967,36): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(966,77): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(966,45): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(985,82): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(985,38): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(984,81): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(984,47): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Project1.vcxproj -> C:\Users\me\Desktop\Network_Game_Programming\이화수\v1\클라초기버전\Debug\Project1.exe

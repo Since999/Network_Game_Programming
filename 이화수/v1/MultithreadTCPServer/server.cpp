@@ -58,7 +58,7 @@ Wall List[36];
 Item itemList[3];
 EXHP exhpList[3];
 Player player[3];
-
+int clientCnt=0;
 sc_recv_struct SeverRecv;
 //sc_send_struct1 SeverSend1;
 sc_send_struct2 SeverSend2;
@@ -245,7 +245,6 @@ void InitExHp()
 
 void MovePlayer(int key, Player& p)
 {
-	printf("%s \n", p.playerID);
 	if (key == MOVE_LEFT)
 	{
 		if (p.pos.x > 0)
@@ -281,6 +280,10 @@ void MovePlayer(int key, Player& p)
 		CheckPlayerByEnemyCollision(p);
 		CheckPlayerByItemCollision(p);
 		CheckPlayerByPlayerCollision(key, p);
+	}
+	else if (key == NULL)
+	{
+		
 	}
 	
 }
@@ -491,11 +494,16 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 	int fileNameSize;
 	int fileSize;
 	int retval;
-
-	
+	EnterCriticalSection(&cs);
+	int clientIndex = clientCnt;
+	cout << clientIndex << endl;
+	clientCnt++;
 	// 클라이언트 정보
 	addrlen = sizeof(clientaddr);
 	getpeername(client_sock, (SOCKADDR*)&clientaddr, &addrlen);
+
+
+
 
 	while (1) {
 		retval = recvn(client_sock, (char*)&SeverRecv, SeverRecv.size, 0);
@@ -504,22 +512,11 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 		}
 		
 		
-		MovePlayer(SeverRecv.keyInputDirection, player[0]);
+		MovePlayer(SeverRecv.keyInputDirection, player[clientIndex]);
 		UpdatePlayer(player);
 
 		
-		//for (int i = 0; i < 3; i++) {
-			//SeverSend.enemyList[i].isAlived = enemyList[i].isAlived;
-		//SeverSend2.enemy[0]= enemyList[i].pos;
-		//}
-
-
-		//for (int i = 0; i < 3; ++i) {
-			//SeverSend.itemList[i].isAlived = itemList[i].isAlived;
-			//SeverSend2.item[i].pos = itemList[i].pos;
-		//}
-
-
+		
 		for (int i = 0; i < 3; ++i)
 			SeverSend2.exhpList[i].isAlived = exhpList[i].isAlived;
 
@@ -540,7 +537,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 		}
 
 	}
-
+	LeaveCriticalSection(&cs);
 	closesocket(client_sock);
 
 	return 0;
