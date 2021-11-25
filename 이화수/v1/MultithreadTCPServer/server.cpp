@@ -386,59 +386,59 @@ void CheckPlayerByItemCollision(Player& p)
 void CheckPlayerByPlayerCollision(int key, Player& p)
 {
 
-	switch (key)
-	{
-	case MOVE_LEFT:
-		for (int i = 1; i < 3; i++)
-		{
+	//switch (key)
+	//{
+	//case MOVE_LEFT:
+	//	for (int i = 1; i < 3; i++)
+	//	{
 
-			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
-			{
-				//if(p==player[i])
-				p.pos.x++;
-				printf("플레이어 충돌\n");
+	//		if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+	//		{
+	//			//if(p==player[i])
+	//			p.pos.x++;
+	//			printf("플레이어 충돌\n");
 
-				break;
-			}
-		}
-		break;
-	case MOVE_RIGHT:
-		for (int i = 1; i < 3; i++)
-		{
-			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
-			{
-				p.pos.x--;
-				printf("플레이어 충돌\n");
-				break;
-			}
-		}
-		break;
-	case MOVE_UP:
-		for (int i = 1; i < 3; i++)
-		{
-			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
-			{
-				p.pos.y++;
-				printf("플레이어 충돌\n");
-				break;
-			}
-		}
-		break;
-	case MOVE_DOWN:
-		for (int i = 1; i < 3; i++)
-		{
-			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
-			{
-				p.pos.y--;
-				printf("플레이어 충돌\n");
-				break;
-			}
-		}
-		break;
+	//			break;
+	//		}
+	//	}
+	//	break;
+	//case MOVE_RIGHT:
+	//	for (int i = 1; i < 3; i++)
+	//	{
+	//		if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+	//		{
+	//			p.pos.x--;
+	//			printf("플레이어 충돌\n");
+	//			break;
+	//		}
+	//	}
+	//	break;
+	//case MOVE_UP:
+	//	for (int i = 1; i < 3; i++)
+	//	{
+	//		if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+	//		{
+	//			p.pos.y++;
+	//			printf("플레이어 충돌\n");
+	//			break;
+	//		}
+	//	}
+	//	break;
+	//case MOVE_DOWN:
+	//	for (int i = 1; i < 3; i++)
+	//	{
+	//		if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+	//		{
+	//			p.pos.y--;
+	//			printf("플레이어 충돌\n");
+	//			break;
+	//		}
+	//	}
+	//	break;
 
-	default:
-		break;
-	}
+	//default:
+	//	break;
+	//}
 
 
 
@@ -498,6 +498,8 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 	int clientIndex = clientCnt;
 	cout << clientIndex << endl;
 	clientCnt++;
+	LeaveCriticalSection(&cs);
+
 	// 클라이언트 정보
 	addrlen = sizeof(clientaddr);
 	getpeername(client_sock, (SOCKADDR*)&clientaddr, &addrlen);
@@ -537,7 +539,6 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 		}
 
 	}
-	LeaveCriticalSection(&cs);
 	closesocket(client_sock);
 
 	return 0;

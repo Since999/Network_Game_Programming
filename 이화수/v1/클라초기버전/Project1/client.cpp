@@ -188,7 +188,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					break;
 				}
 				else {
-					p.pos = clientRecv2.player[clientRecv2.clientIndex].pos;
+					//p.pos = clientRecv2.player[clientRecv2.clientIndex].pos;
 
 					for (int i = 0; i < enemyNumber; ++i)
 						if (i == clientRecv2.enemy[0])
@@ -209,6 +209,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				if (retval == 0) {
 					break;
 				}
+				p.pos = clientRecv2.player[clientRecv2.clientIndex].pos;
+				
+
 
 				InvalidateRgn(hWnd, NULL, FALSE);
 			}
@@ -463,7 +466,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		DrawBoard(mem1dc, boardCount, xS, yS);
 		DrawEnemy(mem1dc, xS, yS);
-		DrawPlayer(mem1dc, xS, yS);
+		DrawPlayer(mem1dc, xS, yS,clientRecv2);
 		DrawObstacle(mem1dc, xS, yS);
 		DrawItem(mem1dc, xS, yS);
 		DrawHp(mem1dc, xS, yS);
@@ -672,40 +675,18 @@ void DrawBoard(HDC hdc, int boardCount, int xS, int yS)
 		LineTo(hdc, 80+boardCount * oneSize + xS, 120+i * oneSize + yS);
 	}
 }
-void DrawPlayer(HDC hdc, int xS, int yS)
+void DrawPlayer(HDC hdc, int xS, int yS, cs_recv_struct2 recv)
 {
 	//1P
 	HBRUSH hBrush, oBrush;
 
 	hBrush = CreateSolidBrush(RGB(0, 255, 0));
 	oBrush = (HBRUSH)SelectObject(hdc, hBrush);
-	
-    Rectangle(hdc, 80+ p.pos.x * oneSize + xS, 120+ p.pos.y * oneSize + yS,
-		80+ p.pos.x * oneSize + xS + oneSize, 120+ p.pos.y * oneSize + yS + oneSize);
+	for(int i= 0;i<3;i++)
+    Rectangle(hdc, 80+ recv.player[i].pos.x * oneSize + xS, 120+ recv.player[i].pos.y * oneSize + yS,
+		80+ recv.player[i].pos.x * oneSize + xS + oneSize, 120+ recv.player[i].pos.y * oneSize + yS + oneSize);
 	SelectObject(hdc, oBrush);
 	DeleteObject(hBrush);
-
-	//2P
-	/*HBRUSH hBrush, oBrush;
-
-	hBrush = CreateSolidBrush(RGB(255, 255, 0));
-	oBrush = (HBRUSH)SelectObject(hdc, hBrush);
-
-	Rectangle(hdc, 80 + p.pos.x * oneSize + xS, 120 + p.pos.y * oneSize + yS,
-		80 + p.pos.x * oneSize + xS + oneSize, 120 + p.pos.y * oneSize + yS + oneSize);
-	SelectObject(hdc, oBrush);
-	DeleteObject(hBrush);*/
-
-	//3P
-	/*HBRUSH hBrush, oBrush;
-
-	hBrush = CreateSolidBrush(RGB(0, 255, 255));
-	oBrush = (HBRUSH)SelectObject(hdc, hBrush);
-
-	Rectangle(hdc, 80 + p.pos.x * oneSize + xS, 120 + p.pos.y * oneSize + yS,
-		80 + p.pos.x * oneSize + xS + oneSize, 120 + p.pos.y * oneSize + yS + oneSize);
-	SelectObject(hdc, oBrush);
-	DeleteObject(hBrush);*/
 
 }
 void InitObstacle()

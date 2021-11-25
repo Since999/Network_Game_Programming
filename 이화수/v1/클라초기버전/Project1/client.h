@@ -127,7 +127,7 @@ void InitExHp();
 
 
 void DrawBoard(HDC hdc, int boardCount, int xS, int yS);
-void DrawPlayer(HDC hdc, int xS, int yS);
+void DrawPlayer(HDC hdc, int xS, int yS, cs_recv_struct2 recv);
 void DrawObstacle(HDC hdc, int xS, int yS);
 void DrawItem(HDC hdc, int xS, int yS);
 void DrawEnemy(HDC hdc, int xS, int yS);
