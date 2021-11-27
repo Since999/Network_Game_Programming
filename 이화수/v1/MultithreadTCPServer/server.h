@@ -117,11 +117,11 @@ void RecvData(sc_recv_struct* r_data);	// sc_recv_struct 구조체 수신
 
 void MakeRank();						// GAME_SET에서 세 클라이언트의 순위 결정
 
-void MovePlayer(int key,Player& p);				// 플레이어의 위치 정보 갱신
+void MovePlayer(int key,Player& p, int clientIndex);				// 플레이어의 위치 정보 갱신
 void UpdatePlayer(Player p);			// 플레이어의 정보 갱신
 
 void CheckPlayerByWallCollision(int key ,Player& p);		// 플레이어와 벽의 충돌 체크
-void CheckPlayerByPlayerCollision(int key, Player& p);	// 플레이어간의 충돌 체크
+void CheckPlayerByPlayerCollision(int key, Player& p,int clientIndex);	// 플레이어간의 충돌 체크
 void CheckPlayerByEnemyCollision(Player& p);		// 플레이어와 Enemy의 충돌 체크
 void CheckPlayerByItemCollision(Player& p);		// 플레이어와 Item의 충돌 체크
 

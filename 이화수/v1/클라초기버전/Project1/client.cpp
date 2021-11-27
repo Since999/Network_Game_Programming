@@ -550,10 +550,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			hBit2 = CreateCompatibleBitmap(mem1dc, 800, 800);
 		}
 
-
 		DeleteDC(mem1dc);
-
-		
 		DeleteDC(mem2dc);
 
 		EndPaint(hWnd, &ps);
@@ -680,11 +677,28 @@ void DrawPlayer(HDC hdc, int xS, int yS, cs_recv_struct2 recv)
 	//1P
 	HBRUSH hBrush, oBrush;
 
-	hBrush = CreateSolidBrush(RGB(0, 255, 0));
+	hBrush = CreateSolidBrush(RGB(0, 0, 0));
 	oBrush = (HBRUSH)SelectObject(hdc, hBrush);
-	for(int i= 0;i<3;i++)
-    Rectangle(hdc, 80+ recv.player[i].pos.x * oneSize + xS, 120+ recv.player[i].pos.y * oneSize + yS,
-		80+ recv.player[i].pos.x * oneSize + xS + oneSize, 120+ recv.player[i].pos.y * oneSize + yS + oneSize);
+
+		
+			hBrush = CreateSolidBrush(RGB(0, 255, 0));
+			oBrush = (HBRUSH)SelectObject(hdc, hBrush);
+			Rectangle(hdc, 80 + recv.player[0].pos.x * oneSize + xS, 120 + recv.player[0].pos.y * oneSize + yS,
+				80 + recv.player[0].pos.x * oneSize + xS + oneSize, 120 + recv.player[0].pos.y * oneSize + yS + oneSize);
+			DeleteObject(hBrush);
+			hBrush = CreateSolidBrush(RGB(255, 255, 0));
+			oBrush = (HBRUSH)SelectObject(hdc, hBrush);
+			Rectangle(hdc, 80 + recv.player[1].pos.x * oneSize + xS, 120 + recv.player[1].pos.y * oneSize + yS,
+				80 + recv.player[1].pos.x * oneSize + xS + oneSize, 120 + recv.player[1].pos.y * oneSize + yS + oneSize);
+			DeleteObject(hBrush);
+			hBrush = CreateSolidBrush(RGB(255, 0, 255));
+			oBrush = (HBRUSH)SelectObject(hdc, hBrush);
+			Rectangle(hdc, 80 + recv.player[2].pos.x * oneSize + xS, 120 + recv.player[2].pos.y * oneSize + yS,
+				80 + recv.player[2].pos.x * oneSize + xS + oneSize, 120 + recv.player[2].pos.y * oneSize + yS + oneSize);
+
+	
+		
+	
 	SelectObject(hdc, oBrush);
 	DeleteObject(hBrush);
 

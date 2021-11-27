@@ -228,7 +228,6 @@ void InitItem()
 	itemList[2].pos.x = 2;
 	itemList[2].pos.y = 7;
 }
-
 void InitExHp()
 {
 
@@ -241,9 +240,7 @@ void InitExHp()
 
 
 }
-
-
-void MovePlayer(int key, Player& p)
+void MovePlayer(int key, Player& p, int clientIndex)
 {
 	if (key == MOVE_LEFT)
 	{
@@ -252,7 +249,7 @@ void MovePlayer(int key, Player& p)
 		CheckPlayerByWallCollision(key, p);
 		CheckPlayerByEnemyCollision(p);
 		CheckPlayerByItemCollision(p);
-		CheckPlayerByPlayerCollision(key, p);
+		CheckPlayerByPlayerCollision(key, p, clientIndex);
 	}
 	else if (key == MOVE_RIGHT)
 	{
@@ -261,7 +258,7 @@ void MovePlayer(int key, Player& p)
 		CheckPlayerByWallCollision(key,p);
 		CheckPlayerByEnemyCollision(p);
 		CheckPlayerByItemCollision(p);
-		CheckPlayerByPlayerCollision(key, p);
+		CheckPlayerByPlayerCollision(key, p, clientIndex);
 	}
 	else if (key == MOVE_UP)
 	{
@@ -270,7 +267,7 @@ void MovePlayer(int key, Player& p)
 		CheckPlayerByWallCollision(key, p);
 		CheckPlayerByEnemyCollision(p);
 		CheckPlayerByItemCollision(p);
-		CheckPlayerByPlayerCollision(key, p);
+		CheckPlayerByPlayerCollision(key, p, clientIndex);
 	}
 	else if (key == MOVE_DOWN)
 	{
@@ -279,7 +276,7 @@ void MovePlayer(int key, Player& p)
 		CheckPlayerByWallCollision(key, p);
 		CheckPlayerByEnemyCollision(p);
 		CheckPlayerByItemCollision(p);
-		CheckPlayerByPlayerCollision(key, p);
+		CheckPlayerByPlayerCollision(key, p, clientIndex);
 	}
 	else if (key == NULL)
 	{
@@ -287,9 +284,6 @@ void MovePlayer(int key, Player& p)
 	}
 	
 }
-
-
-
 void CheckPlayerByWallCollision(int key, Player& p)
 {
 	switch (key)
@@ -356,7 +350,6 @@ void CheckPlayerByEnemyCollision(Player& p)
 		}
 
 }
-
 void CheckPlayerByItemCollision(Player& p)
 {
 	for (int i = 0; i < 3; i++)
@@ -381,69 +374,69 @@ void CheckPlayerByItemCollision(Player& p)
 		}
 
 }
-
-
-void CheckPlayerByPlayerCollision(int key, Player& p)
+void CheckPlayerByPlayerCollision(int key, Player& p, int clientIndex)
 {
 
-	//switch (key)
-	//{
-	//case MOVE_LEFT:
-	//	for (int i = 1; i < 3; i++)
-	//	{
+	switch (key)
+	{
+	case MOVE_LEFT:
+		for (int i = 0; i < 3; i++)
+		{
+			if (i != clientIndex)
+				if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+				{
+				//if(p==player[i])
+				p.pos.x++;
+				printf("플레이어 충돌\n");
 
-	//		if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
-	//		{
-	//			//if(p==player[i])
-	//			p.pos.x++;
-	//			printf("플레이어 충돌\n");
+				break;
+				}
+		}
+		break;
+	case MOVE_RIGHT:
+		for (int i = 0; i < 3; i++)
+		{
+			if (i != clientIndex)
+			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+			{
+				p.pos.x--;
+				printf("플레이어 충돌\n");
+				break;
+			}
+		}
+		break;
+	case MOVE_UP:
+		for (int i = 0; i < 3; i++)
+		{
+			if (i != clientIndex)
+			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+			{
+				p.pos.y++;
+				printf("플레이어 충돌\n");
+				break;
+			}
+		}
+		break;
+	case MOVE_DOWN:
+		for (int i = 0; i < 3; i++)
+		{
+			if (i != clientIndex)
+			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+			{
+				p.pos.y--;
+				printf("플레이어 충돌\n");
+				break;
+			}
+		}
+		break;
 
-	//			break;
-	//		}
-	//	}
-	//	break;
-	//case MOVE_RIGHT:
-	//	for (int i = 1; i < 3; i++)
-	//	{
-	//		if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
-	//		{
-	//			p.pos.x--;
-	//			printf("플레이어 충돌\n");
-	//			break;
-	//		}
-	//	}
-	//	break;
-	//case MOVE_UP:
-	//	for (int i = 1; i < 3; i++)
-	//	{
-	//		if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
-	//		{
-	//			p.pos.y++;
-	//			printf("플레이어 충돌\n");
-	//			break;
-	//		}
-	//	}
-	//	break;
-	//case MOVE_DOWN:
-	//	for (int i = 1; i < 3; i++)
-	//	{
-	//		if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
-	//		{
-	//			p.pos.y--;
-	//			printf("플레이어 충돌\n");
-	//			break;
-	//		}
-	//	}
-	//	break;
-
-	//default:
-	//	break;
-	//}
+	default:
+		break;
+	}
 
 
 
 }
-
 void MakeRank()
 {
 
@@ -473,7 +466,6 @@ int isGameOver(Player p[])
 	else
 		return GAME_RUNNING;
 }
-
 void UpdatePlayer(Player p[])
 {
 	for (int i = 0; i < 3; i++)
@@ -514,7 +506,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 		}
 		
 		
-		MovePlayer(SeverRecv.keyInputDirection, player[clientIndex]);
+		MovePlayer(SeverRecv.keyInputDirection, player[clientIndex],clientIndex);
 		UpdatePlayer(player);
 
 		
@@ -531,7 +523,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 		printf("%d\n", gameState);
 		//for (int i = 0;i < 3;i++)
 		//	printf("%d 번째 플레이어 순위 %d\n", i, player[i].rank);
-
+		SeverSend2.clientIndex = clientIndex;
 		retval = send(client_sock, (char*)&SeverSend2, sizeof(SeverSend2), 0);
 		if (retval == SOCKET_ERROR) {
 			err_display("send()");
