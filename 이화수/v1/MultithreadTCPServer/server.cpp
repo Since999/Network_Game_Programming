@@ -216,7 +216,6 @@ void InitEnemy()
 
 
 }
-
 void InitItem()
 {
 	itemList[0].pos.x = 8;
@@ -497,7 +496,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 	int retval;
 	EnterCriticalSection(&cs);
 	int clientIndex = clientCnt;
-	cout << clientIndex << endl;
+	//cout << clientIndex << endl;
 	clientCnt++;
 	LeaveCriticalSection(&cs);
 

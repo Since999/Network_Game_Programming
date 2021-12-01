@@ -108,8 +108,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 		WndClass.lpfnWndProc = ChildProc;
 		RegisterClassEx(&WndClass);
 
-		WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-		WndClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 		WndClass.lpszClassName = lpszClass3;
 		WndClass.lpfnWndProc = ChildProc2;
 		RegisterClassEx(&WndClass);
@@ -144,7 +142,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	static int Timer1Count = 10;
 	//static int Timer2Count = 0;
 	static HBITMAP hBit1, hBit2, oldBit1, oldBit2;
-	
+		
+
+		
 	//static int count = 1;
 	int retval;
 	strcpy(clientSend.playerID, "asd");
@@ -158,13 +158,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 			child_hWnd = CreateWindow(lpszClass2, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
 				0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
-			child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
-				0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
+			/*child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
+				0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);*/
 			
 
 		}
 
-		
 		break;
 
 	
@@ -440,6 +439,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		if (gamestate == GAME_RUNNING)
 		{
+			SetTimer(hWnd, 2, 33, TimerProc);
+			SetTimer(hWnd, 1, 3000, NULL);
 			hdc = BeginPaint(hWnd, &ps);
 			hBit1 = CreateCompatibleBitmap(hdc, 800, 800);
 
@@ -635,6 +636,7 @@ void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime)
 LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
+	hdc = GetDC(hWnd);
 	char s[10];
 	int len = 10;
 	switch (iMessage) {
@@ -645,13 +647,16 @@ LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 			300, 600, 200, 30, hWnd, (HMENU)IDC_EDIT, g_hInst, NULL);
 		break;
 	case WM_COMMAND:
+		cout << "123" << endl;
+
 		switch (LOWORD(wParam))
 		{
 		case IDC_BUTTON:
-			hdc = GetDC(hWnd);
+			
 			//TextOut(hdc, 400, 400, L"Hello", 5);
 
 			gamestate = GAME_RUNNING;
+			
 			printf("%d\n", gamestate);
 			int retval;
 
@@ -673,11 +678,13 @@ LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 			serveraddr.sin_port = htons(SERVERPORT);
 			retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 			if (retval == SOCKET_ERROR) err_quit("connect()");
+			
 			DestroyWindow(hWnd);
 			ReleaseDC(hWnd, hdc);
-
+			
 			break;
 		case IDC_EDIT:
+			
 			GetDlgItemText(hWnd, IDC_EDIT, str, 10);
 			hdc = GetDC(hWnd);
 			WideCharToMultiByte(CP_ACP, 0, str, len, clientSend.playerID, len, NULL, NULL);
@@ -708,8 +715,7 @@ LRESULT CALLBACK ChildProc2(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 		switch (LOWORD(wParam))
 		{
 		case IDC_BUTTON:
-			SetTimer(hWnd, 2, 33, TimerProc);
-			SetTimer(hWnd, 1, 3000, NULL);
+
 			hdc = GetDC(hWnd);
 			DestroyWindow(hWnd);
 			ReleaseDC(hWnd, hdc);
