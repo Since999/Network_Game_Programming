@@ -129,7 +129,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 TCHAR str[10];
 HWND hButton, hEdit;
 
-
+void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
@@ -137,35 +137,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	HDC mem2dc;
 	HWND child_hWnd;
 	HWND child_hWnd2;
+
 	PAINTSTRUCT ps;
 	static RECT rect;
 	static bool Selection{ false };
 	static int Timer1Count = 10;
-	static int Timer2Count = 0;
+	//static int Timer2Count = 0;
 	static HBITMAP hBit1, hBit2, oldBit1, oldBit2;
-	static int count = 1;
+	
+	//static int count = 1;
 	int retval;
 	strcpy(clientSend.playerID, "asd");
 	switch (iMessage) {
 
 	case WM_CREATE:
 		GetClientRect(hWnd, &rect);
-		SetTimer(hWnd, 1, 3000, NULL);
-		SetTimer(hWnd, 2, 33, NULL);
+		
 
 		if (gamestate == GAME_READY)
 		{
 			child_hWnd = CreateWindow(lpszClass2, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
 				0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
-
-		}
-		else if (gamestate == GAME_SET)
-		{
 			child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
 				0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
-
+			
 
 		}
+
 		
 		break;
 
@@ -177,7 +175,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			//	Timer1Count--;
 			break;
 
-		case 2:
+		/*case 2:
 			Timer2Count++;
 			count++;
 			if (count - Timer2Count == 1) {
@@ -216,7 +214,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				InvalidateRgn(hWnd, NULL, FALSE);
 			}
 
-			break;
+			break;*/
 		}
 		//InvalidateRect(hWnd, NULL, TRUE);
 		break;
@@ -281,7 +279,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 							if (Timer1Count > 4) {
 								for (int i = 0; i < extrahpNumber; ++i)
-									exhpList[i].isAlived = clientRecv2.exhpList[i].isAlived;
+									exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;
 
 							}
 
@@ -314,14 +312,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 									enemyList[i].isAlived = false;
 
 
-							for (int i = 0; i < itemNumber; ++i)
-								if (i == clientRecv2.item[0])
-									itemList[i].isAlived = false;
-
+							
 
 							if (Timer1Count > 4) {
 								for (int i = 0; i < extrahpNumber; ++i)
-									exhpList[i].isAlived = clientRecv2.exhpList[i].isAlived;
+									exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;
 
 							}
 						}
@@ -354,13 +349,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 									enemyList[i].isAlived = false;
 
 
-							for (int i = 0; i < itemNumber; ++i)
-								if (i == clientRecv2.item[0])
-									itemList[i].isAlived = false;
+							
 
 							if (Timer1Count > 4) {
 								for (int i = 0; i < extrahpNumber; ++i)
-									exhpList[i].isAlived = clientRecv2.exhpList[i].isAlived;
+									exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;
 
 							}
 
@@ -389,14 +382,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 									enemyList[i].isAlived = false;
 
 
-							for (int i = 0; i < itemNumber; ++i)
-								if (i == clientRecv2.item[0])
-									itemList[i].isAlived = false;
-
+							
 
 							if (Timer1Count > 4) {
 								for (int i = 0; i < extrahpNumber; ++i)
-									exhpList[i].isAlived = clientRecv2.exhpList[i].isAlived;
+									exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;
 
 							}
 
@@ -427,14 +417,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 								enemyList[i].isAlived = false;
 
 
-						for (int i = 0; i < itemNumber; ++i)
-							if (i == clientRecv2.item[0])
-								itemList[i].isAlived = false;
+						
 
 
 						if (Timer1Count > 4) {
 							for (int i = 0; i < extrahpNumber; ++i)
-								exhpList[i].isAlived = clientRecv2.exhpList[i].isAlived;
+								exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;
 
 						}
 
@@ -450,110 +438,113 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		break;
 	
 	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
-		hBit1 = CreateCompatibleBitmap(hdc, 800, 800);
-
-
-		mem1dc = CreateCompatibleDC(hdc);
-		mem2dc = CreateCompatibleDC(mem1dc);
-
-		oldBit1 = (HBITMAP)SelectObject(mem1dc, hBit1);
-		oldBit2 = (HBITMAP)SelectObject(mem2dc, hBit2);
-
-		Rectangle(mem1dc, 0, 0, 800, 800);
-		Rectangle(mem2dc, 0, 0, 800, 800);
-
-
-		DrawBoard(mem1dc, boardCount, xS, yS);
-		DrawEnemy(mem1dc, xS, yS);
-		DrawPlayer(mem1dc, xS, yS,clientRecv2);
-		DrawObstacle(mem1dc, xS, yS);
-		DrawItem(mem1dc, xS, yS);
-		DrawHp(mem1dc, xS, yS);
-		DrawExHp(mem1dc, xS, yS);
-		
-		
-
-		if (Timer1Count == 9)
-			hpList[4].isAlived = false;
-		else if (Timer1Count == 8)
-			hpList[3].isAlived = false;
-		else if (Timer1Count == 7)
-			hpList[2].isAlived = false;
-		else if (Timer1Count == 6)
-			hpList[1].isAlived = false;
-		else if (Timer1Count == 5)
-			hpList[0].isAlived = false;
-
-		if (exhpList[2].isAlived || exhpList[1].isAlived || exhpList[0].isAlived) {
-			if (Timer1Count == 4) {
-				if (exhpList[0].isAlived) {
-					if (exhpList[1].isAlived) {
-						if (exhpList[2].isAlived) {
-							exhpList[2].isAlived = false;
-						}
-						else exhpList[1].isAlived = false;
-					}
-					else exhpList[0].isAlived = false;
-				}
-			}
-
-			else if (Timer1Count == 3) {
-				if (exhpList[0].isAlived) {
-					if (exhpList[1].isAlived) {
-						if (exhpList[2].isAlived) {
-							exhpList[2].isAlived = false;
-						}
-						else exhpList[1].isAlived = false;
-					}
-					else exhpList[0].isAlived = false;
-				}
-			}
-
-			else if (Timer1Count == 2) {
-				if (exhpList[0].isAlived) {
-					if (exhpList[1].isAlived) {
-						if (exhpList[2].isAlived) {
-							exhpList[2].isAlived = false;
-						}
-						else exhpList[1].isAlived = false;
-					}
-					else exhpList[0].isAlived = false;
-				}
-			}
-		}
-
-		if (!exhpList[2].isAlived && !exhpList[1].isAlived && !exhpList[0].isAlived
-			&& !hpList[0].isAlived && !hpList[1].isAlived && !hpList[2].isAlived
-			&& !hpList[3].isAlived && !hpList[4].isAlived) {
-			TextOut(mem1dc, 350, 100, L"GAME OVER", strlen("GAME OVER"));
-			p.isAlived = false;
-		}
-
-
-		TextOut(mem1dc, 80, 32, L"HP", strlen("HP"));
-		DrawHp(mem1dc, xS, yS);
-
-		
-		TextOut(mem1dc, 450, 32, L"EXTRA", strlen("EXTRA"));
-		DrawExHp(mem1dc, xS, yS);
-		
-		
-		BitBlt(hdc, 0, 0, 800, 800, mem1dc, 0, 0, SRCCOPY);
-		BitBlt(mem1dc, 0, 0, 800, 800, mem2dc, 0, 0, SRCCOPY);
-
-		if (hBit1 == NULL) {
+		if (gamestate == GAME_RUNNING)
+		{
+			hdc = BeginPaint(hWnd, &ps);
 			hBit1 = CreateCompatibleBitmap(hdc, 800, 800);
+
+
+			mem1dc = CreateCompatibleDC(hdc);
+			mem2dc = CreateCompatibleDC(mem1dc);
+
+			oldBit1 = (HBITMAP)SelectObject(mem1dc, hBit1);
+			oldBit2 = (HBITMAP)SelectObject(mem2dc, hBit2);
+
+			Rectangle(mem1dc, 0, 0, 800, 800);
+			Rectangle(mem2dc, 0, 0, 800, 800);
+
+
+			DrawBoard(mem1dc, boardCount, xS, yS);
+			DrawEnemy(mem1dc, xS, yS);
+			DrawPlayer(mem1dc, xS, yS, clientRecv2);
+			DrawObstacle(mem1dc, xS, yS);
+			DrawItem(mem1dc, xS, yS);
+			DrawHp(mem1dc, xS, yS);
+			DrawExHp(mem1dc, xS, yS);
+
+
+
+			if (Timer1Count == 9)
+				hpList[4].isAlived = false;
+			else if (Timer1Count == 8)
+				hpList[3].isAlived = false;
+			else if (Timer1Count == 7)
+				hpList[2].isAlived = false;
+			else if (Timer1Count == 6)
+				hpList[1].isAlived = false;
+			else if (Timer1Count == 5)
+				hpList[0].isAlived = false;
+
+			if (exhpList[2].isAlived || exhpList[1].isAlived || exhpList[0].isAlived) {
+				if (Timer1Count == 4) {
+					if (exhpList[0].isAlived) {
+						if (exhpList[1].isAlived) {
+							if (exhpList[2].isAlived) {
+								exhpList[2].isAlived = false;
+							}
+							else exhpList[1].isAlived = false;
+						}
+						else exhpList[0].isAlived = false;
+					}
+				}
+
+				else if (Timer1Count == 3) {
+					if (exhpList[0].isAlived) {
+						if (exhpList[1].isAlived) {
+							if (exhpList[2].isAlived) {
+								exhpList[2].isAlived = false;
+							}
+							else exhpList[1].isAlived = false;
+						}
+						else exhpList[0].isAlived = false;
+					}
+				}
+
+				else if (Timer1Count == 2) {
+					if (exhpList[0].isAlived) {
+						if (exhpList[1].isAlived) {
+							if (exhpList[2].isAlived) {
+								exhpList[2].isAlived = false;
+							}
+							else exhpList[1].isAlived = false;
+						}
+						else exhpList[0].isAlived = false;
+					}
+				}
+			}
+
+			if (!exhpList[2].isAlived && !exhpList[1].isAlived && !exhpList[0].isAlived
+				&& !hpList[0].isAlived && !hpList[1].isAlived && !hpList[2].isAlived
+				&& !hpList[3].isAlived && !hpList[4].isAlived) {
+				TextOut(mem1dc, 350, 100, L"GAME OVER", strlen("GAME OVER"));
+				p.isAlived = false;
+			}
+
+
+			TextOut(mem1dc, 80, 32, L"HP", strlen("HP"));
+			DrawHp(mem1dc, xS, yS);
+
+
+			TextOut(mem1dc, 450, 32, L"EXTRA", strlen("EXTRA"));
+			DrawExHp(mem1dc, xS, yS);
+
+
+			BitBlt(hdc, 0, 0, 800, 800, mem1dc, 0, 0, SRCCOPY);
+			BitBlt(mem1dc, 0, 0, 800, 800, mem2dc, 0, 0, SRCCOPY);
+
+			if (hBit1 == NULL) {
+				hBit1 = CreateCompatibleBitmap(hdc, 800, 800);
+			}
+
+			if (hBit2 == NULL) {
+				hBit2 = CreateCompatibleBitmap(mem1dc, 800, 800);
+			}
+
+			DeleteDC(mem1dc);
+			DeleteDC(mem2dc);
+
+			EndPaint(hWnd, &ps);
 		}
-
-		if (hBit2 == NULL) {
-			hBit2 = CreateCompatibleBitmap(mem1dc, 800, 800);
-		}
-
-		DeleteDC(mem1dc);
-		DeleteDC(mem2dc);
-
-		EndPaint(hWnd, &ps);
 		break;
 	
 	
@@ -567,6 +558,79 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	return(DefWindowProc(hWnd, iMessage, wParam, lParam));
 }
 
+
+void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime)
+{
+	HDC hdc;
+	HWND child_hWnd2;
+	hdc = GetDC(hWnd);
+	
+	static int Timer2Count = 0;
+	static int count = 1;
+	int retval;
+	//GetClientRect(hWnd, &rect);
+	//MyBrush = CreateSolidBrush(RGB(rand() % 255, rand() % 255, rand() % 255));
+	//MyPen = CreatePen(PS_SOLID, rand() % 5, RGB(rand() % 255, rand() % 255, rand() % 255)); OldBrush = (HBRUSH)SelectObject(hdc, MyBrush);
+	//OldPen = (HPEN)SelectObject(hdc, MyPen);
+	//Ellipse(hdc, rand() % (rect.right), rand() % (rect.bottom), rand() % (rect.right), rand() % (rect.bottom)); SelectObject(hdc, OldBrush);
+	//SelectObject(hdc, OldPen); DeleteObject(MyBrush); DeleteObject(MyPen);
+	Timer2Count++;
+	count++;
+	if (count - Timer2Count == 1) {
+		clientSend.keyInputDirection = 0;
+		retval = send(sock, (char*)&clientSend, clientSend.size, 0);
+		/*if (retval == SOCKET_ERROR) {
+			err_display("send()");
+			break;
+		}*/
+		//else {
+			//p.pos = clientRecv2.player[clientRecv2.clientIndex].pos;
+
+			for (int i = 0; i < enemyNumber; ++i)
+				if (i == clientRecv2.enemy[0])
+					enemyList[i].isAlived = false;
+
+
+			for (int i = 0; i < itemNumber; ++i)
+				if (i == clientRecv2.item[0]) {
+					itemList[i].isAlived = false;
+					/*if (!exhpList[2].isAlived) {
+						if (!exhpList[1].isAlived) {
+							if (!exhpList[0].isAlived) {
+								exhpList[0].isAlived = true;
+							}
+							else exhpList[1].isAlived = true;
+						}
+						else exhpList[2].isAlived = true;
+					}*/
+				}
+
+		//}
+
+
+
+		retval = recvn(sock, (char*)&clientRecv2, sizeof(clientRecv2), 0);
+
+
+		/*if (retval == 0) {
+			break;
+		}*/
+		p.pos = clientRecv2.player[clientRecv2.clientIndex].pos;
+
+				if (gamestate == GAME_SET)
+				{
+					/*child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
+						0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);*/
+					//DestroyWindow(hWnd);
+
+
+				}
+
+		InvalidateRgn(hWnd, NULL, FALSE);
+	}
+
+	ReleaseDC(hWnd, hdc);
+}
 
 LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
@@ -644,6 +708,8 @@ LRESULT CALLBACK ChildProc2(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 		switch (LOWORD(wParam))
 		{
 		case IDC_BUTTON:
+			SetTimer(hWnd, 2, 33, TimerProc);
+			SetTimer(hWnd, 1, 3000, NULL);
 			hdc = GetDC(hWnd);
 			DestroyWindow(hWnd);
 			ReleaseDC(hWnd, hdc);

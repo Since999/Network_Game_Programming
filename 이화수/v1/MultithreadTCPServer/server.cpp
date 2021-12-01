@@ -56,7 +56,7 @@ void err_display(char* msg)
 Enemy enemyList[35];
 Wall List[36];
 Item itemList[3];
-EXHP exhpList[3];
+//EXHP exhpList[3];
 Player player[3];
 int clientCnt=0;
 sc_recv_struct SeverRecv;
@@ -228,7 +228,7 @@ void InitItem()
 	itemList[2].pos.x = 2;
 	itemList[2].pos.y = 7;
 }
-void InitExHp()
+/*void InitExHp()
 {
 
 	exhpList[0].pos.x = 10;
@@ -239,7 +239,7 @@ void InitExHp()
 	exhpList[2].pos.y = 0;
 
 
-}
+}*/
 void MovePlayer(int key, Player& p, int clientIndex)
 {
 	if (key == MOVE_LEFT)
@@ -359,14 +359,14 @@ void CheckPlayerByItemCollision(Player& p)
 				itemList[i].isAlived = false;
 				SeverSend2.item[0] = i;
 				
-				if (!exhpList[2].isAlived) {
-					if (!exhpList[1].isAlived) {
-						if (!exhpList[0].isAlived) {
-							exhpList[0].isAlived = true;
+				if (!p.exhpList[2].isAlived) {
+					if (!p.exhpList[1].isAlived) {
+						if (!p.exhpList[0].isAlived) {
+							p.exhpList[0].isAlived = true;
 						}
-						else exhpList[1].isAlived = true;
+						else p.exhpList[1].isAlived = true;
 					}
-					else exhpList[2].isAlived = true;
+					else p.exhpList[2].isAlived = true;
 				}
 				
 				break;
@@ -475,6 +475,15 @@ void UpdatePlayer(Player p[])
 
 	}
 
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++) {
+			SeverSend2.players[i].exhpList[j] = p[i].exhpList[j];
+
+		}
+
+	}
+
 }
 
 // Client_Thread
@@ -511,8 +520,8 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 
 		
 		
-		for (int i = 0; i < 3; ++i)
-			SeverSend2.exhpList[i].isAlived = exhpList[i].isAlived;
+		//for (int i = 0; i < 3; ++i)
+			//SeverSend2.players->exhpList[i].isAlived = exhpList[i].isAlived;
 
 
 		SeverSend2.gameState = isGameOver(player);
@@ -570,7 +579,7 @@ int main() {
 	InitEnemy();
 	InitItem();
 	InitWall();
-	InitExHp();
+	//InitExHp();
 
 	//player->pos.x = 0;
 	//player->pos.y = 0;
