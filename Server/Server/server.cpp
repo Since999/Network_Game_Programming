@@ -1,19 +1,77 @@
-﻿#include "server.h"
+#include "server.h"
 
-int main() 
-{
-	//hReadEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
-	//if (hReadEvent == NULL) return 1;
-	//hWriteEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	//if (hWriteEvent == NULL) return 1;
 
+// Client_Thread
+
+DWORD WINAPI ProcessClient(LPVOID arg) {
+	SOCKET client_sock = (SOCKET)arg;
+	SOCKADDR_IN clientaddr;
+	int addrlen;
+	int fileNameSize;
+	int fileSize;
+	int retval;
+
+	int clientIndex = clientCnt;
+
+	// 클라이언트 정보
+	addrlen = sizeof(clientaddr);
+	getpeername(client_sock, (SOCKADDR*)&clientaddr, &addrlen);
+
+	while (1) {
+
+		if (elapsedTime >= FPS)
+		{
+			switch (gameState) {
+			case GAME_RUNNING:
+			{
+				retval = recvn(client_sock, (char*)&ServerRecv, ServerRecv.size, 0);
+				if (retval == 0)
+					break;
+
+				MovePlayer(ServerRecv.keyInputDirection, player[clientIndex], clientIndex);
+
+				//for (int i = 0; i < 3; ++i)
+					//ServerSend2.players->exhpList[i].isAlived = exhpList[i].isAlived;
+
+
+				ServerSend2.gameState = isGameOver(player);
+				if (gameState == GAME_SET)MakeRank();
+
+
+				//SeverSend.gameState = gameState;
+				printf("%d\n", gameState);
+				//for (int i = 0;i < 3;i++)
+				//	printf("%d 번째 플레이어 순위 %d\n", i, player[i].rank);
+				ServerSend2.clientIndex = clientIndex;
+				/*retval = send(client_sock, (char*)&ServerSend2, sizeof(ServerSend2), 0);
+				if (retval == SOCKET_ERROR) {
+					err_display("send()");
+					break;
+				}*/
+			}
+
+			break;
+			}
+		}
+		else
+			elapsedTime += elapsedTime;
+
+
+
+	}
+	closesocket(client_sock);
+
+	return 0;
+}
+
+int main() {
 	int retval;
 
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-		return 0;
+		return 1;
 
-	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
+	listen_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (listen_sock == INVALID_SOCKET) err_quit("socket()");
 
 	SOCKADDR_IN serveraddr;
@@ -21,113 +79,261 @@ int main()
 	serveraddr.sin_family = AF_INET;
 	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	serveraddr.sin_port = htons(SERVERPORT);
-
 	retval = bind(listen_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("bind()");
 
 	retval = listen(listen_sock, SOMAXCONN);
 	if (retval == SOCKET_ERROR) err_quit("listen()");
 
-	InitializeCriticalSection(&cs);
+	SOCKET client_sock;
+	SOCKADDR_IN clientaddr;
+	int addrlen;
+	HANDLE hThread;
 
-	while (clientCnt < 3) {
-		addrlen = sizeof(clientaddr);
-		client_sock[clientCnt] = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
-		if (client_sock[clientCnt] == INVALID_SOCKET) {
-			err_display("accept()");
-			break;
+
+
+
+	// 임계 영역 초기화
+	InitializeCriticalSection(&cs);
+	InitEnemy();
+	InitItem();
+	InitWall();
+	//InitExHp();
+
+	//player->pos.x = 0;
+	//player->pos.y = 0;
+	while (1) {
+		elapsedTime = (timeGetTime() - lastTime) * 0.001f;
+		if (clientCnt < PLAYER_MAX) {
+			Accept(clientCnt);
+
+			EnterCriticalSection(&cs);
+			//cout << clientIndex << endl;
+			clientCnt++;
+			cout << clientCnt;
+			
+			LeaveCriticalSection(&cs);
+		}
+		if (clientCnt == PLAYER_MAX) {
+			gameState = GAME_RUNNING;
 		}
 
-		hThread = CreateThread(NULL, 0, ProcessClient, (LPVOID)client_sock[clientCnt], 0, NULL);
-		if (hThread == NULL) { closesocket(client_sock[clientCnt]); }
-		else { CloseHandle(hThread); }
+		if (elapsedTime >= FPS) {
+			// Update
+			UpdatePlayer(player);
 
+			for (int i = 0; i < PLAYER_MAX; i++) {
+				retval = send(clientSock[i], (char*)&ServerSend2, sizeof(ServerSend2), 0);
+			}
+			cout << "SEND" << endl;
+			lastTime = timeGetTime();
+		}
 	}
 
+	// 임계 영역 종료
 	DeleteCriticalSection(&cs);
 
-	//CloseHandle(hReadEvent);
-	//CloseHandle(hWriteEvent);
-		
 	closesocket(listen_sock);
+
 	WSACleanup();
 	return 0;
 }
 
-// Client_Thread
-DWORD WINAPI ProcessClient(LPVOID arg)
-{
-	int retval = 0;
-	SOCKET client_sock = (SOCKET)arg;
+void Accept(int clientIndex) {
 	SOCKADDR_IN clientaddr;
-	int addrlen = sizeof(clientaddr);
-	getpeername(client_sock, (SOCKADDR*)&clientaddr, &addrlen);
-	
-	EnterCriticalSection(&cs);
-	int clientIndex = clientCnt;
-	clientCnt++;
-	LeaveCriticalSection(&cs);
+	int addrlen;
+	HANDLE hThread;
 
-	rData = RecvData(client_sock, rData);
-	sData.players[clientIndex].clientIndex = clientIndex;
-	strcpy(sData.players[clientIndex].playerID, rData.playerID);
-	for (int i = 0; i < PLAYER_MAX; i++)
-		cout << sData.players[i].playerID << endl;	
-	SendData(sData);																// 인식할 수 있는 ClientID 부여
-	
-	
-	while (1) {
-		if (gameState == GAME_RUNNING) {
-			RecvData(client_sock, rData);											// client의 키입력 recv
-			
-			MovePlayer(rData.keyInputDirection, player[clientIndex]);
-			//UpdatePlayer(player);
-			sData.players[clientIndex].pos = player[clientIndex].pos;
-
-			for (int i = 0; i < 35; i++)
-				sData.enemyList[i].isAlived = enemyList[i].isAlived;
-
-			SendData(sData);
-		}
-
+	addrlen = sizeof(clientaddr);
+	clientSock[clientIndex] = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
+	if (clientSock[clientIndex] == INVALID_SOCKET) {
+		err_display("accept()");
+		return;
 	}
 
-	closesocket(client_sock);
-	return 0;
+	hThread = CreateThread(NULL, 0, ProcessClient, (LPVOID)clientSock[clientIndex], 0, NULL);
+	if (hThread == NULL) { closesocket(clientSock[clientIndex]); }
+	else { CloseHandle(hThread); }
 }
 
-void SendData(sc_send_struct s_data)
+
+void InitWall()
 {
-	int retval = 0;
-	char buf[BUFSIZE];
+	List[0].pos.x = 2;
+	List[0].pos.y = 2;
+	List[1].pos.x = 3;
+	List[1].pos.y = 2;
+	List[2].pos.x = 4;
+	List[2].pos.y = 2;
+	List[3].pos.x = 3;
+	List[3].pos.y = 3;
+	List[4].pos.x = 1;
+	List[4].pos.y = 4;
+	List[5].pos.x = 1;
+	List[5].pos.y = 5;
+	List[6].pos.x = 1;
+	List[6].pos.y = 6;
+	List[7].pos.x = 1;
+	List[7].pos.y = 7;
+	List[8].pos.x = 1;
+	List[8].pos.y = 8;
+	List[9].pos.x = 2;
+	List[9].pos.y = 6;
+	List[10].pos.x = 4;
+	List[10].pos.y = 6;
+	List[11].pos.x = 5;
+	List[11].pos.y = 4;
+	List[12].pos.x = 5;
+	List[12].pos.y = 5;
+	List[13].pos.x = 5;
+	List[13].pos.y = 6;
+	List[14].pos.x = 5;
+	List[14].pos.y = 7;
+	List[15].pos.x = 5;
+	List[15].pos.y = 8;
+	List[16].pos.x = 3;
+	List[16].pos.y = 9;
+	List[17].pos.x = 2;
+	List[17].pos.y = 10;
+	List[18].pos.x = 3;
+	List[18].pos.y = 10;
+	List[19].pos.x = 4;
+	List[19].pos.y = 10;
+	List[20].pos.x = 7;
+	List[20].pos.y = 4;
+	List[21].pos.x = 7;
+	List[21].pos.y = 5;
+	List[22].pos.x = 7;
+	List[22].pos.y = 6;
+	List[23].pos.x = 7;
+	List[23].pos.y = 7;
+	List[24].pos.x = 7;
+	List[24].pos.y = 8;
+	List[25].pos.x = 8;
+	List[25].pos.y = 6;
+	List[26].pos.x = 10;
+	List[26].pos.y = 4;
+	List[27].pos.x = 10;
+	List[27].pos.y = 5;
+	List[28].pos.x = 10;
+	List[28].pos.y = 6;
+	List[29].pos.x = 10;
+	List[29].pos.y = 7;
+	List[30].pos.x = 10;
+	List[30].pos.y = 8;
+	List[31].pos.x = 11;
+	List[31].pos.y = 6;
+	List[32].pos.x = 7;
+	List[32].pos.y = 11;
+	List[33].pos.x = 7;
+	List[33].pos.y = 10;
+	List[34].pos.x = 8;
+	List[34].pos.y = 10;
+	List[35].pos.x = 9;
+	List[35].pos.y = 10;
 
-	for (int i = 0; i < PLAYER_MAX; i++) {
-		retval = send(client_sock[i], (char*)&s_data, sizeof(s_data), 0);
-		if (retval == SOCKET_ERROR) {
-			err_display("SC_Send_data() ");
-			return;
-		}
-	}
+
 }
-
-sc_recv_struct RecvData(SOCKET sock, sc_recv_struct r_data)
+void InitEnemy()
 {
-	int retval = 0;
-	retval = recvn(sock, (char*)&r_data, sizeof(r_data), 0);
-	if (retval == SOCKET_ERROR) {
-		err_display("SC_Recv_data() ");
-	}
-		return r_data;
-}
+	enemyList[0].pos.x = 2;
+	enemyList[0].pos.y = 0;
+	enemyList[1].pos.x = 5;
+	enemyList[1].pos.y = 0;
+	enemyList[2].pos.x = 9;
+	enemyList[2].pos.y = 0;
+	enemyList[3].pos.x = 3;
+	enemyList[3].pos.y = 1;
+	enemyList[4].pos.x = 1;
+	enemyList[4].pos.y = 1;
+	enemyList[5].pos.x = 8;
+	enemyList[5].pos.y = 1;
+	enemyList[6].pos.x = 9;
+	enemyList[6].pos.y = 1;
+	enemyList[7].pos.x = 8;
+	enemyList[7].pos.y = 2;
+	enemyList[8].pos.x = 9;
+	enemyList[8].pos.y = 2;
+	enemyList[9].pos.x = 11;
+	enemyList[9].pos.y = 2;
+	enemyList[10].pos.x = 2;
+	enemyList[10].pos.y = 3;
+	enemyList[11].pos.x = 4;
+	enemyList[11].pos.y = 3;
+	enemyList[12].pos.x = 2;
+	enemyList[12].pos.y = 4;
+	enemyList[13].pos.x = 3;
+	enemyList[13].pos.y = 4;
+	enemyList[14].pos.x = 4;
+	enemyList[14].pos.y = 4;
+	enemyList[15].pos.x = 2;
+	enemyList[15].pos.y = 5;
+	enemyList[16].pos.x = 3;
+	enemyList[16].pos.y = 5;
+	enemyList[17].pos.x = 4;
+	enemyList[17].pos.y = 5;
+	enemyList[18].pos.x = 0;
+	enemyList[18].pos.y = 5;
+	enemyList[19].pos.x = 0;
+	enemyList[19].pos.y = 7;
+	enemyList[20].pos.x = 6;
+	enemyList[20].pos.y = 4;
+	enemyList[21].pos.x = 6;
+	enemyList[21].pos.y = 5;
+	enemyList[22].pos.x = 6;
+	enemyList[22].pos.y = 6;
+	enemyList[23].pos.x = 6;
+	enemyList[23].pos.y = 7;
+	enemyList[24].pos.x = 6;
+	enemyList[24].pos.y = 8;
+	enemyList[25].pos.x = 11;
+	enemyList[25].pos.y = 4;
+	enemyList[26].pos.x = 11;
+	enemyList[26].pos.y = 5;
+	enemyList[27].pos.x = 8;
+	enemyList[27].pos.y = 9;
+	enemyList[28].pos.x = 9;
+	enemyList[28].pos.y = 9;
+	enemyList[29].pos.x = 0;
+	enemyList[29].pos.y = 11;
+	enemyList[30].pos.x = 2;
+	enemyList[30].pos.y = 11;
+	enemyList[31].pos.x = 9;
+	enemyList[31].pos.y = 6;
+	enemyList[32].pos.x = 3;
+	enemyList[32].pos.y = 11;
+	enemyList[33].pos.x = 4;
+	enemyList[33].pos.y = 11;
+	enemyList[34].pos.x = 5;
+	enemyList[34].pos.y = 11;
 
-template <typename T>
-void SetPos(T gameObject, int x, int y)
+
+
+}
+void InitItem()
 {
-	gameObject.Pos.x = x;
-	gameObject.Pos.y = y;
-}
+	itemList[0].pos.x = 8;
+	itemList[0].pos.y = 11;
 
-void MovePlayer(int key, Player& p)
+	itemList[1].pos.x = 11;
+	itemList[1].pos.y = 7;
+
+	itemList[2].pos.x = 2;
+	itemList[2].pos.y = 7;
+}
+/*void InitExHp()
+{
+
+	exhpList[0].pos.x = 10;
+	exhpList[0].pos.y = 0;
+	exhpList[1].pos.x = 11;
+	exhpList[1].pos.y = 0;
+	exhpList[2].pos.x = 12;
+	exhpList[2].pos.y = 0;
+
+
+}*/
+void MovePlayer(int key, Player& p, int clientIndex)
 {
 	if (key == MOVE_LEFT)
 	{
@@ -136,16 +342,16 @@ void MovePlayer(int key, Player& p)
 		CheckPlayerByWallCollision(key, p);
 		CheckPlayerByEnemyCollision(p);
 		CheckPlayerByItemCollision(p);
-		CheckPlayerByPlayerCollision(key, p);
+		CheckPlayerByPlayerCollision(key, p, clientIndex);
 	}
 	else if (key == MOVE_RIGHT)
 	{
 		if (p.pos.x < 11)
 			p.pos.x++;
-		CheckPlayerByWallCollision(key, p);
+		CheckPlayerByWallCollision(key,p);
 		CheckPlayerByEnemyCollision(p);
 		CheckPlayerByItemCollision(p);
-		CheckPlayerByPlayerCollision(key, p);
+		CheckPlayerByPlayerCollision(key, p, clientIndex);
 	}
 	else if (key == MOVE_UP)
 	{
@@ -154,7 +360,7 @@ void MovePlayer(int key, Player& p)
 		CheckPlayerByWallCollision(key, p);
 		CheckPlayerByEnemyCollision(p);
 		CheckPlayerByItemCollision(p);
-		CheckPlayerByPlayerCollision(key, p);
+		CheckPlayerByPlayerCollision(key, p, clientIndex);
 	}
 	else if (key == MOVE_DOWN)
 	{
@@ -163,44 +369,49 @@ void MovePlayer(int key, Player& p)
 		CheckPlayerByWallCollision(key, p);
 		CheckPlayerByEnemyCollision(p);
 		CheckPlayerByItemCollision(p);
-		CheckPlayerByPlayerCollision(key, p);
+		CheckPlayerByPlayerCollision(key, p, clientIndex);
 	}
 
 }
-
 void CheckPlayerByWallCollision(int key, Player& p)
 {
-	switch (key) {
+	switch (key)
+	{
 	case MOVE_LEFT:
-		for (int i = 0; i < 35; i++) {
-			if (wallList[i].pos.x == p.pos.x && wallList[i].pos.y == p.pos.y) {
+		for (int i = 0;i < 36;i++)
+		{
+			if (List[i].pos.x == p.pos.x && List[i].pos.y == p.pos.y)
+			{
 				p.pos.x++;
 				break;
 			}
 		}
 		break;
-
 	case MOVE_RIGHT:
-		for (int i = 0; i < 35; i++) {
-			if (wallList[i].pos.x == p.pos.x && wallList[i].pos.y == p.pos.y) {
+		for (int i = 0;i < 36;i++)
+		{
+			if (List[i].pos.x == p.pos.x && List[i].pos.y == p.pos.y)
+			{
 				p.pos.x--;
 				break;
 			}
 		}
 		break;
-
 	case MOVE_UP:
-		for (int i = 0; i < 35; i++) {
-			if (wallList[i].pos.x == p.pos.x && wallList[i].pos.y == p.pos.y) {
+		for (int i = 0;i < 36;i++)
+		{
+			if (List[i].pos.x == p.pos.x && List[i].pos.y == p.pos.y)
+			{
 				p.pos.y++;
 				break;
 			}
 		}
 		break;
-
 	case MOVE_DOWN:
-		for (int i = 0; i < 35; i++) {
-			if (wallList[i].pos.x == p.pos.x && wallList[i].pos.y == p.pos.y) {
+		for (int i = 0;i < 36;i++)
+		{
+			if (List[i].pos.x == p.pos.x && List[i].pos.y == p.pos.y)
+			{
 				p.pos.y--;
 				break;
 			}
@@ -212,64 +423,95 @@ void CheckPlayerByWallCollision(int key, Player& p)
 	}
 
 }
-
 void CheckPlayerByEnemyCollision(Player& p)
 {
-	for (int i = 0; i < 35; i++) {
-		if (p.pos.x == enemyList[i].pos.x && p.pos.y == enemyList[i].pos.y) {
-			enemyList[i].isAlived = false;
-			printf("%d 적 충돌\n", i);
+	for (int i = 0;i < 35;i++)
+		if (p.pos.x == enemyList[i].pos.x && p.pos.y == enemyList[i].pos.y)
+		{
+			if (enemyList[i].isAlived) {
+				enemyList[i].isAlived = false;
+				++p.score;
+				ServerSend2.enemy[0] = i;
+				printf("%d 충돌\n", i);
+				
+				break;
+			}
 		}
-	}
-}
 
+}
 void CheckPlayerByItemCollision(Player& p)
 {
-	for (int i = 0; i < 4; i++) {
-		if (p.pos.x == itemList[i].pos.x && p.pos.y == itemList[i].pos.y) {
-			itemList[i].isAlived = false;
-			printf("%d 아이템 충돌\n", i);
+	for (int i = 0; i < 3; i++)
+		if (p.pos.x == itemList[i].pos.x && p.pos.y == itemList[i].pos.y)
+		{
+			if (itemList[i].isAlived) {
+				itemList[i].isAlived = false;
+				ServerSend2.item[0] = i;
+				
+				if (!p.exhpList[2].isAlived) {
+					if (!p.exhpList[1].isAlived) {
+						if (!p.exhpList[0].isAlived) {
+							p.exhpList[0].isAlived = true;
+						}
+						else p.exhpList[1].isAlived = true;
+					}
+					else p.exhpList[2].isAlived = true;
+				}
+				
+				break;
+			}
 		}
-	}
-}
 
-void CheckPlayerByPlayerCollision(int key, Player& p)
+}
+void CheckPlayerByPlayerCollision(int key, Player& p, int clientIndex)
 {
-	switch (key) {
+
+	switch (key)
+	{
 	case MOVE_LEFT:
-		for (int i = 1; i < PLAYER_MAX; i++) {
-			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y) {
+		for (int i = 0; i < 3; i++)
+		{
+			if (i != clientIndex)
+				if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+				{
 				//if(p==player[i])
 				p.pos.x++;
 				printf("플레이어 충돌\n");
+
 				break;
-			}
+				}
 		}
 		break;
-
 	case MOVE_RIGHT:
-		for (int i = 1; i < PLAYER_MAX; i++) {
-			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y) {
+		for (int i = 0; i < 3; i++)
+		{
+			if (i != clientIndex)
+			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+			{
 				p.pos.x--;
 				printf("플레이어 충돌\n");
 				break;
 			}
 		}
 		break;
-
 	case MOVE_UP:
-		for (int i = 1; i < PLAYER_MAX; i++) {
-			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y) {
+		for (int i = 0; i < 3; i++)
+		{
+			if (i != clientIndex)
+			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+			{
 				p.pos.y++;
 				printf("플레이어 충돌\n");
 				break;
 			}
 		}
 		break;
-
 	case MOVE_DOWN:
-		for (int i = 1; i < PLAYER_MAX; i++) {
-			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y) {
+		for (int i = 0; i < 3; i++)
+		{
+			if (i != clientIndex)
+			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+			{
 				p.pos.y--;
 				printf("플레이어 충돌\n");
 				break;
@@ -280,22 +522,30 @@ void CheckPlayerByPlayerCollision(int key, Player& p)
 	default:
 		break;
 	}
-}
 
+
+
+}
 void MakeRank()
 {
-	for (int i = 0; i < PLAYER_MAX; i++) {
-		for (int j = 0; j < PLAYER_MAX - 1 ; j++)	{
+
+
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 2; j++)
+		{
 			if (player[i].score > player[j].score)
 				player[i].rank--;
 		}
 	}
-}
 
+
+
+}
 int isGameOver(Player p[])
 {
 	int cnt = 0;
-	for (int i = 0; i < PLAYER_MAX; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		if (p[i].hp <= 0)
 			cnt++;
@@ -305,28 +555,60 @@ int isGameOver(Player p[])
 	else
 		return GAME_RUNNING;
 }
-
 void UpdatePlayer(Player p[])
 {
-	for (int i = 0; i < PLAYER_MAX; i++)
+
+	for (int i = 0; i < 3; i++)
 	{
-		sData.players[i].pos = p[i].pos;
+		ServerSend2.players[i].pos.x = p[i].pos.x;
+		ServerSend2.players[i].pos.y = p[i].pos.y;
 	}
+
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++) {
+			ServerSend2.players[i].exhpList[j] = p[i].exhpList[j];
+		}
+	}
+
 }
 
-void err_quit(const char* msg) {
+int recvn(SOCKET s, char* buf, int len, int flags)
+{
+	int received;
+	char* ptr = buf;
+	int left = len;
+
+	while (left > 0) {
+		received = recv(s, ptr, left, flags);
+		if (received == SOCKET_ERROR)
+		{
+
+			return SOCKET_ERROR;
+
+		}
+		else if (received == 0)
+			break;
+		left -= received;
+		ptr += received;
+	}
+
+	return (len - left);
+}
+void err_quit(const char* msg)
+{
 	LPVOID lpMsgBuf;
 	FormatMessage(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
 		NULL, WSAGetLastError(),
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(LPTSTR)&lpMsgBuf, 0, NULL);
-	MessageBox(NULL, (LPCTSTR)lpMsgBuf, (LPCSTR)msg, MB_ICONERROR);
+	MessageBox(NULL, (LPCTSTR)lpMsgBuf, msg, MB_ICONERROR);
 	LocalFree(lpMsgBuf);
 	exit(1);
 }
-
-void err_display(const char* msg) {
+void err_display(const char* msg)
+{
 	LPVOID lpMsgBuf;
 	FormatMessage(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
@@ -335,22 +617,4 @@ void err_display(const char* msg) {
 		(LPTSTR)&lpMsgBuf, 0, NULL);
 	printf("[%s] %s", msg, (char*)lpMsgBuf);
 	LocalFree(lpMsgBuf);
-}
-
-int recvn(SOCKET s, char* buf, int len, int flags) {
-	int received;
-	char* ptr = buf;
-	int left = len;
-
-	while (left > 0) {
-		received = recv(s, ptr, left, flags);
-		if (received == SOCKET_ERROR)
-			return SOCKET_ERROR;
-		else if (received == 0)
-			break;
-		left -= received;
-		ptr += received;
-	}
-
-	return (len - left);
 }
