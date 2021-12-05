@@ -10,13 +10,14 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 	gamestate = GAME_READY;
 	p.hp = 1;
 
-	//hReadEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	//if (hReadEvent == NULL) return 1;
-	//hWriteEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
-	//if (hWriteEvent == NULL) return 1;
+	hReadEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	if (hReadEvent == NULL) return 1;
+	hWriteEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
+	if (hWriteEvent == NULL) return 1;
 	
 	HWND hWnd;
 	MSG Message;
+	Message.message = WM_NULL;
 	WNDCLASSEX WndClass;
 	g_hInst = hInstance;
 
@@ -50,13 +51,34 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 
-	while (GetMessage(&Message, 0, 0, 0)) {
-		TranslateMessage(&Message);
-		DispatchMessage(&Message);
+	//while (GetMessage(&Message, 0, 0, 0)) {
+	//	TranslateMessage(&Message);
+	//	DispatchMessage(&Message);
+	//}
+
+	while (Message.message != WM_QUIT) {	
+		//if (lastTime + 100 < curTime) {
+		//	lastTime = curTime;
+		//}
+
+		if (PeekMessage(&Message, NULL, 0, 0, PM_REMOVE)) {
+			TranslateMessage(&Message);
+			DispatchMessage(&Message);
+		}
+		else {
+			curTime = GetTickCount();
+			if (curTime - lastTime >= 33) {
+				Update();
+				//Render();
+				InvalidateRect(hWnd, NULL, TRUE);
+				lastTime = GetTickCount();
+			}
+		}
 	}
 
-	//CloseHandle(hReadEvent);
-	//CloseHandle(hWriteEvent);
+
+	CloseHandle(hReadEvent);
+	CloseHandle(hWriteEvent);
 
 	return Message.wParam;
 }
@@ -101,8 +123,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 	
 	case WM_TIMER:
-		Update();
-		InvalidateRect(hWnd, NULL, TRUE);
+		//Update();
+		//InvalidateRect(hWnd, NULL, TRUE);
 		switch (wParam) {
 		case 1:
 			//if (Timer1Count > 0)
@@ -173,13 +195,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 		if (gamestate == GAME_RUNNING)
 		{
-			//WaitForSingleObject(hReadEvent, INFINITE);
+			WaitForSingleObject(hReadEvent, INFINITE);
 			//if (count-Timer2Count == 1) {
 			if (p.isAlived) {
 				if (wParam == VK_LEFT)
 				{
 					clientSend.keyInputDirection = MOVE_LEFT;
-
 				}
 				else if (wParam == VK_RIGHT) {
 					clientSend.keyInputDirection = MOVE_RIGHT;
@@ -198,8 +219,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 				//InvalidateRgn(hWnd, NULL, FALSE);
 			}
-			//SetEvent(hWriteEvent);
+			SetEvent(hWriteEvent);
 		}
+		break;
+	case WM_KEYUP:
+		clientSend.keyInputDirection = MOVE_NONE;
 		break;
 	
 	case WM_PAINT:
@@ -327,9 +351,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 void Update()
 {
-	elapsedTime++;
-	if (elapsedTime > 333)
-		elapsedTime = 0;
+
 }
 
 
@@ -341,14 +363,14 @@ DWORD WINAPI SendThread(LPVOID arg)
 		switch (gamestate) {
 		case GAME_RUNNING:
 			if (p.isAlived) {
-				//WaitForSingleObject(hWriteEvent, INFINITE);
-				cout << clientSend.keyInputDirection << endl;
+				WaitForSingleObject(hWriteEvent, INFINITE);
+				//cout << clientSend.keyInputDirection << endl;
 				retval = send(sock, (char*)&clientSend, clientSend.size, 0);
 				if (retval == SOCKET_ERROR) {
 					err_display("send()");
 					break;
 				}
-				//SetEvent(hReadEvent);
+				SetEvent(hReadEvent);
 			}
 			break;
 		}
@@ -368,11 +390,12 @@ DWORD WINAPI RecvThread(LPVOID arg)
 				err_display("recv()");
 				break;
 			}
-			p.pos = clientRecv2.player->pos;
+			p.pos = clientRecv2.players[clientRecv2.clientIndex].pos;
+			//p.pos = clientRecv2.player->pos;
 			cout << p.pos.x << "       " << p.pos.y << endl;
 
-			p.score = clientRecv2.player->score;
-			std::cout << "score: " << clientRecv2.player->score << endl;
+			p.score = clientRecv2.players->score;
+			std::cout << "score: " << clientRecv2.players->score << endl;
 
 			for (int i = 0; i < enemyNumber; ++i)
 				if (i == clientRecv2.enemy[0])
@@ -589,18 +612,18 @@ void DrawPlayer(HDC hdc, int xS, int yS, cs_recv_struct2 recv)
 		
 			hBrush = CreateSolidBrush(RGB(0, 255, 0));
 			oBrush = (HBRUSH)SelectObject(hdc, hBrush);
-			Rectangle(hdc, 80 + recv.player[0].pos.x * oneSize + xS, 120 + recv.player[0].pos.y * oneSize + yS,
-				80 + recv.player[0].pos.x * oneSize + xS + oneSize, 120 + recv.player[0].pos.y * oneSize + yS + oneSize);
+			Rectangle(hdc, 80 + recv.players[0].pos.x * oneSize + xS, 120 + recv.players[0].pos.y * oneSize + yS,
+				80 + recv.players[0].pos.x * oneSize + xS + oneSize, 120 + recv.players[0].pos.y * oneSize + yS + oneSize);
 			DeleteObject(hBrush);
 			hBrush = CreateSolidBrush(RGB(255, 255, 0));
 			oBrush = (HBRUSH)SelectObject(hdc, hBrush);
-			Rectangle(hdc, 80 + recv.player[1].pos.x * oneSize + xS, 120 + recv.player[1].pos.y * oneSize + yS,
-				80 + recv.player[1].pos.x * oneSize + xS + oneSize, 120 + recv.player[1].pos.y * oneSize + yS + oneSize);
+			Rectangle(hdc, 80 + recv.players[1].pos.x * oneSize + xS, 120 + recv.players[1].pos.y * oneSize + yS,
+				80 + recv.players[1].pos.x * oneSize + xS + oneSize, 120 + recv.players[1].pos.y * oneSize + yS + oneSize);
 			DeleteObject(hBrush);
 			hBrush = CreateSolidBrush(RGB(255, 0, 255));
 			oBrush = (HBRUSH)SelectObject(hdc, hBrush);
-			Rectangle(hdc, 80 + recv.player[2].pos.x * oneSize + xS, 120 + recv.player[2].pos.y * oneSize + yS,
-				80 + recv.player[2].pos.x * oneSize + xS + oneSize, 120 + recv.player[2].pos.y * oneSize + yS + oneSize);
+			Rectangle(hdc, 80 + recv.players[2].pos.x * oneSize + xS, 120 + recv.players[2].pos.y * oneSize + yS,
+				80 + recv.players[2].pos.x * oneSize + xS + oneSize, 120 + recv.players[2].pos.y * oneSize + yS + oneSize);
 
 	
 		

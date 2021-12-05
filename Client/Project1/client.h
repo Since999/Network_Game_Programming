@@ -23,7 +23,7 @@ using namespace std;
 #define oneSize 50
 #define boardSize 500
 //#define SERVERIP   "220.120.241.242"
-#define SERVERIP "127.0.0.1"
+ #define SERVERIP "127.0.0.1"
 
 #define PLAYER_SPEED 10			// 플레이어 속도
 #define GAME_READY 11			// 접속한 클라이언트 수 < 3
@@ -36,6 +36,8 @@ using namespace std;
 #define MOVE_LEFT 23			// A키 입력
 #define MOVE_RIGHT 24			// D키 입력
 
+#define FPS 30
+
 static int obstacleNumber{ 36 };
 static int enemyNumber{ 35 };
 static int itemNumber{ 3 };
@@ -46,7 +48,8 @@ static int xS{ 12 };
 static int yS{ 12 };
 
 int gamestate;
-float elapsedTime = 0;
+DWORD curTime;
+DWORD lastTime = GetTickCount();
 
 HANDLE hThread[2];
 HANDLE hReadEvent, hWriteEvent;
@@ -111,7 +114,7 @@ struct cs_send_struct {
 
 struct cs_recv_struct2 {
 	int gameState;
-	Player player[3];
+	Player players[3];
 	int enemy[3];
 	int item[3];
 	//EXHP exhpList[3];

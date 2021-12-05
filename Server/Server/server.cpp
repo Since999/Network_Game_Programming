@@ -19,16 +19,16 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 
 	while (1) {
 
-		if (elapsedTime >= FPS)
-		{
+		/*if (elapsedTime >= FPS)
+		{*/
 			switch (gameState) {
 			case GAME_RUNNING:
 			{
 				retval = recvn(client_sock, (char*)&ServerRecv, ServerRecv.size, 0);
 				if (retval == 0)
 					break;
-
-				MovePlayer(ServerRecv.keyInputDirection, player[clientIndex], clientIndex);
+				
+				MovePlayer(ServerRecv.keyInputDirection, player[clientIndex-1], clientIndex-1);
 
 				//for (int i = 0; i < 3; ++i)
 					//ServerSend2.players->exhpList[i].isAlived = exhpList[i].isAlived;
@@ -39,10 +39,10 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 
 
 				//SeverSend.gameState = gameState;
-				printf("%d\n", gameState);
+				
 				//for (int i = 0;i < 3;i++)
 				//	printf("%d 번째 플레이어 순위 %d\n", i, player[i].rank);
-				ServerSend2.clientIndex = clientIndex;
+				ServerSend2.clientIndex = clientIndex-1;
 				/*retval = send(client_sock, (char*)&ServerSend2, sizeof(ServerSend2), 0);
 				if (retval == SOCKET_ERROR) {
 					err_display("send()");
@@ -52,9 +52,9 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 
 			break;
 			}
-		}
-		else
-			elapsedTime += elapsedTime;
+		//}
+		//else
+		//	elapsedTime += elapsedTime;
 
 
 
@@ -103,30 +103,33 @@ int main() {
 	//player->pos.x = 0;
 	//player->pos.y = 0;
 	while (1) {
-		elapsedTime = (timeGetTime() - lastTime) * 0.001f;
 		if (clientCnt < PLAYER_MAX) {
 			Accept(clientCnt);
 
-			EnterCriticalSection(&cs);
+			//EnterCriticalSection(&cs);
 			//cout << clientIndex << endl;
 			clientCnt++;
 			cout << clientCnt;
-			
-			LeaveCriticalSection(&cs);
+
+			//LeaveCriticalSection(&cs);
 		}
 		if (clientCnt == PLAYER_MAX) {
 			gameState = GAME_RUNNING;
 		}
 
-		if (elapsedTime >= FPS) {
-			// Update
-			UpdatePlayer(player);
+		switch(gameState) {
+		case GAME_RUNNING:
+			curTime = GetTickCount();
+			if (curTime - lastTime >= FPS) {
+				// Update
+				UpdatePlayer(player);
 
-			for (int i = 0; i < PLAYER_MAX; i++) {
-				retval = send(clientSock[i], (char*)&ServerSend2, sizeof(ServerSend2), 0);
+				for (int i = 0; i < PLAYER_MAX; i++) {
+					retval = send(clientSock[i], (char*)&ServerSend2, sizeof(ServerSend2), 0);
+				}
+				lastTime = GetTickCount();
 			}
-			cout << "SEND" << endl;
-			lastTime = timeGetTime();
+			break;
 		}
 	}
 
@@ -155,6 +158,7 @@ void Accept(int clientIndex) {
 	if (hThread == NULL) { closesocket(clientSock[clientIndex]); }
 	else { CloseHandle(hThread); }
 }
+
 
 
 void InitWall()

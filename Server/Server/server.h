@@ -35,9 +35,9 @@ CRITICAL_SECTION cs;
 int joinClient = 0;
 int gameState = GAME_READY;
 
-float FPS = 0.03;
-float elapsedTime = 0.0f;
-DWORD lastTime = timeGetTime();
+float FPS = 30;
+DWORD curTime;
+DWORD lastTime = GetTickCount();
 
 #pragma pack(1)
 struct Position {
