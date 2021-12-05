@@ -20,14 +20,6 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 	while (1) {
 		//WaitForSingleObject(hClientEvent[clientIndex], INFINITE);
 		switch (gameState) {
-			/*	case GAME_RUNNING:
-				{
-					ServerSend2.clientIndex = clientIndex;
-
-					retval = recvn(client_sock, (char*)&ServerRecv, ServerRecv.size, 0);
-					if (retval == 0)
-						break;
-				}*/
 		case GAME_RUNNING:
 		{
 			retval = recvn(client_sock, (char*)&ServerRecv, ServerRecv.size, 0);
@@ -35,25 +27,21 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 				break;
 
 			MovePlayer(ServerRecv.keyInputDirection, player[clientIndex], clientIndex);
+			UpdatePlayer(player[clientIndex], clientIndex);
 
 			//for (int i = 0; i < 3; ++i)
 				//ServerSend2.players->exhpList[i].isAlived = exhpList[i].isAlived;
 
 
 			ServerSend2.gameState = isGameOver(player);
-			if (gameState == GAME_SET)MakeRank();
+			if (gameState == GAME_SET) MakeRank();
 
 
-			//SeverSend.gameState = gameState;
+			//ServerSend2.gameState = gameState;
 
 			//for (int i = 0;i < 3;i++)
 			//	printf("%d 번째 플레이어 순위 %d\n", i, player[i].rank);
 			ServerSend2.clientIndex = clientIndex;
-			/*retval = send(client_sock, (char*)&ServerSend2, sizeof(ServerSend2), 0);
-			if (retval == SOCKET_ERROR) {
-				err_display("send()");
-				break;
-			}*/
 
 			break;
 		}
@@ -117,7 +105,7 @@ int main() {
 	InitEnemy();
 	InitItem();
 	InitWall();
-	//InitExHp();
+	InitExHp();
 
 	//player->pos.x = 0;
 	//player->pos.y = 0;
@@ -134,7 +122,7 @@ int main() {
 		case GAME_RUNNING:
 			curTime = GetTickCount();
 			if (curTime - lastTime >= FPS) {
-				UpdatePlayer(player);
+				//UpdatePlayer(player);
 
 				for (int i = 0; i < PLAYER_MAX; i++) {
 					retval = send(clientSock[i], (char*)&ServerSend2, sizeof(ServerSend2), 0);
@@ -178,8 +166,7 @@ void Accept(int clientIndex) {
 
 void Update()
 {
-	//MovePlayer(ServerRecv.keyInputDirection, player[clientIndex], clientIndex);
-
+	
 }
 
 void MovePlayer(int key, Player& p, int clientIndex)
@@ -189,8 +176,8 @@ void MovePlayer(int key, Player& p, int clientIndex)
 		if (p.pos.x > 0)
 			p.pos.x--;
 		CheckPlayerByWallCollision(key, p);
-		CheckPlayerByEnemyCollision(p);
-		CheckPlayerByItemCollision(p);
+		CheckPlayerByEnemyCollision(p, clientIndex);
+		CheckPlayerByItemCollision(p, clientIndex);
 		CheckPlayerByPlayerCollision(key, p, clientIndex);
 	}
 	else if (key == MOVE_RIGHT)
@@ -198,8 +185,8 @@ void MovePlayer(int key, Player& p, int clientIndex)
 		if (p.pos.x < 11)
 			p.pos.x++;
 		CheckPlayerByWallCollision(key,p);
-		CheckPlayerByEnemyCollision(p);
-		CheckPlayerByItemCollision(p);
+		CheckPlayerByEnemyCollision(p, clientIndex);
+		CheckPlayerByItemCollision(p, clientIndex);
 		CheckPlayerByPlayerCollision(key, p, clientIndex);
 	}
 	else if (key == MOVE_UP)
@@ -207,8 +194,8 @@ void MovePlayer(int key, Player& p, int clientIndex)
 		if (p.pos.y > 0)
 			p.pos.y--;
 		CheckPlayerByWallCollision(key, p);
-		CheckPlayerByEnemyCollision(p);
-		CheckPlayerByItemCollision(p);
+		CheckPlayerByEnemyCollision(p, clientIndex);
+		CheckPlayerByItemCollision(p, clientIndex);
 		CheckPlayerByPlayerCollision(key, p, clientIndex);
 	}
 	else if (key == MOVE_DOWN)
@@ -216,8 +203,8 @@ void MovePlayer(int key, Player& p, int clientIndex)
 		if (p.pos.y < 11)
 			p.pos.y++;
 		CheckPlayerByWallCollision(key, p);
-		CheckPlayerByEnemyCollision(p);
-		CheckPlayerByItemCollision(p);
+		CheckPlayerByEnemyCollision(p, clientIndex);
+		CheckPlayerByItemCollision(p, clientIndex);
 		CheckPlayerByPlayerCollision(key, p, clientIndex);
 	}
 
@@ -272,7 +259,7 @@ void CheckPlayerByWallCollision(int key, Player& p)
 	}
 
 }
-void CheckPlayerByEnemyCollision(Player& p)
+void CheckPlayerByEnemyCollision(Player& p, int clientIndex)
 {
 	for (int i = 0;i < 35;i++)
 		if (p.pos.x == enemyList[i].pos.x && p.pos.y == enemyList[i].pos.y)
@@ -280,22 +267,22 @@ void CheckPlayerByEnemyCollision(Player& p)
 			if (enemyList[i].isAlived) {
 				enemyList[i].isAlived = false;
 				++p.score;
-				ServerSend2.enemy[0] = i;
-				printf("%d 충돌\n", i);
+				ServerSend2.enemy[clientIndex] = i;
+				printf("%d %d 충돌\n", clientIndex, i);
 				
 				break;
 			}
 		}
 
 }
-void CheckPlayerByItemCollision(Player& p)
+void CheckPlayerByItemCollision(Player& p, int clientIndex)
 {
 	for (int i = 0; i < 3; i++)
 		if (p.pos.x == itemList[i].pos.x && p.pos.y == itemList[i].pos.y)
 		{
 			if (itemList[i].isAlived) {
 				itemList[i].isAlived = false;
-				ServerSend2.item[0] = i;
+				ServerSend2.item[clientIndex] = i;
 				
 				if (!p.exhpList[2].isAlived) {
 					if (!p.exhpList[1].isAlived) {
@@ -371,10 +358,34 @@ void CheckPlayerByPlayerCollision(int key, Player& p, int clientIndex)
 	default:
 		break;
 	}
-
-
-
 }
+
+void UpdatePlayer(Player& p, int clientIndex)
+{
+	/*for (int i = 0; i < 3; i++)
+	{
+		ServerSend2.players[i].pos.x = p[i].pos.x;
+		ServerSend2.players[i].pos.y = p[i].pos.y;
+		ServerSend2.players[i].score = p[i].score;
+	}
+
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++) {
+			ServerSend2.players[i].exhpList[j] = p[i].exhpList[j];
+		}
+	} */
+
+	ServerSend2.players[clientIndex].pos.x = p.pos.x;
+	ServerSend2.players[clientIndex].pos.y = p.pos.y;
+	ServerSend2.players[clientIndex].score = p.score;
+	for (int j = 0; j < 3; j++) {
+		ServerSend2.players[clientIndex].exhpList[j].isAlived = p.exhpList[j].isAlived;
+		cout << j << " : " << p.exhpList[j].isAlived << endl;
+		cout << j << " Server : " << ServerSend2.players[clientIndex].exhpList[j].isAlived << endl;
+	}
+}
+
 void MakeRank()
 {
 
@@ -396,30 +407,13 @@ int isGameOver(Player p[])
 	int cnt = 0;
 	for (int i = 0; i < 3; i++)
 	{
-		if (p[i].hp <= 0)
+		if (!p[i].isAlived)
 			cnt++;
 	}
 	if (cnt == 3)
 		return GAME_SET;
 	else
 		return GAME_RUNNING;
-}
-void UpdatePlayer(Player p[])
-{
-
-	for (int i = 0; i < 3; i++)
-	{
-		ServerSend2.players[i].pos.x = p[i].pos.x;
-		ServerSend2.players[i].pos.y = p[i].pos.y;
-	}
-
-	for (int i = 0; i < 3; i++)
-	{
-		for (int j = 0; j < 3; j++) {
-			ServerSend2.players[i].exhpList[j] = p[i].exhpList[j];
-		}
-	}
-
 }
 
 void InitWall()
@@ -586,7 +580,7 @@ void InitItem()
 	itemList[2].pos.x = 2;
 	itemList[2].pos.y = 7;
 }
-/*void InitExHp()
+void InitExHp()
 {
 
 	exhpList[0].pos.x = 10;
@@ -597,7 +591,7 @@ void InitItem()
 	exhpList[2].pos.y = 0;
 
 
-}*/
+}
 
 int recvn(SOCKET s, char* buf, int len, int flags)
 {

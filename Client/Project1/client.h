@@ -37,6 +37,7 @@ using namespace std;
 #define MOVE_RIGHT 24			// D키 입력
 
 #define FPS 30
+#define PLAYER_MAX 3
 
 static int obstacleNumber{ 36 };
 static int enemyNumber{ 35 };
@@ -48,6 +49,7 @@ static int xS{ 12 };
 static int yS{ 12 };
 
 int gamestate;
+int clientIndex;
 DWORD curTime;
 DWORD lastTime = GetTickCount();
 
@@ -60,6 +62,7 @@ struct Position {
 };
 
 struct EXHP {
+public:
 	Position pos;                  // 위치
 	bool isAlived{ false };         // 생사여부
 };
@@ -117,7 +120,6 @@ struct cs_recv_struct2 {
 	Player players[3];
 	int enemy[3];
 	int item[3];
-	//EXHP exhpList[3];
 	int clientIndex;               // 해당 클라이언트의 인덱스
 
 };
@@ -155,6 +157,8 @@ Player temp;
 TCHAR str[10];
 HWND hButton, hEdit;
 
+int hpCnt = 0;
+
 void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime);
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
@@ -170,6 +174,7 @@ void InitHpBar();
 void InitExHp();
 
 void Update();
+void UpdateHP(int cnt);
 
 void DrawBoard(HDC hdc, int boardCount, int xS, int yS);
 void DrawPlayer(HDC hdc, int xS, int yS, cs_recv_struct2 recv);

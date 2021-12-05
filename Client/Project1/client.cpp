@@ -52,17 +52,23 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 	UpdateWindow(hWnd);
 
 	while (Message.message != WM_QUIT) {	
+
 		if (PeekMessage(&Message, NULL, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&Message);
 			DispatchMessage(&Message);
 		}
 		else {
-			curTime = GetTickCount();
-			if (curTime - lastTime >= 33) {
-		 		Update();
-				//Render();
-				InvalidateRect(hWnd, NULL, FALSE);
-				lastTime = GetTickCount();
+			if (gamestate == GAME_RUNNING) {
+				curTime = GetTickCount();
+				if (curTime - lastTime >= 33) {
+					//Render();
+					hpCnt++;
+					if (hpCnt % 90 == 0) {
+						UpdateHP(hpCnt);
+					}
+					InvalidateRect(hWnd, NULL, FALSE);
+					lastTime = GetTickCount();
+				}
 			}
 		}
 	}
@@ -104,10 +110,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 			child_hWnd = CreateWindow(lpszClass2, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
 				0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
-			/*child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
-				0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);*/
-			
-
+		}
+		else if (gamestate == GAME_SET)
+		{
+			child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
+				0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
 		}
 
 		break;
@@ -248,69 +255,71 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 
 
-			if (Timer1Count == 9)
-				hpList[4].isAlived = false;
-			else if (Timer1Count == 8)
-				hpList[3].isAlived = false;
-			else if (Timer1Count == 7)
-				hpList[2].isAlived = false;
-			else if (Timer1Count == 6)
-				hpList[1].isAlived = false;
-			else if (Timer1Count == 5)
-				hpList[0].isAlived = false;
+			//if (Timer1Count == 9)
+			//	hpList[4].isAlived = false;
+			//else if (Timer1Count == 8)
+			//	hpList[3].isAlived = false;
+			//else if (Timer1Count == 7)
+			//	hpList[2].isAlived = false;
+			//else if (Timer1Count == 6)
+			//	hpList[1].isAlived = false;
+			//else if (Timer1Count == 5)
+			//	hpList[0].isAlived = false;
 
-			if (exhpList[2].isAlived || exhpList[1].isAlived || exhpList[0].isAlived) {
-				if (Timer1Count == 4) {
-					if (exhpList[0].isAlived) {
-						if (exhpList[1].isAlived) {
-							if (exhpList[2].isAlived) {
-								exhpList[2].isAlived = false;
-							}
-							else exhpList[1].isAlived = false;
-						}
-						else exhpList[0].isAlived = false;
-					}
-				}
+			//if (exhpList[2].isAlived || exhpList[1].isAlived || exhpList[0].isAlived) {
+			//	if (Timer1Count == 4) {
+			//		if (exhpList[0].isAlived) {
+			//			if (exhpList[1].isAlived) {
+			//				if (exhpList[2].isAlived) {
+			//					exhpList[2].isAlived = false;
+			//				}
+			//				else exhpList[1].isAlived = false;
+			//			}
+			//			else exhpList[0].isAlived = false;
+			//		}
+			//	}
 
-				else if (Timer1Count == 3) {
-					if (exhpList[0].isAlived) {
-						if (exhpList[1].isAlived) {
-							if (exhpList[2].isAlived) {
-								exhpList[2].isAlived = false;
-							}
-							else exhpList[1].isAlived = false;
-						}
-						else exhpList[0].isAlived = false;
-					}
-				}
+			//	else if (Timer1Count == 3) {
+			//		if (exhpList[0].isAlived) {
+			//			if (exhpList[1].isAlived) {
+			//				if (exhpList[2].isAlived) {
+			//					exhpList[2].isAlived = false;
+			//				}
+			//				else exhpList[1].isAlived = false;
+			//			}
+			//			else exhpList[0].isAlived = false;
+			//		}
+			//	}
 
-				else if (Timer1Count == 2) {
-					if (exhpList[0].isAlived) {
-						if (exhpList[1].isAlived) {
-							if (exhpList[2].isAlived) {
-								exhpList[2].isAlived = false;
-							}
-							else exhpList[1].isAlived = false;
-						}
-						else exhpList[0].isAlived = false;
-					}
-				}
-			}
+			//	else if (Timer1Count == 2) {
+			//		if (exhpList[0].isAlived) {
+			//			if (exhpList[1].isAlived) {
+			//				if (exhpList[2].isAlived) {
+			//					exhpList[2].isAlived = false;
+			//				}
+			//				else exhpList[1].isAlived = false;
+			//			}
+			//			else exhpList[0].isAlived = false;
+			//		}
+			//	}
+			//}
 
-			if (!exhpList[2].isAlived && !exhpList[1].isAlived && !exhpList[0].isAlived
-				&& !hpList[0].isAlived && !hpList[1].isAlived && !hpList[2].isAlived
-				&& !hpList[3].isAlived && !hpList[4].isAlived) {
+			//if (!exhpList[2].isAlived && !exhpList[1].isAlived && !exhpList[0].isAlived
+			//	&& !hpList[0].isAlived && !hpList[1].isAlived && !hpList[2].isAlived
+			//	&& !hpList[3].isAlived && !hpList[4].isAlived) {
+			//	TextOut(hdc, 350, 100, L"GAME OVER", strlen("GAME OVER"));
+			//	p.isAlived = false;
+			//}
+
+			if (!p.isAlived)
 				TextOut(hdc, 350, 100, L"GAME OVER", strlen("GAME OVER"));
-				p.isAlived = false;
-			}
-
 
 			TextOut(hdc, 80, 32, L"HP", strlen("HP"));
-			DrawHp(hdc, xS, yS);
+			//DrawHp(hdc, xS, yS);
 
 
 			TextOut(hdc, 450, 32, L"EXTRA", strlen("EXTRA"));
-			DrawExHp(hdc, xS, yS);
+			//DrawExHp(hdc, xS, yS);
 
 
 			tmpDC = hdc;
@@ -339,9 +348,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 void Update()
 {
-
+	
 }
 
+void UpdateHP(int cnt)
+{ 
+	if (int(cnt / 90) <= 5) {
+		hpList[5 - int(cnt / 90)].isAlived = false;
+		cout << int(cnt / 90) << endl;
+	}
+	else {
+	/*	if (p.exhpList[0].isAlived) {
+			if (p.exhpList[1].isAlived) {
+				if (p.exhpList[2].isAlived) {
+					p.exhpList[2].isAlived = false;
+				}
+				else p.exhpList[1].isAlived = false;
+			}
+			else p.exhpList[0].isAlived = false;
+		}*/
+	}
+	
+	if (!p.exhpList[2].isAlived && !p.exhpList[1].isAlived && !p.exhpList[0].isAlived
+		&& !hpList[0].isAlived && !hpList[1].isAlived && !hpList[2].isAlived
+		&& !hpList[3].isAlived && !hpList[4].isAlived) {
+		p.isAlived = false;
+	}
+}
 
 DWORD WINAPI SendThread(LPVOID arg)
 {
@@ -352,7 +385,6 @@ DWORD WINAPI SendThread(LPVOID arg)
 		case GAME_RUNNING:
 			if (p.isAlived) {
 				WaitForSingleObject(hWriteEvent, INFINITE);
-				//cout << clientSend.keyInputDirection << endl;
 				retval = send(sock, (char*)&clientSend, clientSend.size, 0);
 				if (retval == SOCKET_ERROR) {
 					err_display("send()");
@@ -378,25 +410,32 @@ DWORD WINAPI RecvThread(LPVOID arg)
 				err_display("recv()");
 				break;
 			}
-			p.pos = clientRecv2.players[clientRecv2.clientIndex].pos;
-			//p.pos = clientRecv2.player->pos;
-			cout << p.pos.x << "       " << p.pos.y << endl;
 
-			p.score = clientRecv2.players->score;
-			std::cout << "score: " << clientRecv2.players->score << endl;
+			clientIndex = clientRecv2.clientIndex;
+
+			p.pos = clientRecv2.players[clientRecv2.clientIndex].pos;
+			p.score = clientRecv2.players[clientRecv2.clientIndex].score;
+			//cout << "SCORE : " << p.score << endl;
 
 			for (int i = 0; i < enemyNumber; ++i)
-				if (i == clientRecv2.enemy[0])
-					enemyList[i].isAlived = false;
+				for (int j = 0; j < PLAYER_MAX; j++)
+					if (i == clientRecv2.enemy[j])
+						enemyList[i].isAlived = false;
 
 			for (int i = 0; i < itemNumber; ++i)
-				if (i == clientRecv2.item[0]) {
-					itemList[i].isAlived = false;
+				for (int j = 0; j < PLAYER_MAX; j++)
+					if (i == clientRecv2.item[j]) {
+						itemList[i].isAlived = false;
+					}
 
-					/*	if (Timer1Count > 4) {
-							for (int i = 0; i < extrahpNumber; ++i)
-								exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;*/
-				}
+			for (int i = 0; i < extrahpNumber; ++i) {
+				p.exhpList[i].isAlived = clientRecv2.players[clientIndex].exhpList[i].isAlived;
+				cout << "CLIENT :  " << clientRecv2.players[clientRecv2.clientIndex].exhpList[i].isAlived << endl;
+				cout << "EXHP : " << p.exhpList[i].isAlived << endl;
+				if (p.exhpList[i].isAlived)
+					cout << i << "          ALIVED!!!!!!!!!!!!" << endl;
+			
+			}
 			break;
 		}
 	}
@@ -494,8 +533,6 @@ LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 		switch (LOWORD(wParam))
 		{
 		case IDC_BUTTON:
-			
-			//TextOut(hdc, 400, 400, L"Hello", 5);
 
 			gamestate = GAME_RUNNING;
 			
@@ -545,6 +582,7 @@ LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 
 	return DefWindowProc(hWnd, iMessage, wParam, lParam);
 }
+
 LRESULT CALLBACK ChildProc2(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
@@ -560,7 +598,6 @@ LRESULT CALLBACK ChildProc2(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 		switch (LOWORD(wParam))
 		{
 		case IDC_BUTTON:
-
 			hdc = GetDC(hWnd);
 			DestroyWindow(hWnd);
 			ReleaseDC(hWnd, hdc);
@@ -589,6 +626,7 @@ void DrawBoard(HDC hdc, int boardCount, int xS, int yS)
 		LineTo(hdc, 80+boardCount * oneSize + xS, 120+i * oneSize + yS);
 	}
 }
+
 void DrawPlayer(HDC hdc, int xS, int yS, cs_recv_struct2 recv)
 {
 	//1P
@@ -805,14 +843,12 @@ void InitHpBar()
 void InitExHp()
 {
 
-	exhpList[0].pos.x = 10;
-	exhpList[0].pos.y = 0;
-	exhpList[1].pos.x = 11;
-	exhpList[1].pos.y = 0;
-	exhpList[2].pos.x = 12;
-	exhpList[2].pos.y = 0;
-
-
+	p.exhpList[0].pos.x = 10;
+	p.exhpList[0].pos.y = 0;
+	p.exhpList[1].pos.x = 11;
+	p.exhpList[1].pos.y = 0;
+	p.exhpList[2].pos.x = 12;
+	p.exhpList[2].pos.y = 0;
 }
 
 
@@ -883,19 +919,18 @@ void DrawHp(HDC hdc, int xS, int yS)
 		}
 	}
 }
-
-
 void DrawExHp(HDC hdc, int xS, int yS)
 {
 	HBRUSH hBrush, oBrush;
 	int i;
 
 	for (i = 0; i < extrahpNumber; i++) {
-		if (exhpList[i].isAlived) {
-			hBrush = CreateSolidBrush(RGB(255, 0, 0));
+		if (p.exhpList[i].isAlived) {
+			hBrush = CreateSolidBrush(RGB(200, 30, 0));
 			oBrush = (HBRUSH)SelectObject(hdc, hBrush);
-			Rectangle(hdc, exhpList[i].pos.x * oneSize + xS, exhpList[i].pos.y * oneSize + yS,
-				exhpList[i].pos.x * oneSize + xS + oneSize, exhpList[i].pos.y * oneSize + yS + oneSize);
+
+			Rectangle(hdc, p.exhpList[i].pos.x * oneSize + xS, p.exhpList[i].pos.y * oneSize + yS,
+				p.exhpList[i].pos.x * oneSize + xS + oneSize, p.exhpList[i].pos.y * oneSize + yS + oneSize);
 			SelectObject(hdc, oBrush);
 			DeleteObject(hBrush);
 		}

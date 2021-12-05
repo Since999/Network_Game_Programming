@@ -5,13 +5,13 @@ C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.h(
 C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.h(16): message : 'BUFSIZE'의 이전 정의를 참조하십시오.
 C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(10,6): warning C4101: 'fileNameSize' :참조되지 않은 지역 변수입니다.
 C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(11,6): warning C4101: 'fileSize' :참조되지 않은 지역 변수입니다.
-C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(103,9): warning C4101: 'hThread' :참조되지 않은 지역 변수입니다.
-C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(100,9): warning C4101: 'client_sock' :참조되지 않은 지역 변수입니다.
-C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(101,14): warning C4101: 'clientaddr' :참조되지 않은 지역 변수입니다.
-C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(102,6): warning C4101: 'addrlen' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(91,9): warning C4101: 'hThread' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(88,9): warning C4101: 'client_sock' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(89,14): warning C4101: 'clientaddr' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(90,6): warning C4101: 'addrlen' :참조되지 않은 지역 변수입니다.
   코드를 생성하고 있습니다.
-  1 of 29 functions ( 3.4%) were compiled, the rest were copied from previous compilation.
+  4 of 40 functions (10.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    3 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
   Server.vcxproj -> C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\x64\Release\Server.exe
