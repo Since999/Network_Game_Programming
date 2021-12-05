@@ -71,7 +71,8 @@ Player temp;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK ChildProc2(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
-
+void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime);
+void CALLBACK TimerProc2(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime);
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 	InitObstacle();
@@ -127,7 +128,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 TCHAR str[10];
 HWND hButton, hEdit;
 
-void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime);
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
@@ -167,56 +168,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		break;
 
 	
-	case WM_TIMER:
-		switch (wParam) {
-		case 1:
-			//if (Timer1Count > 0)
-			//	Timer1Count--;
-			break;
 
-		/*case 2:
-			Timer2Count++;
-			count++;
-			if (count - Timer2Count == 1) {
-				clientSend.keyInputDirection = 0;
-				retval = send(sock, (char*)&clientSend, clientSend.size, 0);
-				if (retval == SOCKET_ERROR) {
-					err_display("send()");
-					break;
-				}
-				else {
-					//p.pos = clientRecv2.player[clientRecv2.clientIndex].pos;
-
-					for (int i = 0; i < enemyNumber; ++i)
-						if (i == clientRecv2.enemy[0])
-							enemyList[i].isAlived = false;
-
-
-					for (int i = 0; i < itemNumber; ++i)
-						if (i == clientRecv2.item[0])
-							itemList[i].isAlived = false;
-
-				}
-
-
-
-				retval = recvn(sock, (char*)&clientRecv2, sizeof(clientRecv2), 0);
-
-
-				if (retval == 0) {
-					break;
-				}
-				p.pos = clientRecv2.player[clientRecv2.clientIndex].pos;
-				
-
-
-				InvalidateRgn(hWnd, NULL, FALSE);
-			}
-
-			break;*/
-		}
-		//InvalidateRect(hWnd, NULL, TRUE);
-		break;
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
@@ -431,23 +383,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					}
 				}
 			//}
-			
+				/*child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
+					0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);*/
 			InvalidateRgn(hWnd, NULL, FALSE);
 		}
 		break;
-	
+		case WM_TIMER:
+			//switch (wParam) {
+			//case 1:
+			//	if (Timer1Count > 0)
+			//		Timer1Count--;
+			//	break;
+
+			//case 2:
+			//	break;
+			//}
+		
+
+
+			break;
 	case WM_PAINT:
 		if (gamestate == GAME_RUNNING)
 		{
+			SetTimer(hWnd, 1, 3000, TimerProc2);
 			SetTimer(hWnd, 2, 33, TimerProc);
-			SetTimer(hWnd, 1, 3000, NULL);
+			
 			hdc = BeginPaint(hWnd, &ps);
 			hBit1 = CreateCompatibleBitmap(hdc, 800, 800);
 
 
 			mem1dc = CreateCompatibleDC(hdc);
 			mem2dc = CreateCompatibleDC(mem1dc);
-
+			
 			oldBit1 = (HBITMAP)SelectObject(mem1dc, hBit1);
 			oldBit2 = (HBITMAP)SelectObject(mem2dc, hBit2);
 
@@ -465,61 +432,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 
 
-			if (Timer1Count == 9)
-				hpList[4].isAlived = false;
-			else if (Timer1Count == 8)
-				hpList[3].isAlived = false;
-			else if (Timer1Count == 7)
-				hpList[2].isAlived = false;
-			else if (Timer1Count == 6)
-				hpList[1].isAlived = false;
-			else if (Timer1Count == 5)
-				hpList[0].isAlived = false;
-
-			if (exhpList[2].isAlived || exhpList[1].isAlived || exhpList[0].isAlived) {
-				if (Timer1Count == 4) {
-					if (exhpList[0].isAlived) {
-						if (exhpList[1].isAlived) {
-							if (exhpList[2].isAlived) {
-								exhpList[2].isAlived = false;
-							}
-							else exhpList[1].isAlived = false;
-						}
-						else exhpList[0].isAlived = false;
-					}
-				}
-
-				else if (Timer1Count == 3) {
-					if (exhpList[0].isAlived) {
-						if (exhpList[1].isAlived) {
-							if (exhpList[2].isAlived) {
-								exhpList[2].isAlived = false;
-							}
-							else exhpList[1].isAlived = false;
-						}
-						else exhpList[0].isAlived = false;
-					}
-				}
-
-				else if (Timer1Count == 2) {
-					if (exhpList[0].isAlived) {
-						if (exhpList[1].isAlived) {
-							if (exhpList[2].isAlived) {
-								exhpList[2].isAlived = false;
-							}
-							else exhpList[1].isAlived = false;
-						}
-						else exhpList[0].isAlived = false;
-					}
-				}
-			}
-
-			if (!exhpList[2].isAlived && !exhpList[1].isAlived && !exhpList[0].isAlived
-				&& !hpList[0].isAlived && !hpList[1].isAlived && !hpList[2].isAlived
-				&& !hpList[3].isAlived && !hpList[4].isAlived) {
-				TextOut(mem1dc, 350, 100, L"GAME OVER", strlen("GAME OVER"));
-				p.isAlived = false;
-			}
+			
 
 
 			TextOut(mem1dc, 80, 32, L"HP", strlen("HP"));
@@ -545,6 +458,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			DeleteDC(mem2dc);
 
 			EndPaint(hWnd, &ps);
+			//SendMessage(hWnd, WM_TIMER, 1, 0);
+		}
+		else if (gamestate == GAME_SET)
+		{
+				child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
+				0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
 		}
 		break;
 	
@@ -595,7 +514,7 @@ void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime)
 			for (int i = 0; i < itemNumber; ++i)
 				if (i == clientRecv2.item[0]) {
 					itemList[i].isAlived = false;
-					/*if (!exhpList[2].isAlived) {
+					if (!exhpList[2].isAlived) {
 						if (!exhpList[1].isAlived) {
 							if (!exhpList[0].isAlived) {
 								exhpList[0].isAlived = true;
@@ -603,7 +522,7 @@ void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime)
 							else exhpList[1].isAlived = true;
 						}
 						else exhpList[2].isAlived = true;
-					}*/
+					}
 				}
 
 		//}
@@ -627,12 +546,79 @@ void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime)
 
 				}
 
-		InvalidateRgn(hWnd, NULL, FALSE);
+		//InvalidateRgn(hWnd, NULL, FALSE);
 	}
 
 	ReleaseDC(hWnd, hdc);
 }
+void CALLBACK TimerProc2(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime)
+{
+	static int Timer1Count = 10;
+	Timer1Count--;
+	printf("%d\n", Timer1Count);
+	
+	{
+		if (Timer1Count == 9)
+			hpList[4].isAlived = false;
+		else if (Timer1Count == 8)
+			hpList[3].isAlived = false;
+		else if (Timer1Count == 7)
+			hpList[2].isAlived = false;
+		else if (Timer1Count == 6)
+			hpList[1].isAlived = false;
+		else if (Timer1Count == 5)
+			hpList[0].isAlived = false;
 
+		if (exhpList[2].isAlived || exhpList[1].isAlived || exhpList[0].isAlived) {
+			if (Timer1Count == 4) {
+				if (exhpList[0].isAlived) {
+					if (exhpList[1].isAlived) {
+						if (exhpList[2].isAlived) {
+							exhpList[2].isAlived = false;
+						}
+						else exhpList[1].isAlived = false;
+					}
+					else exhpList[0].isAlived = false;
+				}
+			}
+
+			else if (Timer1Count == 3) {
+				if (exhpList[0].isAlived) {
+					if (exhpList[1].isAlived) {
+						if (exhpList[2].isAlived) {
+							exhpList[2].isAlived = false;
+						}
+						else exhpList[1].isAlived = false;
+					}
+					else exhpList[0].isAlived = false;
+				}
+			}
+
+			else if (Timer1Count == 2) {
+				if (exhpList[0].isAlived) {
+					if (exhpList[1].isAlived) {
+						if (exhpList[2].isAlived) {
+							exhpList[2].isAlived = false;
+						}
+						else exhpList[1].isAlived = false;
+					}
+					else exhpList[0].isAlived = false;
+				}
+			}
+		}
+
+		if (!exhpList[2].isAlived && !exhpList[1].isAlived && !exhpList[0].isAlived
+			&& !hpList[0].isAlived && !hpList[1].isAlived && !hpList[2].isAlived
+			&& !hpList[3].isAlived && !hpList[4].isAlived) {
+			//TextOut(mem1dc, 350, 100, L"GAME OVER", strlen("GAME OVER"));
+			p.isAlived = false;
+		}
+
+		InvalidateRgn(hWnd, NULL, FALSE);
+	}
+
+	
+}
 LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
@@ -716,6 +702,12 @@ LRESULT CALLBACK ChildProc2(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 		{
 		case IDC_BUTTON:
 
+
+			InitObstacle();
+			InitItem();
+			InitEnemy();
+			InitHpBar();
+			InitExHp();
 			hdc = GetDC(hWnd);
 			DestroyWindow(hWnd);
 			ReleaseDC(hWnd, hdc);
