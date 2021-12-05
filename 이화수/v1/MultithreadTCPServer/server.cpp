@@ -62,6 +62,7 @@ int clientCnt=0;
 sc_recv_struct SeverRecv;
 //sc_send_struct1 SeverSend1;
 sc_send_struct2 SeverSend2;
+Position Pos;
 
 void InitWall()
 {
@@ -213,7 +214,8 @@ void InitEnemy()
 	enemyList[34].pos.x = 5;
 	enemyList[34].pos.y = 11;
 
-
+	for (int i = 0;i < 35;i++)
+		enemyList[i].isAlived = true;
 
 }
 void InitItem()
@@ -226,6 +228,21 @@ void InitItem()
 
 	itemList[2].pos.x = 2;
 	itemList[2].pos.y = 7;
+	for (int i = 0;i < 3;i++)
+		itemList[i].isAlived = true;
+}
+void InitPlayer(Player p[]) {
+	for (int i = 0;i < 3;i++)
+	{
+		p[i].pos = Pos;
+		p[i].isAlived = true;
+		p[i].rank = 0;
+		p[i].score = 0;
+		p[i].hp = 5;
+		p[i].exhpList = 0;
+
+	}
+	
 }
 /*void InitExHp()
 {
@@ -357,22 +374,20 @@ void CheckPlayerByItemCollision(Player& p)
 			if (itemList[i].isAlived) {
 				itemList[i].isAlived = false;
 				SeverSend2.item[0] = i;
-				
-				if (!p.exhpList[2].isAlived) {
-					if (!p.exhpList[1].isAlived) {
-						if (!p.exhpList[0].isAlived) {
-							p.exhpList[0].isAlived = true;
-						}
-						else p.exhpList[1].isAlived = true;
-					}
-					else p.exhpList[2].isAlived = true;
+				if (p.hp > 4)
+				{
+					p.exhpList++;
+				}
+				else
+				{
+					p.hp++;
+				}
+
 				}
 				
 				break;
 			}
-		}
-
-}
+	}
 void CheckPlayerByPlayerCollision(int key, Player& p, int clientIndex)
 {
 
@@ -457,9 +472,15 @@ int isGameOver(Player p[])
 	int cnt = 0;
 	for (int i = 0; i < 3; i++)
 	{
-		if (p[i].hp <= 0)
+		if (p[i].hp <= 0 && p[i].exhpList <= 0)
+		{
 			cnt++;
+			
+		}
+		/*p[i].isAlived = false;
+		printf("asd : %d\n", p[i].isAlived);*/
 	}
+	
 	if (cnt == 3)
 		return GAME_SET;
 	else
@@ -477,7 +498,7 @@ void UpdatePlayer(Player p[])
 	for (int i = 0; i < 3; i++)
 	{
 		for (int j = 0; j < 3; j++) {
-			SeverSend2.players[i].exhpList[j] = p[i].exhpList[j];
+			//SeverSend2.players[i].exhpList[j] = p[i].exhpList[j];
 
 		}
 
@@ -593,6 +614,17 @@ int main() {
 		hThread = CreateThread(NULL, 0, ProcessClient, (LPVOID)client_sock, 0, NULL);
 		if (hThread == NULL) { closesocket(client_sock); }
 		else { CloseHandle(hThread); }
+
+		if (clientCnt == 3)
+		{
+			
+			clientCnt = 0;
+			InitEnemy();
+			InitItem();
+			InitPlayer(player);
+			//InitWall();
+			//break;
+		}
 	}
 
 	// 임계 영역 종료

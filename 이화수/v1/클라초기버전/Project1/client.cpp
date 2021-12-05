@@ -26,7 +26,7 @@ void err_display(const char* msg)
 		NULL, WSAGetLastError(),
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(LPTSTR)&lpMsgBuf, 0, NULL);
-	printf("[%s] %s", msg, (char*)lpMsgBuf);
+	//printf("[%s] %s", msg, (char*)lpMsgBuf);
 	LocalFree(lpMsgBuf);
 }
 // 사용자 정의 데이터 수신 함수
@@ -81,7 +81,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 	InitHpBar();
 	InitExHp();
 	gamestate = GAME_READY;
-	p.hp = 1;
+	p.hp = 0;
 	
 	HWND hWnd;
 	MSG Message;
@@ -109,6 +109,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 		WndClass.lpfnWndProc = ChildProc;
 		RegisterClassEx(&WndClass);
 
+		WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 		WndClass.lpszClassName = lpszClass3;
 		WndClass.lpfnWndProc = ChildProc2;
 		RegisterClassEx(&WndClass);
@@ -164,6 +165,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			
 
 		}
+		
 
 		break;
 
@@ -174,8 +176,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 		case IDC_BUTTON:
 			hdc = GetDC(hWnd);
-			gamestate = GAME_SET;
-			printf("%d\n", gamestate);
+			
+			/*printf("%d\n", gamestate);*/
 			ReleaseDC(hWnd, hdc);
 
 			break;
@@ -214,7 +216,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 						{
 							p.pos = clientRecv2.player->pos;
 							p.score = clientRecv2.player->score;
-							std::cout << "score: " << clientRecv2.player->score << endl;
 
 							for (int i = 0; i < enemyNumber; ++i)
 								if(i==clientRecv2.enemy[0])
@@ -229,8 +230,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 							
 
 							if (Timer1Count > 4) {
-								for (int i = 0; i < extrahpNumber; ++i)
-									exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;
+								//for (int i = 0; i < extrahpNumber; ++i)
+								//	exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;
 
 							}
 
@@ -256,7 +257,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 						{
 							p.pos = clientRecv2.player->pos;
 							p.score = clientRecv2.player->score;
-							std::cout << "score: " << clientRecv2.player->score << endl;
+							
 
 							for (int i = 0; i < enemyNumber; ++i)
 								if (i == clientRecv2.enemy[0])
@@ -266,8 +267,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 							
 
 							if (Timer1Count > 4) {
-								for (int i = 0; i < extrahpNumber; ++i)
-									exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;
+								
+								//for (int i = 0; i < extrahpNumber; ++i)
+								//	exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;
 
 							}
 						}
@@ -293,7 +295,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 						{
 							p.pos = clientRecv2.player->pos;
 							p.score = clientRecv2.player->score;
-							std::cout << "score: " << clientRecv2.player->score << endl;
 
 							for (int i = 0; i < enemyNumber; ++i)
 								if (i == clientRecv2.enemy[0])
@@ -303,8 +304,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 							
 
 							if (Timer1Count > 4) {
-								for (int i = 0; i < extrahpNumber; ++i)
-									exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;
+								//for (int i = 0; i < extrahpNumber; ++i)
+									//exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;
 
 							}
 
@@ -326,7 +327,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 						{
 							p.pos = clientRecv2.player->pos;
 							p.score = clientRecv2.player->score;
-							std::cout << "score: " << clientRecv2.player->score << endl;
 
 							for (int i = 0; i < enemyNumber; ++i)
 								if (i == clientRecv2.enemy[0])
@@ -336,8 +336,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 							
 
 							if (Timer1Count > 4) {
-								for (int i = 0; i < extrahpNumber; ++i)
-									exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;
+								//for (int i = 0; i < extrahpNumber; ++i)
+								//	exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;
 
 							}
 
@@ -361,7 +361,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					{
 						p.pos = clientRecv2.player->pos;
 						p.score = clientRecv2.player->score;
-						std::cout << "score: " << clientRecv2.player->score << endl;
 
 						for (int i = 0; i < enemyNumber; ++i)
 							if (i == clientRecv2.enemy[0])
@@ -372,8 +371,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 
 						if (Timer1Count > 4) {
-							for (int i = 0; i < extrahpNumber; ++i)
-								exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;
+							//for (int i = 0; i < extrahpNumber; ++i)
+							//	exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;
 
 						}
 
@@ -383,8 +382,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					}
 				}
 			//}
-				/*child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
-					0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);*/
+				child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
+					0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
 			InvalidateRgn(hWnd, NULL, FALSE);
 		}
 		break;
@@ -405,12 +404,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		if (gamestate == GAME_RUNNING)
 		{
+			//SendMessage(hWnd, WM_TIMER, 1, 0);
 			SetTimer(hWnd, 1, 3000, TimerProc2);
 			SetTimer(hWnd, 2, 33, TimerProc);
 			
 			hdc = BeginPaint(hWnd, &ps);
 			hBit1 = CreateCompatibleBitmap(hdc, 800, 800);
-
 
 			mem1dc = CreateCompatibleDC(hdc);
 			mem2dc = CreateCompatibleDC(mem1dc);
@@ -496,6 +495,7 @@ void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime)
 	//SelectObject(hdc, OldPen); DeleteObject(MyBrush); DeleteObject(MyPen);
 	Timer2Count++;
 	count++;
+	
 	if (count - Timer2Count == 1) {
 		clientSend.keyInputDirection = 0;
 		retval = send(sock, (char*)&clientSend, clientSend.size, 0);
@@ -536,17 +536,13 @@ void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime)
 			break;
 		}*/
 		p.pos = clientRecv2.player[clientRecv2.clientIndex].pos;
+		p.isAlived = clientRecv2.player[clientRecv2.clientIndex].isAlived;
 
-				if (gamestate == GAME_SET)
-				{
-					/*child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
-						0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);*/
-					//DestroyWindow(hWnd);
+		/*printf("%d\n", p.isAlived);*/
+				
+				
 
-
-				}
-
-		//InvalidateRgn(hWnd, NULL, FALSE);
+		InvalidateRgn(hWnd, NULL, FALSE);
 	}
 
 	ReleaseDC(hWnd, hdc);
@@ -555,7 +551,7 @@ void CALLBACK TimerProc2(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime)
 {
 	static int Timer1Count = 10;
 	Timer1Count--;
-	printf("%d\n", Timer1Count);
+	//printf("%d\n", Timer1Count);
 	
 	{
 		if (Timer1Count == 9)
@@ -613,7 +609,8 @@ void CALLBACK TimerProc2(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime)
 			//TextOut(mem1dc, 350, 100, L"GAME OVER", strlen("GAME OVER"));
 			p.isAlived = false;
 		}
-
+		if(hpList[0].isAlived==false)//&&exhpList[0].isAlived==false)
+			//gamestate = GAME_SET;
 		InvalidateRgn(hWnd, NULL, FALSE);
 	}
 
@@ -643,7 +640,7 @@ LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 
 			gamestate = GAME_RUNNING;
 			
-			printf("%d\n", gamestate);
+			
 			int retval;
 
 			// 윈속 초기화
@@ -689,6 +686,8 @@ LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 LRESULT CALLBACK ChildProc2(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
+	hdc = GetDC(hWnd);
+	HWND child_hWnd;
 	char s[10];
 	int len = 10;
 	switch (iMessage) {
@@ -708,9 +707,13 @@ LRESULT CALLBACK ChildProc2(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 			InitEnemy();
 			InitHpBar();
 			InitExHp();
-			hdc = GetDC(hWnd);
+			
+			child_hWnd = CreateWindow(lpszClass2, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
+				0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
 			DestroyWindow(hWnd);
 			ReleaseDC(hWnd, hdc);
+
+			
 
 			break;
 

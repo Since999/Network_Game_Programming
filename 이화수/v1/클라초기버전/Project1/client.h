@@ -58,9 +58,9 @@ public:
 	char playerID[10];             // 로그인시 사용할 ID
 	bool isAlived{ true };         // 생사여부
 
-	EXHP exhpList[3];
+	int exhpList=0;
 
-	int hp;                        // 생사를 결정하는 HP
+	int hp=5;                        // 생사를 결정하는 HP
 	int score{ 0 };                // Enemy를 잡으면 1 상승 (승패 결정)
 	int rank;                      // 최종 순위
 };

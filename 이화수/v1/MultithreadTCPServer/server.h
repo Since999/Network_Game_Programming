@@ -32,8 +32,9 @@ int gameState = GAME_READY;
 
 
 struct Position {
-	float x, y;
+	float x, y=0;
 };
+
 
 
 struct EXHP {
@@ -48,7 +49,7 @@ public:
 	bool isAlived{ true };				// 생사여부
 	int hp;						// 생사를 결정하는 HP
 
-	EXHP exhpList[3];
+	int exhpList;
 
 	int score{ 0 };					// Enemy를 잡으면 1 상승 (승패 결정)
 	int rank{ 3 };					// 최종 순위
@@ -82,7 +83,7 @@ struct sc_send_struct2 {
 	Player players[3];
 	int enemy[3];
 	int item[3];
-	//EXHP exhpList[3];
+	//int exhpList;
 	int clientIndex;			// 해당 클라이언트의 인덱스
 
 };
