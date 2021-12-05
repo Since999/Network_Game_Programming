@@ -133,7 +133,8 @@ sc_recv_struct ServerRecv;
 SOCKET listen_sock;
 SOCKET clientSock[3];
 
-
+HANDLE hWriteEvent;
+HANDLE hClientEvent[PLAYER_MAX];
 
 void InitObstacle();
 void InitItem();

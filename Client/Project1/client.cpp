@@ -51,16 +51,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 
-	//while (GetMessage(&Message, 0, 0, 0)) {
-	//	TranslateMessage(&Message);
-	//	DispatchMessage(&Message);
-	//}
-
 	while (Message.message != WM_QUIT) {	
-		//if (lastTime + 100 < curTime) {
-		//	lastTime = curTime;
-		//}
-
 		if (PeekMessage(&Message, NULL, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&Message);
 			DispatchMessage(&Message);
@@ -68,9 +59,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 		else {
 			curTime = GetTickCount();
 			if (curTime - lastTime >= 33) {
-				Update();
+		 		Update();
 				//Render();
-				InvalidateRect(hWnd, NULL, TRUE);
+				InvalidateRect(hWnd, NULL, FALSE);
 				lastTime = GetTickCount();
 			}
 		}
@@ -231,27 +222,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 			//SetTimer(hWnd, 2, 33, TimerProc);
 			//SetTimer(hWnd, 1, 3000, NULL);
+			static HDC hdc, MemDC, tmpDC;
+			static HBITMAP BackBit, oldBackBit;
+			static RECT bufferRT;
+
 			hdc = BeginPaint(hWnd, &ps);
-			hBit1 = CreateCompatibleBitmap(hdc, 800, 800);
+			GetClientRect(hWnd, &bufferRT);
+			MemDC = CreateCompatibleDC(hdc);
+			BackBit = CreateCompatibleBitmap(hdc, bufferRT.right, bufferRT.bottom);
+			oldBackBit = (HBITMAP)SelectObject(MemDC, BackBit);
+			PatBlt(MemDC, 0, 0, bufferRT.right, bufferRT.bottom, WHITENESS);
+			tmpDC = hdc;
+			hdc = MemDC;
+			MemDC = tmpDC;
 
+	
 
-			mem1dc = CreateCompatibleDC(hdc);
-			mem2dc = CreateCompatibleDC(mem1dc);
-
-			oldBit1 = (HBITMAP)SelectObject(mem1dc, hBit1);
-			oldBit2 = (HBITMAP)SelectObject(mem2dc, hBit2);
-
-			Rectangle(mem1dc, 0, 0, 800, 800);
-			Rectangle(mem2dc, 0, 0, 800, 800);
-
-
-			DrawBoard(mem1dc, boardCount, xS, yS);
-			DrawEnemy(mem1dc, xS, yS);
-			DrawPlayer(mem1dc, xS, yS, clientRecv2);
-			DrawObstacle(mem1dc, xS, yS);
-			DrawItem(mem1dc, xS, yS);
-			DrawHp(mem1dc, xS, yS);
-			DrawExHp(mem1dc, xS, yS);
+			DrawBoard(hdc, boardCount, xS, yS);
+			DrawEnemy(hdc, xS, yS);
+			DrawPlayer(hdc, xS, yS, clientRecv2);
+			DrawObstacle(hdc, xS, yS);
+			DrawItem(hdc, xS, yS);
+			DrawHp(hdc, xS, yS);
+			DrawExHp(hdc, xS, yS);
 
 
 
@@ -307,32 +300,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			if (!exhpList[2].isAlived && !exhpList[1].isAlived && !exhpList[0].isAlived
 				&& !hpList[0].isAlived && !hpList[1].isAlived && !hpList[2].isAlived
 				&& !hpList[3].isAlived && !hpList[4].isAlived) {
-				TextOut(mem1dc, 350, 100, L"GAME OVER", strlen("GAME OVER"));
+				TextOut(hdc, 350, 100, L"GAME OVER", strlen("GAME OVER"));
 				p.isAlived = false;
 			}
 
 
-			TextOut(mem1dc, 80, 32, L"HP", strlen("HP"));
-			DrawHp(mem1dc, xS, yS);
+			TextOut(hdc, 80, 32, L"HP", strlen("HP"));
+			DrawHp(hdc, xS, yS);
 
 
-			TextOut(mem1dc, 450, 32, L"EXTRA", strlen("EXTRA"));
-			DrawExHp(mem1dc, xS, yS);
+			TextOut(hdc, 450, 32, L"EXTRA", strlen("EXTRA"));
+			DrawExHp(hdc, xS, yS);
 
 
-			BitBlt(hdc, 0, 0, 800, 800, mem1dc, 0, 0, SRCCOPY);
-			BitBlt(mem1dc, 0, 0, 800, 800, mem2dc, 0, 0, SRCCOPY);
-
-			if (hBit1 == NULL) {
-				hBit1 = CreateCompatibleBitmap(hdc, 800, 800);
-			}
-
-			if (hBit2 == NULL) {
-				hBit2 = CreateCompatibleBitmap(mem1dc, 800, 800);
-			}
-
-			DeleteDC(mem1dc);
-			DeleteDC(mem2dc);
+			tmpDC = hdc;
+			hdc = MemDC;
+			MemDC = tmpDC;
+			GetClientRect(hWnd, &bufferRT);
+			BitBlt(hdc, 0, 0, bufferRT.right, bufferRT.bottom, MemDC, 0, 0, SRCCOPY);
+			SelectObject(MemDC, oldBackBit);
+			DeleteObject(BackBit);
+			DeleteDC(MemDC);
 
 			EndPaint(hWnd, &ps);
 		}
