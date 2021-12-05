@@ -62,7 +62,7 @@ public:
 
 	int hp=5;                        // 생사를 결정하는 HP
 	int score{ 0 };                // Enemy를 잡으면 1 상승 (승패 결정)
-	int rank;                      // 최종 순위
+	int rank=3;                      // 최종 순위
 };
 
 struct Obstacle {

@@ -236,7 +236,7 @@ void InitPlayer(Player p[]) {
 	{
 		p[i].pos = Pos;
 		p[i].isAlived = true;
-		p[i].rank = 0;
+		p[i].rank = 3;
 		p[i].score = 0;
 		p[i].hp = 5;
 		p[i].exhpList = 0;
@@ -263,7 +263,7 @@ void MovePlayer(int key, Player& p, int clientIndex)
 		if (p.pos.x > 0)
 			p.pos.x--;
 		CheckPlayerByWallCollision(key, p);
-		CheckPlayerByEnemyCollision(p);
+		CheckPlayerByEnemyCollision(p, clientIndex);
 		CheckPlayerByItemCollision(p);
 		CheckPlayerByPlayerCollision(key, p, clientIndex);
 	}
@@ -272,7 +272,7 @@ void MovePlayer(int key, Player& p, int clientIndex)
 		if (p.pos.x < 11)
 			p.pos.x++;
 		CheckPlayerByWallCollision(key,p);
-		CheckPlayerByEnemyCollision(p);
+		CheckPlayerByEnemyCollision(p, clientIndex);
 		CheckPlayerByItemCollision(p);
 		CheckPlayerByPlayerCollision(key, p, clientIndex);
 	}
@@ -281,7 +281,7 @@ void MovePlayer(int key, Player& p, int clientIndex)
 		if (p.pos.y > 0)
 			p.pos.y--;
 		CheckPlayerByWallCollision(key, p);
-		CheckPlayerByEnemyCollision(p);
+		CheckPlayerByEnemyCollision(p, clientIndex);
 		CheckPlayerByItemCollision(p);
 		CheckPlayerByPlayerCollision(key, p, clientIndex);
 	}
@@ -290,7 +290,7 @@ void MovePlayer(int key, Player& p, int clientIndex)
 		if (p.pos.y < 11)
 			p.pos.y++;
 		CheckPlayerByWallCollision(key, p);
-		CheckPlayerByEnemyCollision(p);
+		CheckPlayerByEnemyCollision(p, clientIndex);
 		CheckPlayerByItemCollision(p);
 		CheckPlayerByPlayerCollision(key, p, clientIndex);
 	}
@@ -350,7 +350,7 @@ void CheckPlayerByWallCollision(int key, Player& p)
 	}
 
 }
-void CheckPlayerByEnemyCollision(Player& p)
+void CheckPlayerByEnemyCollision(Player& p, int clientIndex)
 {
 	for (int i = 0;i < 35;i++)
 		if (p.pos.x == enemyList[i].pos.x && p.pos.y == enemyList[i].pos.y)
@@ -358,8 +358,8 @@ void CheckPlayerByEnemyCollision(Player& p)
 			if (enemyList[i].isAlived) {
 				enemyList[i].isAlived = false;
 				++p.score;
-				SeverSend2.enemy[0] = i;
-				printf("%d 충돌\n", i);
+				SeverSend2.enemy[clientIndex] = i;
+				printf("%d %d 충돌\n",clientIndex, i);
 				
 				break;
 			}

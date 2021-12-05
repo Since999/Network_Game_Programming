@@ -214,16 +214,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 						}
 						else
 						{
-							p.pos = clientRecv2.player->pos;
-							p.score = clientRecv2.player->score;
+							p.pos = clientRecv2.player[clientRecv2.clientIndex].pos;
+							p.score = clientRecv2.player[clientRecv2.clientIndex].score;
 
 							for (int i = 0; i < enemyNumber; ++i)
-								if(i==clientRecv2.enemy[0])
+								for (int j = 0; j < 3; ++j)
+								if(i==clientRecv2.enemy[j])
 								   enemyList[i].isAlived = false;
 							
 
 							for (int i = 0; i < itemNumber; ++i)
-								if (i == clientRecv2.item[0])
+								for (int j = 0; j < 3; ++j)
+									if (i == clientRecv2.item[j])
 									itemList[i].isAlived = false;
 
 
@@ -255,16 +257,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 						}
 						else
 						{
-							p.pos = clientRecv2.player->pos;
-							p.score = clientRecv2.player->score;
-							
+							p.pos = clientRecv2.player[clientRecv2.clientIndex].pos;
+							p.score = clientRecv2.player[clientRecv2.clientIndex].score;
+
 
 							for (int i = 0; i < enemyNumber; ++i)
-								if (i == clientRecv2.enemy[0])
-									enemyList[i].isAlived = false;
+								for (int j = 0; j < 3; ++j)
+									if (i == clientRecv2.enemy[j])
+										enemyList[i].isAlived = false;
 
 
-							
+							for (int i = 0; i < itemNumber; ++i)
+								for (int j = 0; j < 3; ++j)
+									if (i == clientRecv2.item[j])
+										itemList[i].isAlived = false;
+
 
 							if (Timer1Count > 4) {
 								
@@ -293,15 +300,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 						}
 						else
 						{
-							p.pos = clientRecv2.player->pos;
-							p.score = clientRecv2.player->score;
+							p.pos = clientRecv2.player[clientRecv2.clientIndex].pos;
+							p.score = clientRecv2.player[clientRecv2.clientIndex].score;
 
 							for (int i = 0; i < enemyNumber; ++i)
-								if (i == clientRecv2.enemy[0])
-									enemyList[i].isAlived = false;
+								for (int j = 0; j < 3; ++j)
+									if (i == clientRecv2.enemy[j])
+										enemyList[i].isAlived = false;
 
 
-							
+							for (int i = 0; i < itemNumber; ++i)
+								for (int j = 0; j < 3; ++j)
+									if (i == clientRecv2.item[j])
+										itemList[i].isAlived = false;
+
 
 							if (Timer1Count > 4) {
 								//for (int i = 0; i < extrahpNumber; ++i)
@@ -325,13 +337,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 						}
 						else
 						{
-							p.pos = clientRecv2.player->pos;
-							p.score = clientRecv2.player->score;
+							p.pos = clientRecv2.player[clientRecv2.clientIndex].pos;
+							p.score = clientRecv2.player[clientRecv2.clientIndex].score;
 
 							for (int i = 0; i < enemyNumber; ++i)
-								if (i == clientRecv2.enemy[0])
-									enemyList[i].isAlived = false;
+								for (int j = 0; j < 3; ++j)
+									if (i == clientRecv2.enemy[j])
+										enemyList[i].isAlived = false;
 
+
+							for (int i = 0; i < itemNumber; ++i)
+								for (int j = 0; j < 3; ++j)
+									if (i == clientRecv2.item[j])
+										itemList[i].isAlived = false;
 
 							
 
@@ -359,13 +377,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 					}
 					else
 					{
-						p.pos = clientRecv2.player->pos;
-						p.score = clientRecv2.player->score;
+						p.pos = clientRecv2.player[clientRecv2.clientIndex].pos;
+						p.score = clientRecv2.player[clientRecv2.clientIndex].score;
 
 						for (int i = 0; i < enemyNumber; ++i)
-							if (i == clientRecv2.enemy[0])
-								enemyList[i].isAlived = false;
+							for (int j = 0; j < 3; ++j)
+								if (i == clientRecv2.enemy[j])
+									enemyList[i].isAlived = false;
 
+
+						for (int i = 0; i < itemNumber; ++i)
+							for (int j = 0; j < 3; ++j)
+								if (i == clientRecv2.item[j])
+									itemList[i].isAlived = false;
 
 						
 
@@ -375,15 +399,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 							//	exhpList[i].isAlived = clientRecv2.player->exhpList[i].isAlived;
 
 						}
-
+						p.score = clientRecv2.player[clientRecv2.clientIndex].score;
 					}
 
 
 					}
 				}
 			//}
-				child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
-					0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
+				/*child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
+					0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);*/
+				//Sleep(100);
 			InvalidateRgn(hWnd, NULL, FALSE);
 		}
 		break;
@@ -506,9 +531,7 @@ void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime)
 		//else {
 			//p.pos = clientRecv2.player[clientRecv2.clientIndex].pos;
 
-			for (int i = 0; i < enemyNumber; ++i)
-				if (i == clientRecv2.enemy[0])
-					enemyList[i].isAlived = false;
+			
 
 
 			for (int i = 0; i < itemNumber; ++i)
@@ -531,16 +554,19 @@ void CALLBACK TimerProc(HWND hWnd, UINT iMessage, UINT idEvent, DWORD dwTime)
 
 		retval = recvn(sock, (char*)&clientRecv2, sizeof(clientRecv2), 0);
 
-
+		for (int i = 0; i < enemyNumber; ++i)
+			for (int j = 0; j < 3; ++j)
+				if (i == clientRecv2.enemy[j])
+					enemyList[i].isAlived = false;
 		/*if (retval == 0) {
 			break;
 		}*/
 		p.pos = clientRecv2.player[clientRecv2.clientIndex].pos;
 		p.isAlived = clientRecv2.player[clientRecv2.clientIndex].isAlived;
-
+		p.score = clientRecv2.player[clientRecv2.clientIndex].score;
 		/*printf("%d\n", p.isAlived);*/
 				
-				
+		printf("%d\n", p.score);
 
 		InvalidateRgn(hWnd, NULL, FALSE);
 	}
