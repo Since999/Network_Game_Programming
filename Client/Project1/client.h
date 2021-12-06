@@ -23,7 +23,7 @@ using namespace std;
 #define oneSize 50
 #define boardSize 500
 //#define SERVERIP   "220.120.241.242"
- #define SERVERIP "127.0.0.1"
+#define SERVERIP "127.0.0.1"
 
 #define PLAYER_SPEED 10			// 플레이어 속도
 #define GAME_READY 11			// 접속한 클라이언트 수 < 3

@@ -111,7 +111,7 @@ struct sc_send_struct2 {
 };*/
 
 struct sc_recv_struct {
-	char size=20U;
+	char size = 20U;
 	char type;
 	int keyInputDirection;		// 클라이언트에서의 키입력 정보
 	char playerID[10];			// 해당 클라이언트의 ID
@@ -154,11 +154,11 @@ void RecvData(sc_recv_struct* r_data);	// sc_recv_struct 구조체 수신
 
 void MakeRank();						// GAME_SET에서 세 클라이언트의 순위 결정
 
-void MovePlayer(int key,Player& p, int clientIndex);				// 플레이어의 위치 정보 갱신
+void MovePlayer(int key, Player& p, int clientIndex);				// 플레이어의 위치 정보 갱신
 void UpdatePlayer(Player& p, int clientIndex);			// 플레이어의 정보 갱신
 
-void CheckPlayerByWallCollision(int key ,Player& p);		// 플레이어와 벽의 충돌 체크
-void CheckPlayerByPlayerCollision(int key, Player& p,int clientIndex);	// 플레이어간의 충돌 체크
+void CheckPlayerByWallCollision(int key, Player& p);		// 플레이어와 벽의 충돌 체크
+void CheckPlayerByPlayerCollision(int key, Player& p, int clientIndex);	// 플레이어간의 충돌 체크
 void CheckPlayerByEnemyCollision(Player& p, int clientIndex);		// 플레이어와 Enemy의 충돌 체크
 void CheckPlayerByItemCollision(Player& p, int clientIndex);		// 플레이어와 Item의 충돌 체크
 
@@ -174,5 +174,4 @@ int isGameOver(Player p[]);						// 종료 조건 처리 (죽은 플레이어 �
 int recvn(SOCKET s, char* buf, int len, int flags);
 void err_quit(const char* msg);
 void err_display(const char* msg);
-
 

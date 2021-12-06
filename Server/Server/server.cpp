@@ -46,7 +46,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			break;
 		}
 		}
-
+		
 		/*	switch (clientIndex) {
 			case 0:
 				SetEvent(hClientEvent[1]);
@@ -112,13 +112,22 @@ int main() {
 	while (1) {
 		if (clientCnt < PLAYER_MAX) {
 			Accept(clientCnt);
+			EnterCriticalSection(&cs);
 			clientCnt++;
-		}
-		if (clientCnt == PLAYER_MAX) {
-			gameState = GAME_RUNNING;
+			LeaveCriticalSection(&cs);
 		}
 
-		switch(gameState) {
+		switch (gameState) {
+		case GAME_READY:
+			if (clientCnt == PLAYER_MAX) {
+				gameState = GAME_RUNNING;
+				ServerSend2.gameState = gameState;
+				for (int i = 0; i < PLAYER_MAX; i++) {
+					retval = send(clientSock[i], (char*)&ServerSend2, sizeof(ServerSend2), 0);
+				}
+			}
+			break;
+
 		case GAME_RUNNING:
 			curTime = GetTickCount();
 			if (curTime - lastTime >= FPS) {
@@ -166,7 +175,7 @@ void Accept(int clientIndex) {
 
 void Update()
 {
-	
+
 }
 
 void MovePlayer(int key, Player& p, int clientIndex)
@@ -184,7 +193,7 @@ void MovePlayer(int key, Player& p, int clientIndex)
 	{
 		if (p.pos.x < 11)
 			p.pos.x++;
-		CheckPlayerByWallCollision(key,p);
+		CheckPlayerByWallCollision(key, p);
 		CheckPlayerByEnemyCollision(p, clientIndex);
 		CheckPlayerByItemCollision(p, clientIndex);
 		CheckPlayerByPlayerCollision(key, p, clientIndex);
@@ -214,7 +223,7 @@ void CheckPlayerByWallCollision(int key, Player& p)
 	switch (key)
 	{
 	case MOVE_LEFT:
-		for (int i = 0;i < 36;i++)
+		for (int i = 0; i < 36; i++)
 		{
 			if (List[i].pos.x == p.pos.x && List[i].pos.y == p.pos.y)
 			{
@@ -224,7 +233,7 @@ void CheckPlayerByWallCollision(int key, Player& p)
 		}
 		break;
 	case MOVE_RIGHT:
-		for (int i = 0;i < 36;i++)
+		for (int i = 0; i < 36; i++)
 		{
 			if (List[i].pos.x == p.pos.x && List[i].pos.y == p.pos.y)
 			{
@@ -234,7 +243,7 @@ void CheckPlayerByWallCollision(int key, Player& p)
 		}
 		break;
 	case MOVE_UP:
-		for (int i = 0;i < 36;i++)
+		for (int i = 0; i < 36; i++)
 		{
 			if (List[i].pos.x == p.pos.x && List[i].pos.y == p.pos.y)
 			{
@@ -244,7 +253,7 @@ void CheckPlayerByWallCollision(int key, Player& p)
 		}
 		break;
 	case MOVE_DOWN:
-		for (int i = 0;i < 36;i++)
+		for (int i = 0; i < 36; i++)
 		{
 			if (List[i].pos.x == p.pos.x && List[i].pos.y == p.pos.y)
 			{
@@ -261,7 +270,7 @@ void CheckPlayerByWallCollision(int key, Player& p)
 }
 void CheckPlayerByEnemyCollision(Player& p, int clientIndex)
 {
-	for (int i = 0;i < 35;i++)
+	for (int i = 0; i < 35; i++)
 		if (p.pos.x == enemyList[i].pos.x && p.pos.y == enemyList[i].pos.y)
 		{
 			if (enemyList[i].isAlived) {
@@ -269,7 +278,7 @@ void CheckPlayerByEnemyCollision(Player& p, int clientIndex)
 				++p.score;
 				ServerSend2.enemy[clientIndex] = i;
 				printf("%d %d 충돌\n", clientIndex, i);
-				
+
 				break;
 			}
 		}
@@ -283,7 +292,7 @@ void CheckPlayerByItemCollision(Player& p, int clientIndex)
 			if (itemList[i].isAlived) {
 				itemList[i].isAlived = false;
 				ServerSend2.item[clientIndex] = i;
-				
+
 				if (!p.exhpList[2].isAlived) {
 					if (!p.exhpList[1].isAlived) {
 						if (!p.exhpList[0].isAlived) {
@@ -293,7 +302,7 @@ void CheckPlayerByItemCollision(Player& p, int clientIndex)
 					}
 					else p.exhpList[2].isAlived = true;
 				}
-				
+
 				break;
 			}
 		}
@@ -310,11 +319,11 @@ void CheckPlayerByPlayerCollision(int key, Player& p, int clientIndex)
 			if (i != clientIndex)
 				if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
 				{
-				//if(p==player[i])
-				p.pos.x++;
-				printf("플레이어 충돌\n");
+					//if(p==player[i])
+					p.pos.x++;
+					printf("플레이어 충돌\n");
 
-				break;
+					break;
 				}
 		}
 		break;
@@ -322,36 +331,36 @@ void CheckPlayerByPlayerCollision(int key, Player& p, int clientIndex)
 		for (int i = 0; i < 3; i++)
 		{
 			if (i != clientIndex)
-			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
-			{
-				p.pos.x--;
-				printf("플레이어 충돌\n");
-				break;
-			}
+				if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+				{
+					p.pos.x--;
+					printf("플레이어 충돌\n");
+					break;
+				}
 		}
 		break;
 	case MOVE_UP:
 		for (int i = 0; i < 3; i++)
 		{
 			if (i != clientIndex)
-			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
-			{
-				p.pos.y++;
-				printf("플레이어 충돌\n");
-				break;
-			}
+				if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+				{
+					p.pos.y++;
+					printf("플레이어 충돌\n");
+					break;
+				}
 		}
 		break;
 	case MOVE_DOWN:
 		for (int i = 0; i < 3; i++)
 		{
 			if (i != clientIndex)
-			if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
-			{
-				p.pos.y--;
-				printf("플레이어 충돌\n");
-				break;
-			}
+				if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
+				{
+					p.pos.y--;
+					printf("플레이어 충돌\n");
+					break;
+				}
 		}
 		break;
 
