@@ -463,8 +463,10 @@ void MakeRank()
 				player[i].rank--;
 		}
 	}
-
-
+	for (int i = 0; i < 3; i++)
+	{
+		SeverSend2.players[i].rank = player[i].rank;
+	}
 
 }
 int isGameOver(Player p[])
@@ -472,7 +474,7 @@ int isGameOver(Player p[])
 	int cnt = 0;
 	for (int i = 0; i < 3; i++)
 	{
-		if (p[i].hp <= 0 && p[i].exhpList <= 0)
+		if (p[i].hp <= 0 || p[i].exhpList <= 0)
 		{
 			cnt++;
 			
@@ -492,7 +494,7 @@ void UpdatePlayer(Player p[])
 	{
 		SeverSend2.players[i].pos.x = p[i].pos.x;
 		SeverSend2.players[i].pos.y = p[i].pos.y;
-
+		SeverSend2.players[i].score = p[i].score;
 	}
 
 	for (int i = 0; i < 3; i++)

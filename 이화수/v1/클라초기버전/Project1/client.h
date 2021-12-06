@@ -11,7 +11,7 @@ using namespace std;
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <atlstr.h>
 
 #define SERVERPORT 9000
 #define BUFSIZE 1024
