@@ -1,5 +1,5 @@
 #include "client.h"
-
+HWND hWnd;
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 	InitObstacle();
@@ -15,7 +15,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 	hWriteEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
 	if (hWriteEvent == NULL) return 1;
 
-	HWND hWnd;
+	
 	MSG Message;
 	Message.message = WM_NULL;
 	WNDCLASSEX WndClass;
@@ -88,6 +88,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	HDC mem2dc;
 	HWND child_hWnd;
 	HWND child_hWnd2;
+	
 
 	PAINTSTRUCT ps;
 	static RECT rect;
@@ -114,11 +115,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			child_hWnd = CreateWindow(lpszClass2, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
 				0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
 		}
-		else if (gamestate == GAME_SET)
-		{
-			child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
-				0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
-		}
+
 
 		break;
 
@@ -187,6 +184,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		clientSend.keyInputDirection = MOVE_NONE;
 		//child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
 		//	0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
+		//child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
+		//	0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
 
 		break;
 
@@ -237,8 +236,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			SelectObject(MemDC, oldBackBit);
 			DeleteObject(BackBit);
 			DeleteDC(MemDC);
-
+			
 			EndPaint(hWnd, &ps);
+
 		}
 		break;
 
@@ -306,6 +306,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 
 DWORD WINAPI RecvThread(LPVOID arg)
 {
+	HWND child_hWnd2;
 	int retval = 0;
 	SOCKET client_sock = (SOCKET)arg;
 	while (1) {
@@ -353,9 +354,18 @@ DWORD WINAPI RecvThread(LPVOID arg)
 					cout << i << "          ALIVED!!!!!!!!!!!!" << endl;
 
 			}
+			gamestate = clientRecv2.gameState;
 			break;
+			case GAME_SET:
+{
+	child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
+		0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
+}
 		}
+		
+
 	}
+
 }
 
 LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)

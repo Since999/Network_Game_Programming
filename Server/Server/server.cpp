@@ -33,8 +33,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 				//ServerSend2.players->exhpList[i].isAlived = exhpList[i].isAlived;
 
 
-			ServerSend2.gameState = isGameOver(player);
-			if (gameState == GAME_SET) MakeRank();
+
 
 
 			//ServerSend2.gameState = gameState;
@@ -134,6 +133,9 @@ int main() {
 				//UpdatePlayer(player);
 
 				for (int i = 0; i < PLAYER_MAX; i++) {
+					ServerSend2.gameState = isGameOver(player);
+					printf("%d\n", ServerSend2.gameState);
+					if (gameState == GAME_SET) MakeRank();
 					retval = send(clientSock[i], (char*)&ServerSend2, sizeof(ServerSend2), 0);
 				}
 				lastTime = GetTickCount();
@@ -390,8 +392,8 @@ void UpdatePlayer(Player& p, int clientIndex)
 	ServerSend2.players[clientIndex].score = p.score;
 	for (int j = 0; j < 3; j++) {
 		ServerSend2.players[clientIndex].exhpList[j].isAlived = p.exhpList[j].isAlived;
-		cout << j << " : " << p.exhpList[j].isAlived << endl;
-		cout << j << " Server : " << ServerSend2.players[clientIndex].exhpList[j].isAlived << endl;
+		//cout << j << " : " << p.exhpList[j].isAlived << endl;
+		//cout << j << " Server : " << ServerSend2.players[clientIndex].exhpList[j].isAlived << endl;
 	}
 }
 
@@ -417,7 +419,10 @@ int isGameOver(Player p[])
 	for (int i = 0; i < 3; i++)
 	{
 		if (!p[i].isAlived)
+		{
 			cnt++;
+			printf("death %d\n", cnt);
+		}
 	}
 	if (cnt == 3)
 		return GAME_SET;
