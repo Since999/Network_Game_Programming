@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Debug\Project1.exe</FullPath>
+      <FullPath>D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Release\Project1.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

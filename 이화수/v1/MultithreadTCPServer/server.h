@@ -32,8 +32,9 @@ int gameState = GAME_READY;
 
 
 struct Position {
-	float x, y;
+	float x, y=0;
 };
+
 
 
 struct EXHP {
@@ -46,9 +47,11 @@ public:
 	Position pos{ 0,0 };				// 위치
 	char playerID[10];			// 로그인시 사용할 ID
 	bool isAlived{ true };				// 생사여부
-	int hp;						// 생사를 결정하는 HP
+							// 생사를 결정하는 HP
 
-	EXHP exhpList[3];
+	int exhpList;
+
+	int hp{ 5 };
 
 	int score{ 0 };					// Enemy를 잡으면 1 상승 (승패 결정)
 	int rank{ 3 };					// 최종 순위
@@ -82,7 +85,7 @@ struct sc_send_struct2 {
 	Player players[3];
 	int enemy[3];
 	int item[3];
-	//EXHP exhpList[3];
+	//int exhpList;
 	int clientIndex;			// 해당 클라이언트의 인덱스
 
 };
@@ -122,7 +125,7 @@ void UpdatePlayer(Player p);			// 플레이어의 정보 갱신
 
 void CheckPlayerByWallCollision(int key ,Player& p);		// 플레이어와 벽의 충돌 체크
 void CheckPlayerByPlayerCollision(int key, Player& p,int clientIndex);	// 플레이어간의 충돌 체크
-void CheckPlayerByEnemyCollision(Player& p);		// 플레이어와 Enemy의 충돌 체크
+void CheckPlayerByEnemyCollision(Player& p, int clientIndex);		// 플레이어와 Enemy의 충돌 체크
 void CheckPlayerByItemCollision(Player& p);		// 플레이어와 Item의 충돌 체크
 
 void DeleteEnemy();						// Enemy 객체의 isAlived = false;

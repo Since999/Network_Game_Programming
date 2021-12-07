@@ -1,0 +1,11 @@
+﻿  server.cpp
+D:\NetGamePl\Network_Game_Programming\이화수\v1\MultithreadTCPServer\server.cpp(6,1): warning C4005: 'BUFSIZE': 매크로 재정의
+D:\NetGamePl\Network_Game_Programming\이화수\v1\MultithreadTCPServer\server.h(12): message : 'BUFSIZE'의 이전 정의를 참조하십시오.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\MultithreadTCPServer\server.cpp(515,6): warning C4101: 'fileNameSize' :참조되지 않은 지역 변수입니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\MultithreadTCPServer\server.cpp(516,6): warning C4101: 'fileSize' :참조되지 않은 지역 변수입니다.
+  코드를 생성하고 있습니다.
+  15 of 45 functions (33.3%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    5 functions had inline decision re-evaluated but remain unchanged
+  코드를 생성했습니다.
+  MultithreadTCPServer.vcxproj -> D:\NetGamePl\Network_Game_Programming\이화수\v1\MultithreadTCPServer\Release\MultithreadTCPServer.exe

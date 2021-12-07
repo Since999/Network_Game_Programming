@@ -1,1 +1,38 @@
-﻿  Project1.vcxproj -> D:\넷겜플텀프\새 폴더\Network_Game_Programming-dc32f33c6333d0fb688536ba7d67ab8697550ae4\홍찬우\클라초기버전\Debug\Project1.exe
+﻿  client.cpp
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(513,7): warning C4101: 'child_hWnd2' :참조되지 않은 지역 변수입니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(658,7): warning C4101: 's' :참조되지 않은 지역 변수입니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(725,7): warning C4101: 'child_hWnd' :참조되지 않은 지역 변수입니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(820,6): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(842,99): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(842,46): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(841,98): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(841,55): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(847,99): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(847,46): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(846,98): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(846,55): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(852,99): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(852,46): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(851,98): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(851,55): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1065,80): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1065,36): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1064,79): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1064,45): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1081,93): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1081,43): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1080,92): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1080,52): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1097,95): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1097,44): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1096,94): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1096,53): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1117,78): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1117,36): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1116,77): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1116,45): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1135,82): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1135,38): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1134,81): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Project1\client.cpp(1134,47): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Project1.vcxproj -> D:\NetGamePl\Network_Game_Programming\이화수\v1\클라초기버전\Debug\Project1.exe
