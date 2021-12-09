@@ -53,7 +53,7 @@ int clientIndex;
 DWORD curTime;
 DWORD lastTime = GetTickCount();
 
-HANDLE hThread[2];
+HANDLE hThread;
 HANDLE hReadEvent, hWriteEvent;
 
 #pragma pack(1)
