@@ -9,18 +9,12 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 	InitExHp();
 	gamestate = GAME_READY;
 	p.hp = 1;
-
-	hReadEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	if (hReadEvent == NULL) return 1;
-	hWriteEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
-	if (hWriteEvent == NULL) return 1;
-
 	
 	MSG Message;
 	Message.message = WM_NULL;
 	WNDCLASSEX WndClass;
 	g_hInst = hInstance;
-
+	HWND child_hWnd2;
 	if (!hPrevInstance) {
 		WndClass.cbSize = sizeof(WNDCLASSEX);
 		WndClass.cbClsExtra = 0;
@@ -62,21 +56,36 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 			if (gamestate == GAME_RUNNING) {
 				curTime = GetTickCount();
 				if (curTime - lastTime >= 33) {
+					int retval=0;
 					//Render();
 					hpCnt++;
 					if (hpCnt % 90 == 0) {
 						UpdateHP(hpCnt);
 					}
+					if (hpList[0].isAlived == false)
+					{
+						p.isAlived = false;
+						clientSend.isAlive = p.isAlived;
+						printf("%d\n", clientSend.isAlive);
+						retval = send(sock, (char*)&clientSend, clientSend.size, 0);
+
+					}
 					InvalidateRect(hWnd, NULL, FALSE);
 					lastTime = GetTickCount();
 				}
 			}
+			else if (gamestate == GAME_SET)
+			{
+				static RECT rect;
+				GetClientRect(hWnd, &rect);
+				
+				child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
+					0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
+				gamestate = 0;
+				printf("%d\n", gamestate);
+			}
 		}
 	}
-
-
-	CloseHandle(hReadEvent);
-	CloseHandle(hWriteEvent);
 
 	return Message.wParam;
 }
@@ -87,7 +96,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	HDC mem1dc;
 	HDC mem2dc;
 	HWND child_hWnd;
-	HWND child_hWnd2;
+	
 	
 
 	PAINTSTRUCT ps;
@@ -101,7 +110,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 	//static int count = 1;
 	int retval;
-	strcpy(clientSend.playerID, "asd");
+	//strcpy(clientSend.playerID, "asd");
 	switch (iMessage) {
 
 	case WM_CREATE:
@@ -110,8 +119,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		if (gamestate == GAME_READY)
 		{
-			//child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
-			//	0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
+			
 			child_hWnd = CreateWindow(lpszClass2, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
 				0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
 		}
@@ -121,7 +129,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 
 	case WM_TIMER:
-		//Update();
+
 		//InvalidateRect(hWnd, NULL, TRUE);
 		switch (wParam) {
 		case 1:
@@ -137,8 +145,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		{
 		case IDC_BUTTON:
 			hdc = GetDC(hWnd);
-			gamestate = GAME_SET;
-			cout << gamestate << endl;
+
+			
 			ReleaseDC(hWnd, hdc);
 
 			break;
@@ -154,39 +162,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 		if (gamestate == GAME_RUNNING)
 		{
-			WaitForSingleObject(hReadEvent, INFINITE);
-			//if (count-Timer2Count == 1) {
 			if (p.isAlived) {
 				if (wParam == VK_LEFT)
 				{
 					clientSend.keyInputDirection = MOVE_LEFT;
+					retval = send(sock, (char*)&clientSend, clientSend.size, 0);
 				}
 				else if (wParam == VK_RIGHT) {
 					clientSend.keyInputDirection = MOVE_RIGHT;
+					retval = send(sock, (char*)&clientSend, clientSend.size, 0);
 				}
-
 				else if (wParam == VK_UP)
 				{
 					clientSend.keyInputDirection = MOVE_UP;
-
+					retval = send(sock, (char*)&clientSend, clientSend.size, 0);
 				}
 				else if (wParam == VK_DOWN)
 				{
 					clientSend.keyInputDirection = MOVE_DOWN;
-
+					retval = send(sock, (char*)&clientSend, clientSend.size, 0);
 				}
-				//InvalidateRgn(hWnd, NULL, FALSE);
 			}
-			SetEvent(hWriteEvent);
 		}
-		break;
-	case WM_KEYUP:
-		clientSend.keyInputDirection = MOVE_NONE;
-		//child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
-		//	0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
-		//child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
-		//	0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
-
 		break;
 
 	case WM_PAINT:
@@ -240,13 +237,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 			EndPaint(hWnd, &ps);
 
 		}
+
+
 		break;
 
 
 
 	case WM_DESTROY:
-		//KillTimer(hWnd, 1);
-		//KillTimer(hWnd, 2);
 		PostQuitMessage(0);
 		break;
 	}
@@ -262,7 +259,7 @@ void UpdateHP(int cnt)
 {
 	if (int(cnt / 90) <= 5) {
 		hpList[5 - int(cnt / 90)].isAlived = false;
-		cout << int(cnt / 90) << endl;
+		
 	}
 	else {
 		/*	if (p.exhpList[0].isAlived) {
@@ -279,28 +276,7 @@ void UpdateHP(int cnt)
 	if (!p.exhpList[2].isAlived && !p.exhpList[1].isAlived && !p.exhpList[0].isAlived
 		&& !hpList[0].isAlived && !hpList[1].isAlived && !hpList[2].isAlived
 		&& !hpList[3].isAlived && !hpList[4].isAlived) {
-		p.isAlived = false;
-	}
-}
-
-DWORD WINAPI SendThread(LPVOID arg)
-{
-	int retval = 0;
-	SOCKET client_sock = (SOCKET)arg;
-	while (1) {
-		switch (gamestate) {
-		case GAME_RUNNING:
-			if (p.isAlived) {
-				WaitForSingleObject(hWriteEvent, INFINITE);
-				retval = send(sock, (char*)&clientSend, clientSend.size, 0);
-				if (retval == SOCKET_ERROR) {
-					err_display("send()");
-					break;
-				}
-				SetEvent(hReadEvent);
-			}
-			break;
-		}
+		//p.isAlived = false;
 	}
 }
 
@@ -348,21 +324,19 @@ DWORD WINAPI RecvThread(LPVOID arg)
 
 			for (int i = 0; i < extrahpNumber; ++i) {
 				p.exhpList[i].isAlived = clientRecv2.players[clientIndex].exhpList[i].isAlived;
-				cout << "CLIENT :  " << clientRecv2.players[clientRecv2.clientIndex].exhpList[i].isAlived << endl;
-				cout << "EXHP : " << p.exhpList[i].isAlived << endl;
-				if (p.exhpList[i].isAlived)
-					cout << i << "          ALIVED!!!!!!!!!!!!" << endl;
-
 			}
 			gamestate = clientRecv2.gameState;
+			printf("%d\n", clientRecv2.gameState);
 			break;
-			case GAME_SET:
-{
-	child_hWnd2 = CreateWindow(lpszClass3, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
-		0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
-}
+			case GAME_SET:	
+			{
+				printf("asd\n");
+				ExitThread(1);
+
+				
+
+			}
 		}
-		
 
 	}
 
@@ -382,13 +356,12 @@ LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 			300, 600, 200, 30, hWnd, (HMENU)IDC_EDIT, g_hInst, NULL);
 		break;
 	case WM_COMMAND:
-		cout << "123" << endl;
-
 		switch (LOWORD(wParam))
 		{
 		case IDC_BUTTON:
 			int retval;
-
+			WideCharToMultiByte(CP_ACP, 0, str, len, clientSend.playerID, len, NULL, NULL);
+			printf("%s \n", clientSend.playerID);
 			// 윈속 초기화
 			WSADATA wsa;
 			if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
@@ -408,8 +381,8 @@ LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 			retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 			if (retval == SOCKET_ERROR) err_quit("connect()");
 
-			hThread[0] = CreateThread(NULL, 0, SendThread, (LPVOID)sock, 0, NULL);
-			hThread[1] = CreateThread(NULL, 0, RecvThread, (LPVOID)sock, 0, NULL);
+			hThread = CreateThread(NULL, 0, RecvThread, (LPVOID)sock, 0, NULL);
+			retval = send(sock, (char*)&clientSend, clientSend.size, 0);
 
 			DestroyWindow(hWnd);
 			ReleaseDC(hWnd, hdc);
@@ -419,8 +392,7 @@ LRESULT CALLBACK ChildProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 
 			GetDlgItemText(hWnd, IDC_EDIT, str, 10);
 			hdc = GetDC(hWnd);
-			WideCharToMultiByte(CP_ACP, 0, str, len, clientSend.playerID, len, NULL, NULL);
-
+			
 			ReleaseDC(hWnd, hdc);
 			break;
 
@@ -438,7 +410,8 @@ LRESULT CALLBACK ChildProc2(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 	HDC hdc;
 
 	HWND child_hWnd;
-	
+	hdc = GetDC(hWnd);
+
 	char firstP[60]="";
 	char secondP[10]="";
 	char thirdP[10]="";
@@ -463,7 +436,7 @@ LRESULT CALLBACK ChildProc2(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 			strcpy(thirdP, clientRecv2.players[i].playerID);
 		}
 	}
-
+	printf("%s, %s, %s \n", firstP, secondP, thirdP);
 	char first[10] = "   1st\r\n";
 	char second[10] = "   2nd\r\n";
 	char third[10] = "   3rd\r\n";
@@ -491,7 +464,7 @@ LRESULT CALLBACK ChildProc2(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 
 	switch (iMessage) {
 	case WM_CREATE:
-		hButton = CreateWindow(L"button", L"DONE", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,500, 600, 100, 25, hWnd, (HMENU)IDC_BUTTON, g_hInst, NULL);
+		//hButton = CreateWindow(L"button", L"DONE", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,500, 600, 100, 25, hWnd, (HMENU)IDC_BUTTON, g_hInst, NULL);
 		hEdit = CreateWindow(L"edit", L"", WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,300, 200, 200, 100, hWnd, (HMENU)IDC_EDIT, g_hInst, NULL);
 
 		SetWindowText(hEdit, wtext);
@@ -504,20 +477,11 @@ LRESULT CALLBACK ChildProc2(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 		case IDC_BUTTON:
 
 
-			//InitObstacle();
-			//InitItem();
-			//InitEnemy();
-			//InitHpBar();
-			//InitExHp();
-			//p.isAlived = true;
-			//gamestate = GAME_RUNNING;
-			hdc = GetDC(hWnd);
-			//child_hWnd = CreateWindow(lpszClass2, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
-			//	0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
+
 			ReleaseDC(hWnd, hdc);
 			DestroyWindow(hWnd);
-
-
+			SendMessage(hWnd,WM_DESTROY,1,0);
+			
 
 
 			break;

@@ -113,6 +113,7 @@ struct sc_send_struct2 {
 struct sc_recv_struct {
 	char size = 20U;
 	char type;
+	bool isAlive=true;
 	int keyInputDirection;		// 클라이언트에서의 키입력 정보
 	char playerID[10];			// 해당 클라이언트의 ID
 };

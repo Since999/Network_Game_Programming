@@ -12,7 +12,6 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 	int retval;
 
 	int clientIndex = clientCnt - 1;
-
 	// 클라이언트 정보
 	addrlen = sizeof(clientaddr);
 	getpeername(client_sock, (SOCKADDR*)&clientaddr, &addrlen);
@@ -25,10 +24,11 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			retval = recvn(client_sock, (char*)&ServerRecv, ServerRecv.size, 0);
 			if (retval == 0)
 				break;
+			strcpy(player[clientIndex].playerID, ServerRecv.playerID);
+			//printf(" %d:: %s\n", clientIndex,ServerSend2.players[clientIndex].playerID);
 
 			MovePlayer(ServerRecv.keyInputDirection, player[clientIndex], clientIndex);
 			UpdatePlayer(player[clientIndex], clientIndex);
-
 			//for (int i = 0; i < 3; ++i)
 				//ServerSend2.players->exhpList[i].isAlived = exhpList[i].isAlived;
 
@@ -36,12 +36,8 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 
 
 
-			//ServerSend2.gameState = gameState;
-
-			//for (int i = 0;i < 3;i++)
-			//	printf("%d 번째 플레이어 순위 %d\n", i, player[i].rank);
 			ServerSend2.clientIndex = clientIndex;
-
+			strcpy(ServerSend2.players[clientIndex].playerID, player[clientIndex].playerID);
 			break;
 		}
 		}
@@ -109,7 +105,7 @@ int main() {
 	//player->pos.x = 0;
 	//player->pos.y = 0;
 	while (1) {
-		if (clientCnt < PLAYER_MAX) {
+		if (clientCnt < 3) {
 			Accept(clientCnt);
 			EnterCriticalSection(&cs);
 			clientCnt++;
@@ -130,12 +126,29 @@ int main() {
 		case GAME_RUNNING:
 			curTime = GetTickCount();
 			if (curTime - lastTime >= FPS) {
-				//UpdatePlayer(player);
-
+				//UpdatePlayer(player);for (int i = 0;i < 3;i++)
 				for (int i = 0; i < PLAYER_MAX; i++) {
-					ServerSend2.gameState = isGameOver(player);
-					printf("%d\n", ServerSend2.gameState);
+					{
+						player[i].isAlived = ServerRecv.isAlive;
+						//printf("asd\n");
+						//printf("%d , %d\n",i, ServerRecv.isAlive);
+						//printf("%s\n", player[i].playerID);
+					}
+				}
+				ServerSend2.gameState = isGameOver(player);
+				//for (int i = 0;i < 3;i++)
+					//printf("%d %d\n", i, player[i].isAlived);
+				for (int i = 0; i < PLAYER_MAX; i++) {
+					//printf("%d\n", ServerSend2.gameState);
 					if (gameState == GAME_SET) MakeRank();
+					for (int i = 0; i < 3; i++)
+					{
+						//printf("%s , %d\n", player[i].playerID, player[i].rank);
+						ServerSend2.players[i] = player[i];
+
+					}
+					//ServerSend2.gameState = GAME_SET;
+
 					retval = send(clientSock[i], (char*)&ServerSend2, sizeof(ServerSend2), 0);
 				}
 				lastTime = GetTickCount();
@@ -390,6 +403,8 @@ void UpdatePlayer(Player& p, int clientIndex)
 	ServerSend2.players[clientIndex].pos.x = p.pos.x;
 	ServerSend2.players[clientIndex].pos.y = p.pos.y;
 	ServerSend2.players[clientIndex].score = p.score;
+	
+
 	for (int j = 0; j < 3; j++) {
 		ServerSend2.players[clientIndex].exhpList[j].isAlived = p.exhpList[j].isAlived;
 		//cout << j << " : " << p.exhpList[j].isAlived << endl;
@@ -409,23 +424,32 @@ void MakeRank()
 				player[i].rank--;
 		}
 	}
-
-
+	
 
 }
+bool test = true;
+
 int isGameOver(Player p[])
 {
 	int cnt = 0;
 	for (int i = 0; i < 3; i++)
 	{
+		//printf("%s , %d \n", p[i].playerID, p[i].isAlived);
 		if (!p[i].isAlived)
 		{
 			cnt++;
-			printf("death %d\n", cnt);
+			//return GAME_SET;
 		}
 	}
 	if (cnt == 3)
+	{
+		if (test)
+		{
+			MakeRank();
+			test = false;
+		}
 		return GAME_SET;
+	}
 	else
 		return GAME_RUNNING;
 }

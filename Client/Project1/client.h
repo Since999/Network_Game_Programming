@@ -53,7 +53,7 @@ int clientIndex;
 DWORD curTime;
 DWORD lastTime = GetTickCount();
 
-HANDLE hThread[2];
+HANDLE hThread;
 HANDLE hReadEvent, hWriteEvent;
 
 #pragma pack(1)
@@ -105,6 +105,7 @@ struct HPBAR {
 struct cs_send_struct {
 	char size = 20U;
 	char type;
+	bool isAlive=true;
 	int keyInputDirection;
 	char playerID[10];
 
