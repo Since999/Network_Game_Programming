@@ -1,2 +1,2 @@
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Server\Server\x64\Debug\Server.exe
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Server\Server\x64\Debug\Server.pdb
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\x64\Debug\Server.exe
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\x64\Debug\Server.pdb

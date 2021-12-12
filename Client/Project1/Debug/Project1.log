@@ -1,42 +1,61 @@
 ﻿  client.cpp
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(80,7): warning C4101: 'child_hWnd2' :참조되지 않은 지역 변수입니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(77,6): warning C4101: 'mem1dc' :참조되지 않은 지역 변수입니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(78,6): warning C4101: 'mem2dc' :참조되지 않은 지역 변수입니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(331,7): warning C4101: 's' :참조되지 않은 지역 변수입니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(395,7): warning C4101: 'child_hWnd' :참조되지 않은 지역 변수입니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(491,6): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(514,99): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(514,45): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(513,98): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(513,54): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(520,99): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(520,45): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(519,98): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(519,54): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(526,99): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(526,45): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(525,98): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(525,54): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(738,84): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(738,38): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(737,83): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(737,47): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(754,93): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(754,43): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(753,92): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(753,52): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(770,95): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(770,44): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(769,94): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(769,53): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(790,78): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(790,36): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(789,77): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(789,45): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(807,86): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(807,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(806,85): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Project1\client.cpp(806,49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Project1.vcxproj -> C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Client\Debug\Project1.exe
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(97,6): warning C4101: 'mem1dc' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(98,6): warning C4101: 'mem2dc' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(286,7): warning C4101: 'child_hWnd2' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(353,7): warning C4101: 's' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(416,7): warning C4101: 'child_hWnd' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(504,6): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(527,99): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(527,45): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(526,98): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(526,54): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(533,99): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(533,45): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(532,98): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(532,54): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(539,99): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(539,45): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(538,98): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(538,54): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(751,84): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(751,38): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(750,83): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(750,47): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(767,93): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(767,43): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(766,92): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(766,52): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(783,95): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(783,44): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(782,94): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(782,53): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(851,78): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(851,36): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(850,77): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(850,45): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(868,81): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(868,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(867,80): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(867,46): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(872,81): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(872,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(871,80): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(871,46): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(874,81): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(874,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(873,80): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(873,46): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(878,81): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(878,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(877,80): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(877,46): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(880,81): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(880,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(879,80): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(879,46): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(882,81): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(882,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(881,80): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(881,46): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Project1\client.cpp(860,6): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
+  Project1.vcxproj -> C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Client\Debug\Project1.exe

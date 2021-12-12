@@ -1,8 +1,5 @@
 #include "server.h"
 
-
-// Client_Thread
-
 DWORD WINAPI ProcessClient(LPVOID arg) {
 	SOCKET client_sock = (SOCKET)arg;
 	SOCKADDR_IN clientaddr;
@@ -12,52 +9,43 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 	int retval;
 
 	int clientIndex = clientCnt - 1;
-
-	// ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏ Ï†ïÎ≥¥
+	// ≈¨∂Û¿Ãæ∆Æ ¡§∫∏
 	addrlen = sizeof(clientaddr);
 	getpeername(client_sock, (SOCKADDR*)&clientaddr, &addrlen);
+	retval = recvn(client_sock, (char*)&ServerRecv, ServerRecv.size, 0);
+	strcpy(player[clientIndex].playerID, ServerRecv.playerID);
+	
+	//for(int i=0;i<3;i++)
+	//	printf("id : %s\n", player[i].playerID);
+
+	strcpy(ServerSend2.players[clientIndex].playerID, player[clientIndex].playerID);
 
 	while (1) {
-		//WaitForSingleObject(hClientEvent[clientIndex], INFINITE);
 		switch (gameState) {
 		case GAME_RUNNING:
-		{
+			WaitForSingleObject(hWriteEvent, INFINITE);
+			cout << "ClientIndex :  " << clientIndex << endl;
+
 			retval = recvn(client_sock, (char*)&ServerRecv, ServerRecv.size, 0);
-			if (retval == 0)
-				break;
+			
+			//printf(" %d:: %s\n", clientIndex,ServerSend2.players[clientIndex].playerID);
 
 			MovePlayer(ServerRecv.keyInputDirection, player[clientIndex], clientIndex);
 			UpdatePlayer(player[clientIndex], clientIndex);
-
 			//for (int i = 0; i < 3; ++i)
 				//ServerSend2.players->exhpList[i].isAlived = exhpList[i].isAlived;
 
 
-
-
-
-			//ServerSend2.gameState = gameState;
-
-			//for (int i = 0;i < 3;i++)
-			//	printf("%d Î≤àÏß∏ ÌîåÎ†àÏù¥Ïñ¥ ÏàúÏúÑ %d\n", i, player[i].rank);
-			ServerSend2.clientIndex = clientIndex;
-
+			retval = send(client_sock, (char*)&ServerSend2, sizeof(ServerSend2), 0);
+			//SetEvent(hWriteEvent);
+			//cout << "SetEvent - hWriteEvent" << endl;
 			break;
 		}
-		}
-		
-		/*	switch (clientIndex) {
-			case 0:
-				SetEvent(hClientEvent[1]);
-				break;
-			case 1:
-				SetEvent(hClientEvent[2]);
-				break;
-			case 2:
-				SetEvent(hWriteEvent);
-			}*/
+		//WaitForSingleObject(hWriteEvent, INFINITE);
+		//cout << "WaitForSingleObject - hWriteEvent" << endl;
+    }
+  //  CloseHandle(hClientEvent[clientIndex]);
 
-	}
 	closesocket(client_sock);
 
 	return 0;
@@ -89,27 +77,30 @@ int main() {
 	int addrlen;
 	HANDLE hThread;
 
-	/*hWriteEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	if (hWriteEvent == NULL) return 1;
-	hClientEvent[0] = CreateEvent(NULL, FALSE, TRUE, NULL);
-	if (hClientEvent[0] == NULL) return 1;
+	hWriteEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+	/*hClientEvent[0] = CreateEvent(NULL, FALSE, FALSE, NULL);
 	hClientEvent[1] = CreateEvent(NULL, FALSE, FALSE, NULL);
-	if (hClientEvent[1] == NULL) return 1;
-	hClientEvent[2] = CreateEvent(NULL, FALSE, FALSE, NULL);
-	if (hClientEvent[2] == NULL) return 1;*/
+	hClientEvent[2] = CreateEvent(NULL, FALSE, FALSE, NULL);*/
 
+	for (int i = 0; i < 3; i++) {
+		if (i > 0)
+			eventIndex[i] = i - 1;
+		else
+			eventIndex[i] = 2;
+	}
+	int eventStart = 2;
 
-	// ÏûÑÍ≥Ñ ÏòÅÏó≠ Ï¥àÍ∏∞Ìôî
+	// ¿”∞Ë øµø™ √ ±‚»≠
 	InitializeCriticalSection(&cs);
 	InitEnemy();
 	InitItem();
 	InitWall();
-	InitExHp();
+	//InitExHp();
 
 	//player->pos.x = 0;
 	//player->pos.y = 0;
 	while (1) {
-		if (clientCnt < PLAYER_MAX) {
+		if (clientCnt < 3) {
 			Accept(clientCnt);
 			EnterCriticalSection(&cs);
 			clientCnt++;
@@ -128,23 +119,52 @@ int main() {
 			break;
 
 		case GAME_RUNNING:
-			curTime = GetTickCount();
+			ResetEvent(hWriteEvent);
+			//WaitForSingleObject(hClientEvent[eventIndex[eventStart]], INFINITE);
+			//cout << "Main WaitForSingleObject - " << eventIndex[eventStart] << endl;
+			curTime = GetTickCount64();
 			if (curTime - lastTime >= FPS) {
-				//UpdatePlayer(player);
+				//UpdatePlayer(player);for (int i = 0;i < 3;i++)
 
 				for (int i = 0; i < PLAYER_MAX; i++) {
-					ServerSend2.gameState = isGameOver(player);
-					printf("%d\n", ServerSend2.gameState);
+					{
+						player[i].isAlived = ServerRecv.isAlive;
+						//printf("asd\n");
+						//printf("%d , %d\n",i, ServerRecv.isAlive);
+						//printf("%s\n", player[i].playerID);
+					}
+				}
+				
+				ServerSend2.gameState = isGameOver(player);
+				//ServerSend2.players[clientCnt].exhpList = player[clientCnt].exhpList;
+				//for (int i = 0;i < 3;i++)
+					//printf("%d %d\n", i, player[i].isAlived);
+				for (int i = 0; i < PLAYER_MAX; i++) {
+					//printf("%d\n", ServerSend2.gameState);
 					if (gameState == GAME_SET) MakeRank();
+					for (int i = 0; i < 3; i++)
+					{
+						//printf("%s , %d\n", player[i].playerID, player[i].rank);
+						//ServerSend2.players[i].exhpList = player[i].exhpList;
+						//ServerSend2.clientIndex = 0;
+						//printf("%d : %d\n", ServerSend2.clientIndex, ServerSend2.players[i].exhpList);
+
+					}
+					//ServerSend2.gameState = GAME_SET;
+					//ServerSend2.clientIndex = clientIndex1;
+					//printf("%d : %d\n", ServerSend2.clientIndex, ServerSend2.players[i].exhpList);
 					retval = send(clientSock[i], (char*)&ServerSend2, sizeof(ServerSend2), 0);
 				}
-				lastTime = GetTickCount();
+				//SetEvent(hClientEvent[eventIndex[eventStart % 3]]);
+				//cout << "Main SetEvent - hWriteEvent" << endl;
+				SetEvent(hWriteEvent);
+				lastTime = GetTickCount64();
 			}
 			break;
 		}
 	}
 
-	// ÏûÑÍ≥Ñ ÏòÅÏó≠ Ï¢ÖÎ£å
+	// ¿”∞Ë øµø™ ¡æ∑·
 	DeleteCriticalSection(&cs);
 
 	//CloseHandle(hWriteEvent);
@@ -276,11 +296,12 @@ void CheckPlayerByEnemyCollision(Player& p, int clientIndex)
 		if (p.pos.x == enemyList[i].pos.x && p.pos.y == enemyList[i].pos.y)
 		{
 			if (enemyList[i].isAlived) {
+				EnterCriticalSection(&cs);
 				enemyList[i].isAlived = false;
 				++p.score;
 				ServerSend2.enemy[clientIndex] = i;
-				printf("%d %d Ï∂©Îèå\n", clientIndex, i);
-
+				printf("%d %d √Êµπ\n", clientIndex, i);
+				LeaveCriticalSection(&cs);
 				break;
 			}
 		}
@@ -292,10 +313,11 @@ void CheckPlayerByItemCollision(Player& p, int clientIndex)
 		if (p.pos.x == itemList[i].pos.x && p.pos.y == itemList[i].pos.y)
 		{
 			if (itemList[i].isAlived) {
+				EnterCriticalSection(&cs);
 				itemList[i].isAlived = false;
 				ServerSend2.item[clientIndex] = i;
 
-				if (!p.exhpList[2].isAlived) {
+				/*if (!p.exhpList[2].isAlived) {
 					if (!p.exhpList[1].isAlived) {
 						if (!p.exhpList[0].isAlived) {
 							p.exhpList[0].isAlived = true;
@@ -303,8 +325,24 @@ void CheckPlayerByItemCollision(Player& p, int clientIndex)
 						else p.exhpList[1].isAlived = true;
 					}
 					else p.exhpList[2].isAlived = true;
-				}
+				}*/
 
+
+				
+
+				//if (p.hp > 4)
+				//{
+					++p.exhpList;
+					//cout << "EX: " << p.exhpList << endl;
+				//}
+				//else
+				//{
+					//cout << "HP: " << p.hp << endl;
+					//cout << "EX: " << p.exhpList << endl;
+					//p.hp++;
+				//}
+
+					LeaveCriticalSection(&cs);
 				break;
 			}
 		}
@@ -323,7 +361,7 @@ void CheckPlayerByPlayerCollision(int key, Player& p, int clientIndex)
 				{
 					//if(p==player[i])
 					p.pos.x++;
-					printf("ÌîåÎ†àÏù¥Ïñ¥ Ï∂©Îèå\n");
+					printf("«√∑π¿ÃæÓ √Êµπ\n");
 
 					break;
 				}
@@ -336,7 +374,7 @@ void CheckPlayerByPlayerCollision(int key, Player& p, int clientIndex)
 				if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
 				{
 					p.pos.x--;
-					printf("ÌîåÎ†àÏù¥Ïñ¥ Ï∂©Îèå\n");
+					printf("«√∑π¿ÃæÓ √Êµπ\n");
 					break;
 				}
 		}
@@ -348,7 +386,7 @@ void CheckPlayerByPlayerCollision(int key, Player& p, int clientIndex)
 				if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
 				{
 					p.pos.y++;
-					printf("ÌîåÎ†àÏù¥Ïñ¥ Ï∂©Îèå\n");
+					printf("«√∑π¿ÃæÓ √Êµπ\n");
 					break;
 				}
 		}
@@ -360,7 +398,7 @@ void CheckPlayerByPlayerCollision(int key, Player& p, int clientIndex)
 				if (player[i].pos.x == p.pos.x && player[i].pos.y == p.pos.y)
 				{
 					p.pos.y--;
-					printf("ÌîåÎ†àÏù¥Ïñ¥ Ï∂©Îèå\n");
+					printf("«√∑π¿ÃæÓ √Êµπ\n");
 					break;
 				}
 		}
@@ -375,32 +413,28 @@ void UpdatePlayer(Player& p, int clientIndex)
 {
 	/*for (int i = 0; i < 3; i++)
 	{
-		ServerSend2.players[i].pos.x = p[i].pos.x;
-		ServerSend2.players[i].pos.y = p[i].pos.y;
-		ServerSend2.players[i].score = p[i].score;
-	}
+		//ServerSend2.players[i].pos.x = p[i].pos.x;
+		//ServerSend2.players[i].pos.y = p[i].pos.y;
+		//ServerSend2.players[i].score = p[i].score;
+		ServerSend2.players[i].exhpList = p[i].exhpList;
+	}*/
 
-	for (int i = 0; i < 3; i++)
-	{
-		for (int j = 0; j < 3; j++) {
-			ServerSend2.players[i].exhpList[j] = p[i].exhpList[j];
-		}
-	} */
+	
 
 	ServerSend2.players[clientIndex].pos.x = p.pos.x;
 	ServerSend2.players[clientIndex].pos.y = p.pos.y;
 	ServerSend2.players[clientIndex].score = p.score;
-	for (int j = 0; j < 3; j++) {
+	ServerSend2.players[clientIndex].exhpList = p.exhpList;
+	ServerSend2.clientIndex = clientIndex;
+	/*for (int j = 0; j < 3; j++) {
 		ServerSend2.players[clientIndex].exhpList[j].isAlived = p.exhpList[j].isAlived;
 		//cout << j << " : " << p.exhpList[j].isAlived << endl;
 		//cout << j << " Server : " << ServerSend2.players[clientIndex].exhpList[j].isAlived << endl;
-	}
+	}*/
 }
 
 void MakeRank()
 {
-
-
 	for (int i = 0; i < 3; i++)
 	{
 		for (int j = 0; j < 2; j++)
@@ -410,22 +444,36 @@ void MakeRank()
 		}
 	}
 
-
+	for (int i = 0; i < 3; i++)
+	{
+		ServerSend2.players[i].rank = player[i].rank;
+		printf("%s : %d  \n", player[i].playerID, player[i].rank);
+	}
 
 }
+bool test = true;
+
 int isGameOver(Player p[])
 {
 	int cnt = 0;
 	for (int i = 0; i < 3; i++)
 	{
+		//printf("%s , %d \n", p[i].playerID, p[i].isAlived);
 		if (!p[i].isAlived)
 		{
 			cnt++;
-			printf("death %d\n", cnt);
+			//return GAME_SET;
 		}
 	}
 	if (cnt == 3)
+	{
+		if (test)
+		{
+			MakeRank();
+			test = false;
+		}
 		return GAME_SET;
+	}
 	else
 		return GAME_RUNNING;
 }
@@ -594,7 +642,7 @@ void InitItem()
 	itemList[2].pos.x = 2;
 	itemList[2].pos.y = 7;
 }
-void InitExHp()
+/*void InitExHp()
 {
 
 	exhpList[0].pos.x = 10;
@@ -605,7 +653,7 @@ void InitExHp()
 	exhpList[2].pos.y = 0;
 
 
-}
+}*/
 
 int recvn(SOCKET s, char* buf, int len, int flags)
 {

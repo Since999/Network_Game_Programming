@@ -1,12 +1,12 @@
 ﻿  server.cpp
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Server\Server\server.cpp(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Server\Server\server.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Server\Server\server.h(19,1): warning C4005: 'BUFSIZE': 매크로 재정의
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Server\Server\server.h(16): message : 'BUFSIZE'의 이전 정의를 참조하십시오.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Server\Server\server.cpp(10,6): warning C4101: 'fileNameSize' :참조되지 않은 지역 변수입니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Server\Server\server.cpp(11,6): warning C4101: 'fileSize' :참조되지 않은 지역 변수입니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Server\Server\server.cpp(90,9): warning C4101: 'hThread' :참조되지 않은 지역 변수입니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Server\Server\server.cpp(87,9): warning C4101: 'client_sock' :참조되지 않은 지역 변수입니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Server\Server\server.cpp(88,14): warning C4101: 'clientaddr' :참조되지 않은 지역 변수입니다.
-C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Server\Server\server.cpp(89,6): warning C4101: 'addrlen' :참조되지 않은 지역 변수입니다.
-  Server.vcxproj -> C:\Users\sumin\Desktop\2021\3-2\네트워크 게임 프로그래밍\텀프로젝트\중간검수2\gamestate merge\Server\Server\x64\Debug\Server.exe
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.h(19,1): warning C4005: 'BUFSIZE': 매크로 재정의
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.h(16): message : 'BUFSIZE'의 이전 정의를 참조하십시오.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(7,6): warning C4101: 'fileNameSize' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(8,6): warning C4101: 'fileSize' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(125,28): warning C4244: '=': 'ULONGLONG'에서 'DWORD'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(161,30): warning C4244: '=': 'ULONGLONG'에서 'DWORD'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(78,9): warning C4101: 'hThread' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(75,9): warning C4101: 'client_sock' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(76,14): warning C4101: 'clientaddr' :참조되지 않은 지역 변수입니다.
+C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\server.cpp(77,6): warning C4101: 'addrlen' :참조되지 않은 지역 변수입니다.
+  Server.vcxproj -> C:\Users\sumin\Documents\GitHub\Network_Game_Programming\Server\Server\x64\Debug\Server.exe
