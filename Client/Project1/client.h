@@ -1,6 +1,5 @@
 #pragma once
-#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
 #pragma comment(lib, "ws2_32")
 #pragma warning(disable:4996)
 #pragma warning(disable : 5208)
@@ -12,6 +11,7 @@ using namespace std;
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
+//#include <atlstr.h>
 #include <conio.h>
 
 #define IDC_BUTTON 100
@@ -25,16 +25,16 @@ using namespace std;
 //#define SERVERIP   "220.120.241.242"
 #define SERVERIP "127.0.0.1"
 
-#define PLAYER_SPEED 10			// í”Œë ˆì´ì–´ ì†ë„
-#define GAME_READY 11			// ì ‘ì†í•œ í´ë¼ì´ì–¸íŠ¸ ìˆ˜ < 3
-#define GAME_RUNNING 12			// INGAME ìƒíƒœ (ì£½ì€ í´ë¼ì´ì–¸íŠ¸ ìˆ˜ < 3)
-#define GAME_SET 13				// ì£½ì€ í´ë¼ì´ì–¸íŠ¸ ìˆ˜ == 3
+#define PLAYER_SPEED 10			// ÇÃ·¹ÀÌ¾î ¼Óµµ
+#define GAME_READY 11			// Á¢¼ÓÇÑ Å¬¶óÀÌ¾ğÆ® ¼ö < 3
+#define GAME_RUNNING 12			// INGAME »óÅÂ (Á×Àº Å¬¶óÀÌ¾ğÆ® ¼ö < 3)
+#define GAME_SET 13				// Á×Àº Å¬¶óÀÌ¾ğÆ® ¼ö == 3
 
-#define MOVE_NONE 20			// í‚¤ ì…ë ¥ì´ ì—†ëŠ” ìƒíƒœ (ë¡œê·¸ì¸ì‹œ ì‚¬ìš©)
-#define MOVE_UP 21				// Wí‚¤ ì…ë ¥
-#define MOVE_DOWN 22			// Sí‚¤ ì…ë ¥
-#define MOVE_LEFT 23			// Aí‚¤ ì…ë ¥
-#define MOVE_RIGHT 24			// Dí‚¤ ì…ë ¥
+#define MOVE_NONE 20			// Å° ÀÔ·ÂÀÌ ¾ø´Â »óÅÂ (·Î±×ÀÎ½Ã »ç¿ë)
+#define MOVE_UP 21				// WÅ° ÀÔ·Â
+#define MOVE_DOWN 22			// SÅ° ÀÔ·Â
+#define MOVE_LEFT 23			// AÅ° ÀÔ·Â
+#define MOVE_RIGHT 24			// DÅ° ÀÔ·Â
 
 #define FPS 30
 #define PLAYER_MAX 3
@@ -63,21 +63,21 @@ struct Position {
 
 struct EXHP {
 public:
-	Position pos;                  // ìœ„ì¹˜
-	bool isAlived{ false };         // ìƒì‚¬ì—¬ë¶€
+	Position pos;                  // À§Ä¡
+	bool isAlived{ false };         // »ı»ç¿©ºÎ
 };
 
 class Player {
 public:
-	Position pos{ 0,0 };                  // ìœ„ì¹˜
-	char playerID[10];             // ë¡œê·¸ì¸ì‹œ ì‚¬ìš©í•  ID
-	bool isAlived{ true };         // ìƒì‚¬ì—¬ë¶€
+	Position pos{ 0,0 };                  // À§Ä¡
+	char playerID[10];             // ·Î±×ÀÎ½Ã »ç¿ëÇÒ ID
+	bool isAlived{ true };         // »ı»ç¿©ºÎ
 
-	EXHP exhpList[3];
+	int exhpList = 0;
 
-	int hp;                        // ìƒì‚¬ë¥¼ ê²°ì •í•˜ëŠ” HP
-	int score{ 0 };                // Enemyë¥¼ ì¡ìœ¼ë©´ 1 ìƒìŠ¹ (ìŠ¹íŒ¨ ê²°ì •)
-	int rank;                      // ìµœì¢… ìˆœìœ„
+	int hp{ 5 };                        // »ı»ç¸¦ °áÁ¤ÇÏ´Â HP
+	int score{ 0 };                // Enemy¸¦ ÀâÀ¸¸é 1 »ó½Â (½ÂÆĞ °áÁ¤)
+	int rank;                      // ÃÖÁ¾ ¼øÀ§
 };
 
 struct Obstacle {
@@ -86,18 +86,18 @@ struct Obstacle {
 };
 
 struct Enemy {
-	Position pos;                  // ìœ„ì¹˜
-	bool isAlived{ true };          // ìƒì‚¬ì—¬ë¶€
+	Position pos;                  // À§Ä¡
+	bool isAlived{ true };          // »ı»ç¿©ºÎ
 };
 
 struct Item {
-	Position pos;                  // ìœ„ì¹˜
-	bool isAlived{ true };          // ìƒì‚¬ì—¬ë¶€
+	Position pos;                  // À§Ä¡
+	bool isAlived{ true };          // »ı»ç¿©ºÎ
 };
 
 struct HPBAR {
-	Position pos;                  // ìœ„ì¹˜
-	bool isAlived{ true };          // ìƒì‚¬ì—¬ë¶€
+	Position pos;                  // À§Ä¡
+	bool isAlived{ true };          // »ı»ç¿©ºÎ
 };
 
 
@@ -105,7 +105,7 @@ struct HPBAR {
 struct cs_send_struct {
 	char size = 20U;
 	char type;
-	bool isAlive=true;
+	bool isAlive = true;
 	int keyInputDirection;
 	char playerID[10];
 
@@ -121,7 +121,7 @@ struct cs_recv_struct2 {
 	Player players[3];
 	int enemy[3];
 	int item[3];
-	int clientIndex;               // í•´ë‹¹ í´ë¼ì´ì–¸íŠ¸ì˜ ì¸ë±ìŠ¤
+	int clientIndex;               // ÇØ´ç Å¬¶óÀÌ¾ğÆ®ÀÇ ÀÎµ¦½º
 
 };
 
@@ -183,7 +183,7 @@ void DrawObstacle(HDC hdc, int xS, int yS);
 void DrawItem(HDC hdc, int xS, int yS);
 void DrawEnemy(HDC hdc, int xS, int yS);
 void DrawHp(HDC hdc, int xS, int yS);
-void DrawExHp(HDC hdc, int xS, int yS);
+void DrawExHp(HDC hdc, int xS, int yS, Player& p);
 
 int recvn(SOCKET s, char* buf, int len, int flags);
 void err_quit(const char* msg);

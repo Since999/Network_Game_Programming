@@ -1,6 +1,6 @@
 #pragma once
 
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
 #define _CRT_SECURE_NO_WARNINGS
 #pragma comment(lib, "ws2_32")
 #pragma comment(lib, "winmm.lib")
@@ -18,18 +18,18 @@ using namespace std;
 #define SERVERPORT 9000
 #define BUFSIZE 1024
 
-#define GAME_READY 11			// ì ‘ì†í•œ í´ë¼ì´ì–¸íŠ¸ ìˆ˜ < 3
-#define GAME_RUNNING 12			// INGAME ìƒíƒœ (ì£½ì€ í´ë¼ì´ì–¸íŠ¸ ìˆ˜ < 3)
-#define GAME_SET 13				// ì£½ì€ í´ë¼ì´ì–¸íŠ¸ ìˆ˜ == 3
+#define GAME_READY 11			// Á¢¼ÓÇÑ Å¬¶óÀÌ¾ğÆ® ¼ö < 3
+#define GAME_RUNNING 12			// INGAME »óÅÂ (Á×Àº Å¬¶óÀÌ¾ğÆ® ¼ö < 3)
+#define GAME_SET 13				// Á×Àº Å¬¶óÀÌ¾ğÆ® ¼ö == 3
 
-#define MOVE_NONE 20			// í‚¤ ì…ë ¥ì´ ì—†ëŠ” ìƒíƒœ (ë¡œê·¸ì¸ì‹œ ì‚¬ìš©)
-#define MOVE_UP 21				// Wí‚¤ ì…ë ¥
-#define MOVE_DOWN 22			// Sí‚¤ ì…ë ¥
-#define MOVE_LEFT 23			// Aí‚¤ ì…ë ¥
-#define MOVE_RIGHT 24			// Dí‚¤ ì…ë ¥
+#define MOVE_NONE 20			// Å° ÀÔ·ÂÀÌ ¾ø´Â »óÅÂ (·Î±×ÀÎ½Ã »ç¿ë)
+#define MOVE_UP 21				// WÅ° ÀÔ·Â
+#define MOVE_DOWN 22			// SÅ° ÀÔ·Â
+#define MOVE_LEFT 23			// AÅ° ÀÔ·Â
+#define MOVE_RIGHT 24			// DÅ° ÀÔ·Â
 
 #define PLAYER_MAX 3
-#define PLAYER_SPEED 10			// í”Œë ˆì´ì–´ ì†ë„
+#define PLAYER_SPEED 10			// ÇÃ·¹ÀÌ¾î ¼Óµµ
 
 CRITICAL_SECTION cs;
 int joinClient = 0;
@@ -47,33 +47,36 @@ struct Position {
 
 struct EXHP {
 public:
-	Position pos;                  // ìœ„ì¹˜
-	bool isAlived{ false };          // ìƒì‚¬ì—¬ë¶€
+	Position pos;                  // À§Ä¡
+	bool isAlived{ false };          // »ı»ç¿©ºÎ
 };
 
 class Player {
 public:
-	Position pos{ 0,0 };				// ìœ„ì¹˜
-	char playerID[10];			// ë¡œê·¸ì¸ì‹œ ì‚¬ìš©í•  ID
-	bool isAlived{ true };				// ìƒì‚¬ì—¬ë¶€
-	int hp;						// ìƒì‚¬ë¥¼ ê²°ì •í•˜ëŠ” HP
+	Position pos{ 0,0 };				// À§Ä¡
+	char playerID[10];			// ·Î±×ÀÎ½Ã »ç¿ëÇÒ ID
+	bool isAlived{ true };				// »ı»ç¿©ºÎ
+						// »ı»ç¸¦ °áÁ¤ÇÏ´Â HP
 
-	EXHP exhpList[3];
+	int exhpList=0;
 
-	int score{ 0 };					// Enemyë¥¼ ì¡ìœ¼ë©´ 1 ìƒìŠ¹ (ìŠ¹íŒ¨ ê²°ì •)
-	int rank{ 3 };					// ìµœì¢… ìˆœìœ„
+	int hp{ 5 };
+
+
+	int score{ 0 };					// Enemy¸¦ ÀâÀ¸¸é 1 »ó½Â (½ÂÆĞ °áÁ¤)
+	int rank{ 3 };					// ÃÖÁ¾ ¼øÀ§
 };
 
 struct Enemy {
 public:
-	Position pos;				// ìœ„ì¹˜
-	bool isAlived{ true };				// ìƒì‚¬ì—¬ë¶€
+	Position pos;				// À§Ä¡
+	bool isAlived{ true };				// »ı»ç¿©ºÎ
 };
 
 struct Item {
 public:
-	Position pos;				// ìœ„ì¹˜
-	bool isAlived{ true };				// ìƒì‚¬ì—¬ë¶€
+	Position pos;				// À§Ä¡
+	bool isAlived{ true };				// »ı»ç¿©ºÎ
 };
 
 struct Wall {
@@ -92,7 +95,7 @@ struct sc_send_struct2 {
 	Player players[3];
 	int enemy[3];
 	int item[3];
-	int clientIndex;			// í•´ë‹¹ í´ë¼ì´ì–¸íŠ¸ì˜ ì¸ë±ìŠ¤
+	int clientIndex;			// ÇØ´ç Å¬¶óÀÌ¾ğÆ®ÀÇ ÀÎµ¦½º
 
 };
 
@@ -103,7 +106,7 @@ struct sc_send_struct2 {
 /*struct sc_send_struct {
 	char size=596U;
 	char type;
-	Player players[3];			// í”Œë ˆì´ì–´ë“¤ì˜ ë¦¬ìŠ¤íŠ¸
+	Player players[3];			// ÇÃ·¹ÀÌ¾îµéÀÇ ¸®½ºÆ®
 	int gameState;				// GAME_READY/GAME_RUNNING/GAME_SET
 	Enemy enemyList[35];
 	Item itemList[3];
@@ -113,9 +116,9 @@ struct sc_send_struct2 {
 struct sc_recv_struct {
 	char size = 20U;
 	char type;
-	bool isAlive=true;
-	int keyInputDirection;		// í´ë¼ì´ì–¸íŠ¸ì—ì„œì˜ í‚¤ì…ë ¥ ì •ë³´
-	char playerID[10];			// í•´ë‹¹ í´ë¼ì´ì–¸íŠ¸ì˜ ID
+	bool isAlive = true;
+	int keyInputDirection;		// Å¬¶óÀÌ¾ğÆ®¿¡¼­ÀÇ Å°ÀÔ·Â Á¤º¸
+	char playerID[10];			// ÇØ´ç Å¬¶óÀÌ¾ğÆ®ÀÇ ID
 };
 
 #pragma pack()
@@ -125,7 +128,7 @@ sc_send_struct2 ServerSend2;
 Enemy enemyList[35];
 Wall List[36];
 Item itemList[3];
-EXHP exhpList[3];
+
 Player player[3];
 int clientCnt = 0;
 sc_recv_struct ServerRecv;
@@ -146,31 +149,31 @@ void InitWall();
 
 void Accept(int clientIndex);
 
-float deltaTime();						// deltaTime ë°˜í™˜
+float deltaTime();						// deltaTime ¹İÈ¯
 
-void sendGameStart();					// GAME_RUNNING ì „í™˜ì„ í´ë¼ì´ì–¸íŠ¸ì—ê²Œ ì „ì†¡
+void sendGameStart();					// GAME_RUNNING ÀüÈ¯À» Å¬¶óÀÌ¾ğÆ®¿¡°Ô Àü¼Û
 
-void SendData(sc_send_struct2* s_data);	// sc_send_struct êµ¬ì¡°ì²´ ì „ì†¡
-void RecvData(sc_recv_struct* r_data);	// sc_recv_struct êµ¬ì¡°ì²´ ìˆ˜ì‹ 
+void SendData(sc_send_struct2* s_data);	// sc_send_struct ±¸Á¶Ã¼ Àü¼Û
+void RecvData(sc_recv_struct* r_data);	// sc_recv_struct ±¸Á¶Ã¼ ¼ö½Å
 
-void MakeRank();						// GAME_SETì—ì„œ ì„¸ í´ë¼ì´ì–¸íŠ¸ì˜ ìˆœìœ„ ê²°ì •
+void MakeRank();						// GAME_SET¿¡¼­ ¼¼ Å¬¶óÀÌ¾ğÆ®ÀÇ ¼øÀ§ °áÁ¤
 
-void MovePlayer(int key, Player& p, int clientIndex);				// í”Œë ˆì´ì–´ì˜ ìœ„ì¹˜ ì •ë³´ ê°±ì‹ 
-void UpdatePlayer(Player& p, int clientIndex);			// í”Œë ˆì´ì–´ì˜ ì •ë³´ ê°±ì‹ 
+void MovePlayer(int key, Player& p, int clientIndex);				// ÇÃ·¹ÀÌ¾îÀÇ À§Ä¡ Á¤º¸ °»½Å
+void UpdatePlayer(Player& p, int clientIndex);			// ÇÃ·¹ÀÌ¾îÀÇ Á¤º¸ °»½Å
 
-void CheckPlayerByWallCollision(int key, Player& p);		// í”Œë ˆì´ì–´ì™€ ë²½ì˜ ì¶©ëŒ ì²´í¬
-void CheckPlayerByPlayerCollision(int key, Player& p, int clientIndex);	// í”Œë ˆì´ì–´ê°„ì˜ ì¶©ëŒ ì²´í¬
-void CheckPlayerByEnemyCollision(Player& p, int clientIndex);		// í”Œë ˆì´ì–´ì™€ Enemyì˜ ì¶©ëŒ ì²´í¬
-void CheckPlayerByItemCollision(Player& p, int clientIndex);		// í”Œë ˆì´ì–´ì™€ Itemì˜ ì¶©ëŒ ì²´í¬
+void CheckPlayerByWallCollision(int key, Player& p);		// ÇÃ·¹ÀÌ¾î¿Í º®ÀÇ Ãæµ¹ Ã¼Å©
+void CheckPlayerByPlayerCollision(int key, Player& p, int clientIndex);	// ÇÃ·¹ÀÌ¾î°£ÀÇ Ãæµ¹ Ã¼Å©
+void CheckPlayerByEnemyCollision(Player& p, int clientIndex);		// ÇÃ·¹ÀÌ¾î¿Í EnemyÀÇ Ãæµ¹ Ã¼Å©
+void CheckPlayerByItemCollision(Player& p, int clientIndex);		// ÇÃ·¹ÀÌ¾î¿Í ItemÀÇ Ãæµ¹ Ã¼Å©
 
-void DeleteEnemy();						// Enemy ê°ì²´ì˜ isAlived = false;
-										// CheckPlayerByEnemyCollision()ì—ì„œ í˜¸ì¶œ
-void DeleteItem();						// Item ê°ì²´ì˜ isAlived = false;
-										// CheckPlayerByItemCollision()ì—ì„œ í˜¸ì¶œ
+void DeleteEnemy();						// Enemy °´Ã¼ÀÇ isAlived = false;
+										// CheckPlayerByEnemyCollision()¿¡¼­ È£Ãâ
+void DeleteItem();						// Item °´Ã¼ÀÇ isAlived = false;
+										// CheckPlayerByItemCollision()¿¡¼­ È£Ãâ
 
-bool isPlayerAlived();					// í”Œë ˆì´ì–´ì˜ HP ê²€ì‚¬ë¥¼ í†µí•´ ìƒì‚¬ íŒë³„
+bool isPlayerAlived();					// ÇÃ·¹ÀÌ¾îÀÇ HP °Ë»ç¸¦ ÅëÇØ »ı»ç ÆÇº°
 
-int isGameOver(Player p[]);						// ì¢…ë£Œ ì¡°ê±´ ì²˜ë¦¬ (ì£½ì€ í”Œë ˆì´ì–´ ìˆ˜ == 3)
+int isGameOver(Player p[]);						// Á¾·á Á¶°Ç Ã³¸® (Á×Àº ÇÃ·¹ÀÌ¾î ¼ö == 3)
 
 int recvn(SOCKET s, char* buf, int len, int flags);
 void err_quit(const char* msg);
