@@ -9,6 +9,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 	InitHpBar();
 	InitExHp();
 	gamestate = GAME_READY;
+
+	hSocketEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	hRenderEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
 	//p.hp = 1;
 
 	MSG Message;
@@ -60,7 +63,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 					int retval = 0;
 					//Render();
 					hpCnt++;
-					if (hpCnt % 90 == 0) {
+					if (hpCnt % 120 == 0) {
 						UpdateHP(hpCnt);
 					}
 					if (p.isAlived == false)
@@ -68,10 +71,13 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 						clientSend.isAlive = p.isAlived;
 						
 						retval = send(sock, (char*)&clientSend, clientSend.size, 0);
+						cout << "PLAYER is not Alived!!" << endl;
 					}
 					//gamestate = clientRecv2.gameState;
-
+					WaitForSingleObject(hSocketEvent, INFINITE);
 					InvalidateRect(hWnd, NULL, FALSE);
+					SetEvent(hRenderEvent);
+
 					lastTime = GetTickCount();
 				}
 			}
@@ -257,8 +263,8 @@ void Update()
 
 void UpdateHP(int cnt)
 {
-	if (int(cnt / 90) <= 5) {
-		hpList[5 - int(cnt / 90)].isAlived = false;
+	if (int(cnt / 120) <= 5) {
+		hpList[5 - int(cnt / 120)].isAlived = false;
 		//hpNumber--;
 		if (hpList[0].isAlived == false)
 		{
@@ -299,6 +305,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 			break;
 
 		case GAME_RUNNING:
+			WaitForSingleObject(hRenderEvent, INFINITE);
 			retval = recvn(sock, (char*)&clientRecv2, sizeof(clientRecv2), 0);
 			if (retval == SOCKET_ERROR)
 			{
@@ -330,15 +337,12 @@ DWORD WINAPI RecvThread(LPVOID arg)
 				//hpNumber++;
 
 			gamestate = clientRecv2.gameState;
-			
+			SetEvent(hSocketEvent);
 			break;
 		case GAME_SET:
 		{
 			printf("asd\n");
 			ExitThread(1);
-
-
-
 		}
 		}
 
@@ -516,30 +520,18 @@ void DrawPlayer(HDC hdc, int xS, int yS, cs_recv_struct2 recv)
 {
 	//1P
 	HBRUSH hBrush, oBrush;
-
 	hBrush = CreateSolidBrush(RGB(0, 0, 0));
 	oBrush = (HBRUSH)SelectObject(hdc, hBrush);
 
-
-	hBrush = CreateSolidBrush(RGB(0, 255, 0));
-	oBrush = (HBRUSH)SelectObject(hdc, hBrush);
-	Rectangle(hdc, 80 + recv.players[0].pos.x * oneSize + xS, 120 + recv.players[0].pos.y * oneSize + yS,
-		80 + recv.players[0].pos.x * oneSize + xS + oneSize, 120 + recv.players[0].pos.y * oneSize + yS + oneSize);
-	DeleteObject(hBrush);
-
-	hBrush = CreateSolidBrush(RGB(255, 255, 0));
-	oBrush = (HBRUSH)SelectObject(hdc, hBrush);
-	Rectangle(hdc, 80 + recv.players[1].pos.x * oneSize + xS, 120 + recv.players[1].pos.y * oneSize + yS,
-		80 + recv.players[1].pos.x * oneSize + xS + oneSize, 120 + recv.players[1].pos.y * oneSize + yS + oneSize);
-	DeleteObject(hBrush);
-
-	hBrush = CreateSolidBrush(RGB(255, 0, 255));
-	oBrush = (HBRUSH)SelectObject(hdc, hBrush);
-	Rectangle(hdc, 80 + recv.players[2].pos.x * oneSize + xS, 120 + recv.players[2].pos.y * oneSize + yS,
-		80 + recv.players[2].pos.x * oneSize + xS + oneSize, 120 + recv.players[2].pos.y * oneSize + yS + oneSize);
-
-
-
+	for (int i = 0; i < 3; i++) {
+		if (recv.players[i].isAlived) {
+			hBrush = CreateSolidBrush(recv.players[i].color);
+			oBrush = (HBRUSH)SelectObject(hdc, hBrush);
+			Rectangle(hdc, 80 + recv.players[i].pos.x * oneSize + xS, 120 + recv.players[i].pos.y * oneSize + yS,
+				80 + recv.players[i].pos.x * oneSize + xS + oneSize, 120 + recv.players[i].pos.y * oneSize + yS + oneSize);
+			DeleteObject(hBrush);
+		}
+	}
 
 	SelectObject(hdc, oBrush);
 	DeleteObject(hBrush);

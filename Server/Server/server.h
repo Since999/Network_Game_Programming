@@ -63,6 +63,7 @@ public:
 
 	int hp{ 5 };
 
+	COLORREF color;
 
 	int score{ 0 };					// Enemy를 잡으면 1 상승 (승패 결정)
 	int rank{ 3 };					// 최종 순위
@@ -141,12 +142,11 @@ SOCKET clientSock[3];
 HANDLE hWriteEvent;
 HANDLE hClientEvent[PLAYER_MAX];
 
-void InitObstacle();
+
 void InitItem();
 void InitEnemy();
-void InitHpBar();
-void InitExHp();
 void InitWall();
+void InitPlayer();
 
 void Accept(int clientIndex);
 

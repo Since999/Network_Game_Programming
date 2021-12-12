@@ -35,6 +35,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			//for (int i = 0; i < 3; ++i)
 				//ServerSend2.players->exhpList[i].isAlived = exhpList[i].isAlived;
 
+			player[clientIndex].isAlived = ServerRecv.isAlive;
 
 			retval = send(client_sock, (char*)&ServerSend2, sizeof(ServerSend2), 0);
 			//SetEvent(hWriteEvent);
@@ -95,10 +96,7 @@ int main() {
 	InitEnemy();
 	InitItem();
 	InitWall();
-	//InitExHp();
 
-	//player->pos.x = 0;
-	//player->pos.y = 0;
 	while (1) {
 		if (clientCnt < 3) {
 			Accept(clientCnt);
@@ -112,6 +110,7 @@ int main() {
 			if (clientCnt == 3) {
 				gameState = GAME_RUNNING;
 				ServerSend2.gameState = gameState;
+				InitPlayer();
 				for (int i = 0; i < PLAYER_MAX; i++) {
 					retval = send(clientSock[i], (char*)&ServerSend2, sizeof(ServerSend2), 0);
 				}
@@ -126,14 +125,14 @@ int main() {
 			if (curTime - lastTime >= FPS) {
 				//UpdatePlayer(player);for (int i = 0;i < 3;i++)
 
-				for (int i = 0; i < PLAYER_MAX; i++) {
-					{
-						player[i].isAlived = ServerRecv.isAlive;
-						//printf("asd\n");
-						//printf("%d , %d\n",i, ServerRecv.isAlive);
-						//printf("%s\n", player[i].playerID);
-					}
-				}
+				//for (int i = 0; i < PLAYER_MAX; i++) {
+				//	{
+				//		player[i].isAlived = ServerRecv.isAlive;
+				//		//printf("asd\n");
+				//		//printf("%d , %d\n",i, ServerRecv.isAlive);
+				//		//printf("%s\n", player[i].playerID);
+				//	}
+				//}
 				
 				ServerSend2.gameState = isGameOver(player);
 				//ServerSend2.players[clientCnt].exhpList = player[clientCnt].exhpList;
@@ -641,6 +640,22 @@ void InitItem()
 
 	itemList[2].pos.x = 2;
 	itemList[2].pos.y = 7;
+}
+void InitPlayer() {
+	player[0].pos.x = 0;
+	player[0].pos.y = 0;
+	player[0].color = RGB(0, 255, 0);
+	player[1].pos.x = 11;
+	player[1].pos.y = 0;
+	player[1].color = RGB(255, 255, 0);
+	player[2].pos.x = 0;
+	player[2].pos.y = 11;
+	player[2].color = RGB(255, 0, 255);
+
+	for (int i = 0; i < 3; i++) {
+		ServerSend2.players[i].pos = player[i].pos;
+		ServerSend2.players[i].color = player[i].color;
+	}
 }
 /*void InitExHp()
 {
