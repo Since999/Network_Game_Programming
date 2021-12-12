@@ -1,6 +1,7 @@
 #include "client.h"
 #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 HWND hWnd;
+bool bbb = true;
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 	InitObstacle();
@@ -188,11 +189,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				}
 			}
 			retval = recvn(sock, (char*)&clientRecv2, sizeof(clientRecv2), 0);
-			p.exhpList = clientRecv2.players[clientIndex].exhpList;
-			for (int i = 0;i < 3;i++)
+			
+			if (bbb == true)
 			{
-				if (p.exhpList >= i)
-					exhpList[i].isAlived=true;
+				p.exhpList = clientRecv2.players[clientIndex].exhpList;
+				for (int i = 0;i < 3;i++)
+				{
+					if (p.exhpList >= i)
+						exhpList[i].isAlived = true;
+				}
 			}
 		}
 		break;
@@ -271,25 +276,49 @@ void UpdateHP(int cnt)
 	if (int(cnt / 30) <= 5) {
 		hpList[5 - int(cnt / 30)].isAlived = false;
 		//hpNumber--;
+		
+		
+	}
+
+	if (int(cnt / 30) >= 6) {
 		if (hpList[0].isAlived == false)
 		{
-			if (exhpList[0].isAlived) {
-				if (exhpList[1].isAlived) {
-					if (exhpList[2].isAlived) {
-						exhpList[2].isAlived = false;
-					}
-					else exhpList[1].isAlived = false;
-				}
-				else exhpList[0].isAlived = false;
+			if (exhpList[2].isAlived == true)
+			{
+				exhpList[2].isAlived = false;
+				p.exhpList -= 1;
 			}
+			else if (exhpList[2].isAlived == false && exhpList[1].isAlived == true)
+			{
+				exhpList[1].isAlived = false;
+				p.exhpList -= 2;
+				printf("dead\n");
+				p.isAlived = false;
+				bbb = false;
+				printf("dead\n");
+			}
+			else if (exhpList[2].isAlived == false && exhpList[1].isAlived == false && exhpList[1].isAlived == true)
+			{
+				exhpList[0].isAlived = false;
+				p.exhpList -= 3;
+				p.isAlived = false;
+				bbb = false;
+				printf("dead\n");
+			}
+			
 		}
-		printf("ex : %d\n", p.exhpList);
+		//exhpList[0].isAlived = false;
 	}
-	
+
+	printf("cnt : %d\n", cnt);
 	if (!exhpList[2].isAlived && !exhpList[1].isAlived && !exhpList[0].isAlived
-		&& !hpList[0].isAlived ) {
+		&& !hpList[0].isAlived) {
 		p.isAlived = false;
+		bbb = false;
+		printf("dead\n");
+
 	}
+
 }
 
 DWORD WINAPI RecvThread(LPVOID arg)

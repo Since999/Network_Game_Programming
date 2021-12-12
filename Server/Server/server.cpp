@@ -44,6 +44,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			//for (int i = 0; i < 3; ++i)
 				//ServerSend2.players->exhpList[i].isAlived = exhpList[i].isAlived;
 
+			player[clientIndex].isAlived = ServerRecv.isAlive;
 
 			
 			retval = send(client_sock, (char*)&ServerSend2, sizeof(ServerSend2), 0);
@@ -140,14 +141,7 @@ int main() {
 			if (curTime - lastTime >= FPS) {
 				//UpdatePlayer(player);for (int i = 0;i < 3;i++)
 
-				for (int i = 0; i < PLAYER_MAX; i++) {
-					{
-						player[i].isAlived = ServerRecv.isAlive;
-						//printf("asd\n");
-						//printf("%d , %d\n",i, ServerRecv.isAlive);
-						//printf("%s\n", player[i].playerID);
-					}
-				}
+
 				
 				ServerSend2.gameState = isGameOver(player);
 				//ServerSend2.players[clientCnt].exhpList = player[clientCnt].exhpList;
@@ -472,9 +466,12 @@ int isGameOver(Player p[])
 		if (!p[i].isAlived)
 		{
 			cnt++;
+			p[i].exhpList = 0;
+
 			//return GAME_SET;
 		}
 	}
+	printf("cnt : %d\n", cnt);
 	if (cnt == 3)
 	{
 		if (test)
