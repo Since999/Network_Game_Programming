@@ -36,8 +36,8 @@ using namespace std;
 #define MOVE_LEFT 23			// A키 입력
 #define MOVE_RIGHT 24			// D키 입력
 
-#define FPS 30
 #define PLAYER_MAX 3
+#define FPS 30
 
 static int obstacleNumber{ 36 };
 static int enemyNumber{ 35 };
@@ -54,7 +54,7 @@ DWORD curTime;
 DWORD lastTime = GetTickCount();
 
 HANDLE hThread;
-HANDLE hReadEvent, hWriteEvent;
+HANDLE hSocketEvent, hRenderEvent;
 
 #pragma pack(1)
 struct Position {
@@ -76,6 +76,8 @@ public:
 	int exhpList = 0;
 
 	int hp{ 5 };                        // 생사를 결정하는 HP
+	
+	COLORREF color;
 	int score{ 0 };                // Enemy를 잡으면 1 상승 (승패 결정)
 	int rank;                      // 최종 순위
 };
@@ -173,6 +175,7 @@ void InitItem();
 void InitEnemy();
 void InitHpBar();
 void InitExHp();
+void InitPlayer();
 
 void Update();
 void UpdateHP(int cnt);

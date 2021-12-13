@@ -2,6 +2,7 @@
 #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 HWND hWnd;
 bool bbb = true;
+
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 	InitObstacle();
@@ -10,6 +11,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 	InitHpBar();
 	InitExHp();
 	gamestate = GAME_READY;
+
+	hSocketEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	hRenderEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
 	//p.hp = 1;
 
 	MSG Message;
@@ -57,25 +61,19 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmd
 		else {
 			if (gamestate == GAME_RUNNING) {
 				curTime = GetTickCount();
-				if (curTime - lastTime >= 33) {
+				if (curTime - lastTime >= FPS) {
 					int retval = 0;
 					//Render();
 					hpCnt++;
-					if (hpCnt % 30 == 0) {
+					if (hpCnt % 60 == 0) {
 						UpdateHP(hpCnt);
 					}
-					if (p.isAlived == false)
-					{
-						//p.isAlived = false;
-						clientSend.isAlive = p.isAlived;
-						
-						//printf("%d\n", clientSend.isAlive);
-						retval = send(sock, (char*)&clientSend, clientSend.size, 0);
 
-					}
 					//gamestate = clientRecv2.gameState;
-
+					WaitForSingleObject(hSocketEvent, INFINITE);
 					InvalidateRect(hWnd, NULL, FALSE);
+					SetEvent(hRenderEvent);
+
 					lastTime = GetTickCount();
 				}
 			}
@@ -121,28 +119,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 		GetClientRect(hWnd, &rect);
 
-
 		if (gamestate == GAME_READY)
 		{
-
 			child_hWnd = CreateWindow(lpszClass2, NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE,
 				0, 0, 800, 800, hWnd, NULL, g_hInst, NULL);
 		}
-
-
 		break;
 
-
 	case WM_TIMER:
-
 		//InvalidateRect(hWnd, NULL, TRUE);
 		switch (wParam) {
 		case 1:
 			//if (Timer1Count > 0)
 			//	Timer1Count--;
 			break;
-
-
 		}
 		break;
 	case WM_COMMAND:
@@ -168,38 +158,52 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		if (gamestate == GAME_RUNNING)
 		{
 			if (p.isAlived) {
+			
+
 				if (wParam == VK_LEFT)
 				{
 					clientSend.keyInputDirection = MOVE_LEFT;
-					retval = send(sock, (char*)&clientSend, clientSend.size, 0);
 				}
 				else if (wParam == VK_RIGHT) {
 					clientSend.keyInputDirection = MOVE_RIGHT;
-					retval = send(sock, (char*)&clientSend, clientSend.size, 0);
 				}
 				else if (wParam == VK_UP)
 				{
 					clientSend.keyInputDirection = MOVE_UP;
-					retval = send(sock, (char*)&clientSend, clientSend.size, 0);
 				}
 				else if (wParam == VK_DOWN)
 				{
 					clientSend.keyInputDirection = MOVE_DOWN;
-					retval = send(sock, (char*)&clientSend, clientSend.size, 0);
 				}
 			}
+			if (!hpList[0].isAlived && p.exhpList < 1)
+			{
+				//p.isAlived=false;
+				clientSend.isAlive = p.isAlived;
+			}
+			retval = send(sock, (char*)&clientSend, clientSend.size, 0);
+			 
 			retval = recvn(sock, (char*)&clientRecv2, sizeof(clientRecv2), 0);
 			
-			if (bbb == true)
+			if (clientIndex == clientRecv2.clientIndex)
 			{
+				
 				p.exhpList = clientRecv2.players[clientIndex].exhpList;
-				for (int i = 0;i < 3;i++)
-				{
-					if (p.exhpList >= i)
-						exhpList[i].isAlived = true;
-				}
+				printf("ex %d \n", p.exhpList);
 			}
+			//if (bbb=true)
+			//{
+			//	for (int i = 0;i < 3;i++)
+			//	{
+			//		if (p.exhpList >= i)
+			//			exhpList[i].isAlived = true;
+			//	}
+			//}
 		}
+
+
+
+
 		break;
 
 	case WM_PAINT:
@@ -273,49 +277,72 @@ void Update()
 
 void UpdateHP(int cnt)
 {
-	if (int(cnt / 30) <= 5) {
-		hpList[5 - int(cnt / 30)].isAlived = false;
+	//printf("asd : %d\n", p.exhpList);
+	if (int(cnt / 60) <= 5) {
+		hpList[5 - int(cnt / 60)].isAlived = false;
 		//hpNumber--;
 		
-		
-	}
 
-	if (int(cnt / 30) >= 6) {
-		if (hpList[0].isAlived == false)
+
+	}
+	if (int(cnt / 60) == 6) {
+
+
+		if (p.exhpList < 1)
 		{
-			if (exhpList[2].isAlived == true)
-			{
-				exhpList[2].isAlived = false;
-				p.exhpList -= 1;
-			}
-			else if (exhpList[2].isAlived == false && exhpList[1].isAlived == true)
-			{
-				exhpList[1].isAlived = false;
-				p.exhpList -= 2;
-				printf("dead\n");
-				p.isAlived = false;
-				bbb = false;
-				printf("dead\n");
-			}
-			else if (exhpList[2].isAlived == false && exhpList[1].isAlived == false && exhpList[1].isAlived == true)
-			{
-				exhpList[0].isAlived = false;
-				p.exhpList -= 3;
-				p.isAlived = false;
-				bbb = false;
-				printf("dead\n");
-			}
-			
-		}
-		//exhpList[0].isAlived = false;
-	}
+			p.isAlived = false;
+			clientSend.isAlive = p.isAlived;
 
-	printf("cnt : %d\n", cnt);
-	if (!exhpList[2].isAlived && !exhpList[1].isAlived && !exhpList[0].isAlived
-		&& !hpList[0].isAlived) {
+
+		}
+		else
+			p.exhpList--;
+
+
+	}
+	else if (int(cnt / 60) == 7) {
+
+
+		if (p.exhpList < 1)
+		{
+			p.isAlived = false;
+			clientSend.isAlive = p.isAlived;
+
+
+		}
+		else
+			p.exhpList -= 2;
+
+
+	}
+	else if (int(cnt / 60) == 8) {
+
+
+		if (p.exhpList < 1)
+		{
+			p.isAlived = false;
+			clientSend.isAlive = p.isAlived;
+
+
+		}
+		else
+			p.exhpList -= 3;
+
+
+	}
+	if (!hpList[0].isAlived && p.exhpList < 1)
+	{
 		p.isAlived = false;
+		clientSend.isAlive = p.isAlived;
+
+		printf("%d\n", p.exhpList);
+
+		send(sock, (char*)&clientSend, clientSend.size, 0);
 		bbb = false;
-		printf("dead\n");
+		recvn(sock, (char*)&clientRecv2, sizeof(clientRecv2), 0);
+		gamestate = clientRecv2.gameState;
+
+
 
 	}
 
@@ -336,17 +363,20 @@ DWORD WINAPI RecvThread(LPVOID arg)
 				break;
 			}
 			gamestate = clientRecv2.gameState;
+			clientIndex = clientRecv2.clientIndex;
 			break;
 
 		case GAME_RUNNING:
+			WaitForSingleObject(hRenderEvent, INFINITE);
 			retval = recvn(sock, (char*)&clientRecv2, sizeof(clientRecv2), 0);
+			
+
 			if (retval == SOCKET_ERROR)
 			{
-				err_display("recv()");
+				err_display("recv()"); 
 				break;
 			}
 
-			clientIndex = clientRecv2.clientIndex;
 			//printf("%d\n",clientIndex);
 			//p.pos = clientRecv2.players[clientRecv2.clientIndex].pos;
 			//p.score = clientRecv2.players[clientRecv2.clientIndex].score;
@@ -371,14 +401,13 @@ DWORD WINAPI RecvThread(LPVOID arg)
 
 			gamestate = clientRecv2.gameState;
 			
+
+			SetEvent(hSocketEvent);
 			break;
 		case GAME_SET:
 		{
-			printf("asd\n");
+			//printf("asd\n");
 			ExitThread(1);
-
-
-
 		}
 		}
 
@@ -556,30 +585,18 @@ void DrawPlayer(HDC hdc, int xS, int yS, cs_recv_struct2 recv)
 {
 	//1P
 	HBRUSH hBrush, oBrush;
-
 	hBrush = CreateSolidBrush(RGB(0, 0, 0));
 	oBrush = (HBRUSH)SelectObject(hdc, hBrush);
 
-
-	hBrush = CreateSolidBrush(RGB(0, 255, 0));
-	oBrush = (HBRUSH)SelectObject(hdc, hBrush);
-	Rectangle(hdc, 80 + recv.players[0].pos.x * oneSize + xS, 120 + recv.players[0].pos.y * oneSize + yS,
-		80 + recv.players[0].pos.x * oneSize + xS + oneSize, 120 + recv.players[0].pos.y * oneSize + yS + oneSize);
-	DeleteObject(hBrush);
-
-	hBrush = CreateSolidBrush(RGB(255, 255, 0));
-	oBrush = (HBRUSH)SelectObject(hdc, hBrush);
-	Rectangle(hdc, 80 + recv.players[1].pos.x * oneSize + xS, 120 + recv.players[1].pos.y * oneSize + yS,
-		80 + recv.players[1].pos.x * oneSize + xS + oneSize, 120 + recv.players[1].pos.y * oneSize + yS + oneSize);
-	DeleteObject(hBrush);
-
-	hBrush = CreateSolidBrush(RGB(255, 0, 255));
-	oBrush = (HBRUSH)SelectObject(hdc, hBrush);
-	Rectangle(hdc, 80 + recv.players[2].pos.x * oneSize + xS, 120 + recv.players[2].pos.y * oneSize + yS,
-		80 + recv.players[2].pos.x * oneSize + xS + oneSize, 120 + recv.players[2].pos.y * oneSize + yS + oneSize);
-
-
-
+	for (int i = 0; i < 3; i++) {
+		if (recv.players[i].isAlived) {
+			hBrush = CreateSolidBrush(recv.players[i].color);
+			oBrush = (HBRUSH)SelectObject(hdc, hBrush);
+			Rectangle(hdc, 80 + recv.players[i].pos.x * oneSize + xS, 120 + recv.players[i].pos.y * oneSize + yS,
+				80 + recv.players[i].pos.x * oneSize + xS + oneSize, 120 + recv.players[i].pos.y * oneSize + yS + oneSize);
+			DeleteObject(hBrush);
+		}
+	}
 
 	SelectObject(hdc, oBrush);
 	DeleteObject(hBrush);
@@ -835,50 +852,7 @@ void DrawHp(HDC hdc, int xS, int yS)
 	HBRUSH hBrush, oBrush;
 	int i;
 
-	//hBrush = CreateSolidBrush(RGB(255, 0, 0));
-	//oBrush = (HBRUSH)SelectObject(hdc, hBrush);
-	/*if (hpNumber == 1) {
-		Rectangle(hdc, hpList[0].pos.x * oneSize + xS, hpList[0].pos.y * oneSize + yS,
-			hpList[0].pos.x * oneSize + xS + oneSize, hpList[0].pos.y * oneSize + yS + oneSize);
-	}
-	else if (hpNumber == 2) {
-		Rectangle(hdc, hpList[0].pos.x * oneSize + xS, hpList[0].pos.y * oneSize + yS,
-			hpList[0].pos.x * oneSize + xS + oneSize, hpList[0].pos.y * oneSize + yS + oneSize);
-		Rectangle(hdc, hpList[1].pos.x * oneSize + xS, hpList[1].pos.y * oneSize + yS,
-		hpList[1].pos.x * oneSize + xS + oneSize, hpList[1].pos.y * oneSize + yS + oneSize);
-	}
-	else if (hpNumber == 3) {
-		Rectangle(hdc, hpList[0].pos.x * oneSize + xS, hpList[0].pos.y * oneSize + yS,
-			hpList[0].pos.x * oneSize + xS + oneSize, hpList[0].pos.y * oneSize + yS + oneSize);
-		Rectangle(hdc, exhpList[1].pos.x * oneSize + xS, exhpList[1].pos.y * oneSize + yS,
-			hpList[1].pos.x * oneSize + xS + oneSize, hpList[1].pos.y * oneSize + yS + oneSize);
-		Rectangle(hdc, hpList[2].pos.x * oneSize + xS, hpList[2].pos.y * oneSize + yS,
-			hpList[2].pos.x * oneSize + xS + oneSize, hpList[2].pos.y * oneSize + yS + oneSize);
-	}
-	else if (hpNumber == 4) {
-		Rectangle(hdc, hpList[0].pos.x * oneSize + xS, hpList[0].pos.y * oneSize + yS,
-			hpList[0].pos.x * oneSize + xS + oneSize, hpList[0].pos.y * oneSize + yS + oneSize);
-		Rectangle(hdc, exhpList[1].pos.x * oneSize + xS, exhpList[1].pos.y * oneSize + yS,
-			hpList[1].pos.x * oneSize + xS + oneSize, hpList[1].pos.y * oneSize + yS + oneSize);
-		Rectangle(hdc, hpList[2].pos.x * oneSize + xS, hpList[2].pos.y * oneSize + yS,
-			hpList[2].pos.x * oneSize + xS + oneSize, hpList[2].pos.y * oneSize + yS + oneSize);
-		Rectangle(hdc, hpList[3].pos.x * oneSize + xS, hpList[3].pos.y * oneSize + yS,
-			hpList[3].pos.x * oneSize + xS + oneSize, hpList[3].pos.y * oneSize + yS + oneSize);
-	}
-	else if (hpNumber == 5) {
-		Rectangle(hdc, hpList[0].pos.x * oneSize + xS, hpList[0].pos.y * oneSize + yS,
-			hpList[0].pos.x * oneSize + xS + oneSize, hpList[0].pos.y * oneSize + yS + oneSize);
-		Rectangle(hdc, exhpList[1].pos.x * oneSize + xS, exhpList[1].pos.y * oneSize + yS,
-			hpList[1].pos.x * oneSize + xS + oneSize, hpList[1].pos.y * oneSize + yS + oneSize);
-		Rectangle(hdc, hpList[2].pos.x * oneSize + xS, hpList[2].pos.y * oneSize + yS,
-			hpList[2].pos.x * oneSize + xS + oneSize, hpList[2].pos.y * oneSize + yS + oneSize);
-		Rectangle(hdc, hpList[3].pos.x * oneSize + xS, hpList[3].pos.y * oneSize + yS,
-			hpList[3].pos.x * oneSize + xS + oneSize, hpList[3].pos.y * oneSize + yS + oneSize);
-		Rectangle(hdc, hpList[4].pos.x * oneSize + xS, hpList[4].pos.y * oneSize + yS,
-			hpList[4].pos.x * oneSize + xS + oneSize, hpList[4].pos.y * oneSize + yS + oneSize);
-	}
-	SelectObject(hdc, oBrush);
-	DeleteObject(hBrush);*/
+
 
 	
 
@@ -904,16 +878,25 @@ void DrawExHp(HDC hdc, int xS, int yS, Player& p)
 	hBrush = CreateSolidBrush(RGB(255, 0, 0));
 	oBrush = (HBRUSH)SelectObject(hdc, hBrush);
 	if (p.exhpList == 1) {
+		exhpList[0].isAlived = true;
+		exhpList[1].isAlived = false;
+		exhpList[2].isAlived = false;
 		Rectangle(hdc, exhpList[0].pos.x * oneSize + xS, exhpList[0].pos.y * oneSize + yS,
 			exhpList[0].pos.x * oneSize + xS + oneSize, exhpList[0].pos.y * oneSize + yS + oneSize);
 	}
 	else if (p.exhpList == 2) {
+		exhpList[0].isAlived = true;
+		exhpList[1].isAlived = true;
+		exhpList[2].isAlived = false;
 		Rectangle(hdc, exhpList[0].pos.x * oneSize + xS, exhpList[0].pos.y * oneSize + yS,
 			exhpList[0].pos.x * oneSize + xS + oneSize, exhpList[0].pos.y * oneSize + yS + oneSize);
 		Rectangle(hdc, exhpList[1].pos.x * oneSize + xS, exhpList[1].pos.y * oneSize + yS,
 			exhpList[1].pos.x * oneSize + xS + oneSize, exhpList[1].pos.y * oneSize + yS + oneSize);
 	}
 	else if (p.exhpList == 3) {
+		exhpList[0].isAlived = true;
+		exhpList[1].isAlived = true;
+		exhpList[2].isAlived = true;
 		Rectangle(hdc, exhpList[0].pos.x * oneSize + xS, exhpList[0].pos.y * oneSize + yS,
 			exhpList[0].pos.x * oneSize + xS + oneSize, exhpList[0].pos.y * oneSize + yS + oneSize);
 		Rectangle(hdc, exhpList[1].pos.x * oneSize + xS, exhpList[1].pos.y * oneSize + yS,
@@ -921,9 +904,21 @@ void DrawExHp(HDC hdc, int xS, int yS, Player& p)
 		Rectangle(hdc, exhpList[2].pos.x * oneSize + xS, exhpList[2].pos.y * oneSize + yS,
 			exhpList[2].pos.x * oneSize + xS + oneSize, exhpList[2].pos.y * oneSize + yS + oneSize);
 	}
+	else if(p.exhpList < 1)
+	{
+		p.exhpList = 0;
+			exhpList[0].isAlived = false;
+			exhpList[1].isAlived = false;
+			exhpList[2].isAlived = false;
+			if (hpList[0].isAlived == false)
+				p.isAlived = false;
+	}
+
+		
+	
 	SelectObject(hdc, oBrush);
 	DeleteObject(hBrush);
-	//}
+	
 
 }
 

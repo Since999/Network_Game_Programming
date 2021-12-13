@@ -29,15 +29,16 @@ using namespace std;
 #define MOVE_RIGHT 24			// D키 입력
 
 #define PLAYER_MAX 3
-#define PLAYER_SPEED 10			// 플레이어 속도
+#define FPS 30
 
 CRITICAL_SECTION cs;
 int joinClient = 0;
 int gameState = GAME_READY;
 
-float FPS = 30;
 DWORD curTime;
 DWORD lastTime = GetTickCount();
+
+int eventIndex[3];
 
 #pragma pack(1)
 struct Position {
@@ -62,6 +63,7 @@ public:
 
 	int hp{ 5 };
 
+	COLORREF color;
 
 	int score{ 0 };					// Enemy를 잡으면 1 상승 (승패 결정)
 	int rank{ 3 };					// 최종 순위
@@ -140,12 +142,11 @@ SOCKET clientSock[3];
 HANDLE hWriteEvent;
 HANDLE hClientEvent[PLAYER_MAX];
 
-void InitObstacle();
+
 void InitItem();
 void InitEnemy();
-void InitHpBar();
-void InitExHp();
 void InitWall();
+void InitPlayer();
 
 void Accept(int clientIndex);
 
