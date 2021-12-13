@@ -1,5 +1,4 @@
 #pragma once
-
 #define _WINSOCK_DEPRECATED_NO_WARNINGS // 최신 VC++ 컴파일 시 경고 방지
 #define _CRT_SECURE_NO_WARNINGS
 #pragma comment(lib, "ws2_32")
@@ -32,13 +31,10 @@ using namespace std;
 #define FPS 30
 
 CRITICAL_SECTION cs;
-int joinClient = 0;
 int gameState = GAME_READY;
 
 DWORD curTime;
 DWORD lastTime = GetTickCount();
-
-int eventIndex[3];
 
 #pragma pack(1)
 struct Position {
@@ -47,50 +43,38 @@ struct Position {
 
 
 struct EXHP {
-public:
-	Position pos;                  // 위치
-	bool isAlived{ false };          // 생사여부
+public:	
+	Position pos;						// 위치
+	bool isAlived{ false };				// 생사여부
 };
 
 class Player {
 public:
 	Position pos{ 0,0 };				// 위치
-	char playerID[10];			// 로그인시 사용할 ID
+	char playerID[10];					// 로그인시 사용할 ID
 	bool isAlived{ true };				// 생사여부
-						// 생사를 결정하는 HP
-
 	int exhpList=0;
-
-	int hp{ 5 };
-
+	int hp{ 5 };						// 생사를 결정하는 HP
 	COLORREF color;
-
-	int score{ 0 };					// Enemy를 잡으면 1 상승 (승패 결정)
-	int rank{ 3 };					// 최종 순위
+	int score{ 0 };						// Enemy를 잡으면 1 상승 (승패 결정)
+	int rank{ 3 };						// 최종 순위
 };
 
 struct Enemy {
 public:
-	Position pos;				// 위치
+	Position pos;						// 위치
 	bool isAlived{ true };				// 생사여부
 };
 
 struct Item {
 public:
-	Position pos;				// 위치
+	Position pos;						// 위치
 	bool isAlived{ true };				// 생사여부
 };
 
 struct Wall {
 	Position pos;
 };
-
-
-
-
-/*struct sc_send_struct1 {
-	int gameState;
-};*/
 
 struct sc_send_struct2 {
 	int gameState;
@@ -100,20 +84,6 @@ struct sc_send_struct2 {
 	int clientIndex;			// 해당 클라이언트의 인덱스
 
 };
-
-
-
-
-
-/*struct sc_send_struct {
-	char size=596U;
-	char type;
-	Player players[3];			// 플레이어들의 리스트
-	int gameState;				// GAME_READY/GAME_RUNNING/GAME_SET
-	Enemy enemyList[35];
-	Item itemList[3];
-	EXHP exhpList[3];
-};*/
 
 struct sc_recv_struct {
 	char size = 20U;
@@ -134,7 +104,6 @@ Item itemList[3];
 Player player[3];
 int clientCnt = 0;
 sc_recv_struct ServerRecv;
-//sc_send_struct1 SeverSend1;;
 
 SOCKET listen_sock;
 SOCKET clientSock[3];
@@ -142,20 +111,12 @@ SOCKET clientSock[3];
 HANDLE hWriteEvent;
 HANDLE hClientEvent[PLAYER_MAX];
 
-
 void InitItem();
 void InitEnemy();
 void InitWall();
 void InitPlayer();
 
 void Accept(int clientIndex);
-
-float deltaTime();						// deltaTime 반환
-
-void sendGameStart();					// GAME_RUNNING 전환을 클라이언트에게 전송
-
-void SendData(sc_send_struct2* s_data);	// sc_send_struct 구조체 전송
-void RecvData(sc_recv_struct* r_data);	// sc_recv_struct 구조체 수신
 
 void MakeRank();						// GAME_SET에서 세 클라이언트의 순위 결정
 
@@ -166,13 +127,6 @@ void CheckPlayerByWallCollision(int key, Player& p);		// 플레이어와 벽의 충돌 체
 void CheckPlayerByPlayerCollision(int key, Player& p, int clientIndex);	// 플레이어간의 충돌 체크
 void CheckPlayerByEnemyCollision(Player& p, int clientIndex);		// 플레이어와 Enemy의 충돌 체크
 void CheckPlayerByItemCollision(Player& p, int clientIndex);		// 플레이어와 Item의 충돌 체크
-
-void DeleteEnemy();						// Enemy 객체의 isAlived = false;
-										// CheckPlayerByEnemyCollision()에서 호출
-void DeleteItem();						// Item 객체의 isAlived = false;
-										// CheckPlayerByItemCollision()에서 호출
-
-bool isPlayerAlived();					// 플레이어의 HP 검사를 통해 생사 판별
 
 int isGameOver(Player p[]);						// 종료 조건 처리 (죽은 플레이어 수 == 3)
 
